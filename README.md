@@ -1,29 +1,54 @@
 # Crochet
 
-A Claude Code plugin that bridges specs and executable git-zhi chains. Crochet provides the intelligence layer — decomposing PRDs into executable issue chains and generating mandatory postmortems at milestone completion.
+Intelligence layer for git-zhi. Crochet is a Claude Code plugin that provides
+skills for decomposing specs into executable chains, importing external tickets,
+generating reports, onboarding repos, and validating pipeline outputs.
 
 ## Skills
 
-### crochet:refinement
-
-Replaces `superpowers:writing-plans`. Takes a brainstorming spec and produces an executable git-zhi chain through four agent roles: architect, decomposer, SQE, and technical writer.
-
-### crochet:postmortem
-
-Required at milestone completion. Process retrospective structured around four questions: what worked, what didn't, what puzzles us, what we'll do differently.
+| Skill | Purpose |
+|-------|---------|
+| `crochet:refinement` | Decompose a spec into an executable git-zhi chain (architect, decomposer, SQE, tech writer) |
+| `crochet:assess` | Analyze a PRD against the codebase to identify gaps, partial implementations, and blockers |
+| `crochet:import` | Assisted ticket import from Jira or other trackers with dependency inference |
+| `crochet:report` | Generate narrative reports from user-defined templates with Mermaid charts |
+| `crochet:onboard` | Step-by-step git-zhi adoption walkthrough with verification at each step |
+| `crochet:pushback` | Pre-flight validation of specs, historian output, and report templates |
+| `crochet:alignment` | Post-pipeline verification: refinement vs PRD, historian vs git log, forward vs historical chain |
+| `crochet:postmortem` | Mandatory process retrospective at milestone completion |
+| `crochet:install` | Install git-zhi binary and companion symlinks |
 
 ## Prerequisites
 
-- [git-zhi](https://github.com/perigrin/git-zhi) core binary on `$PATH`
-- Optional: `git-zhi-verify`, `git-zhi-sanbao`, `git-zhi-docs` plugins for full integration
+[git-zhi](https://github.com/perigrin/git-zhi) must be on `$PATH`. If it's
+not installed, run `crochet:install` or install manually:
 
-## How It Works
+```bash
+curl -fsSL https://raw.githubusercontent.com/perigrin/git-zhi/pu/install.sh | sh
+```
 
-Crochet interacts with chain state exclusively through `git zhi` CLI commands — the same porcelain-over-plumbing pattern git itself uses. It never accesses `refs/zhi/` directly.
+Or build from source:
+
+```bash
+go install github.com/perigrin/git-zhi@latest
+git zhi setup
+```
 
 ## Installation
 
+Install from the perigrin marketplace in Claude Code:
+
 ```
-# Claude Code plugin installation (future)
-/plugin install crochet
+/install-plugin crochet@perigrin-marketplace
 ```
+
+## How It Works
+
+Crochet interacts with chain state exclusively through `git zhi` CLI commands —
+the same porcelain-over-plumbing pattern git itself uses. It never accesses
+`refs/zhi/` directly. Each skill checks for `git-zhi` availability before
+proceeding and directs users to `crochet:install` if it's missing.
+
+## License
+
+MIT

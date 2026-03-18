@@ -3,6 +3,10 @@ name: assess
 description: Analyze a PRD against the existing codebase and chain to identify gaps, partial implementations, blocking architecture conflicts, and satisfied requirements
 ---
 
+## Prerequisites
+
+Before proceeding, verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up.
+
 # crochet:assess
 
 Reads a PRD and analyzes it against the existing codebase and chain state to produce a gap analysis. Output feeds `crochet:refinement` — blocking items become prerequisite refactoring issues at the front of the chain.

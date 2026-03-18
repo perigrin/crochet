@@ -3,6 +3,10 @@ name: onboard
 description: Automated executor of the onboard procedure — runs the full git-zhi adoption walkthrough with human approval at each decision point
 ---
 
+## Prerequisites
+
+Before proceeding, verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up.
+
 # crochet:onboard
 
 Executes the onboard procedure step by step, with human approval at each decision point. Every step is independently verifiable and reversible.

@@ -3,6 +3,10 @@ name: refinement
 description: Decompose a brainstorming spec into an executable git-zhi chain with milestone, issues, dependencies, and acceptance criteria
 ---
 
+## Prerequisites
+
+Before proceeding, verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up.
+
 # crochet:refinement
 
 Replaces `superpowers:writing-plans`. Transforms a validated design spec into an executable git-zhi chain.

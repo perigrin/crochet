@@ -3,6 +3,10 @@ name: alignment
 description: Post-pipeline verification that outputs match inputs — checks refinement vs PRD, historian vs git log, historian vs tracker, and forward chain vs historical chain for coverage gaps and structural drift
 ---
 
+## Prerequisites
+
+Before proceeding, verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up.
+
 # crochet:alignment
 
 Verifies that pipeline outputs are aligned with their inputs. Same methodology across four contexts; specific checks are parameterized by what you're comparing.

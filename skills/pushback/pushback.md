@@ -3,6 +3,10 @@ name: pushback
 description: Pre-flight validation for structured inputs before LLM-powered pipelines act on them — catches implausible dependencies, inconsistent granularity, stale data, and spec gaps before they become silent errors
 ---
 
+## Prerequisites
+
+Before proceeding, verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up.
+
 # crochet:pushback
 
 Critically reviews structured input before an LLM pipeline acts on it. Same methodology across three contexts; specific checks are parameterized by what you're reviewing.

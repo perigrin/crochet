@@ -3,6 +3,10 @@ name: import
 description: Assisted ticket import from external trackers — reads ticket data from sync plugin stdout, proposes chain placement with dependencies and urgency, presents for user review
 ---
 
+## Prerequisites
+
+Before proceeding, verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up.
+
 # crochet:import
 
 Reads an external ticket (via the sync plugin's stdout format) and proposes chain placement with dependencies, urgency, and labels. Presents the enriched issue for user review before creation.
