@@ -28,7 +28,7 @@ to find the active milestone (state != completed).
 
 ```bash
 git zhi milestone show <milestone> --format json
-git zhi chain list --milestone <milestone> --format json
+git zhi list --milestone <milestone> --format json
 ```
 
 Count open issues. If zero, skip to Step 5 (completion).
@@ -36,7 +36,7 @@ Count open issues. If zero, skip to Step 5 (completion).
 ### Step 2: Pick Next Issue
 
 ```bash
-git zhi chain list --ready --format json
+git zhi list --milestone <milestone> --ready --format json
 ```
 
 Select the first ready issue (all dependencies satisfied, state = pending).
@@ -217,7 +217,7 @@ Postmortem: see output above
 ## Key Constraints
 
 - All chain interaction through `git zhi` CLI — never access refs directly
-- Use `git zhi chain list --ready` for ready-set queries (not `git zhi list`)
+- Use `git zhi list --milestone <ms> --ready` for ready-set queries
 - Reopen requires two state transitions: `--state reopen` then `--state start`
 - The inner loop is a Ralph Loop — it handles iteration, context preservation,
   and completion detection
