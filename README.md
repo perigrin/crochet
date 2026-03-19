@@ -39,7 +39,8 @@ git zhi setup
 Install from the perigrin marketplace in Claude Code:
 
 ```
-/install-plugin crochet@perigrin-marketplace
+/plugin marketplace add perigrin/claude-plugins-marketplace
+/plugin install crochet
 ```
 
 ## How It Works
