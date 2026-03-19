@@ -28,7 +28,7 @@ to find the active milestone (state != completed).
 
 ```bash
 git zhi milestone show <milestone> --format json
-git zhi list --milestone <milestone> --format json
+git zhi chain list --milestone <milestone> --format json
 ```
 
 Count open issues. If zero, skip to Step 5 (completion).
@@ -36,7 +36,7 @@ Count open issues. If zero, skip to Step 5 (completion).
 ### Step 2: Pick Next Issue
 
 ```bash
-git zhi list --milestone <milestone> --ready --format json
+git zhi chain list --ready --format json
 ```
 
 Select the first ready issue (all dependencies satisfied, state = pending).
@@ -97,20 +97,17 @@ squash or amend — the commit history is the iteration history.
 
 ### Step 3.5: Sanbao Gate Analysis
 
-After the inner loop completes and before running PAAD, compute a sanbao
-snapshot for the issue to determine review tier.
+After the inner loop completes, close the issue and compute a sanbao snapshot
+to determine review tier.
 
 ```bash
 git zhi issue edit <id> --state done
 git-zhi-sanbao <milestone> --format json
 ```
 
-Extract per-issue metrics from the sanbao report:
-- **Difficulty score** (from `difficulties[]` — composite of MPG, cycle time,
-  reopens, sentiment, session count, normalized to [0,1])
-- **Hotspot count** (files touched by this issue in `complexity.hotspots[]`)
-- **Change coupling** (unexpected co-change pairs in `complexity.coupling[]`)
-- **MPG** (commits for this issue, from DORA domain)
+Sanbao operates at milestone scope. Extract the target issue's metrics from
+the per-issue `difficulties[]` array and the `complexity` domain in the JSON
+output.
 
 **Run the gate analysis agent** with this prompt:
 
@@ -155,15 +152,24 @@ Run PAAD based on the tier determined by the gate analyst.
 
 **Evaluate findings:**
 
-- **In-scope findings** (directly related to this issue's AC): append findings
-  to the issue body as a `### Review Findings` section, reopen the issue,
-  and return to Step 3 for another inner-loop pass.
+- **In-scope findings** (directly related to this issue's AC) AND reopens < 3:
+  append findings to the issue body as a `### Review Findings` section, reopen
+  the issue via two-step state transition, and return to Step 3 for another
+  inner-loop pass.
   ```bash
   # Append findings to issue body via --body on stdin
-  git zhi issue edit <id> --body <<< "<current body>\n\n### Review Findings\n\n<findings>"
+  echo "<current body>
+
+  ### Review Findings
+
+  <findings>" | git zhi issue edit <id> --body
+  git zhi issue edit <id> --state reopen
   git zhi issue edit <id> --state start
   ```
   The next Ralph Loop iteration reads the issue and sees the findings.
+
+- **In-scope findings AND reopens >= 3:** Stop and report: "Issue <id> exceeded
+  max review passes (3). Consider splitting the issue or revising the AC."
 
 - **Out-of-scope findings** (new work beyond this issue): create new issues in
   the same milestone.
@@ -211,11 +217,15 @@ Postmortem: see output above
 ## Key Constraints
 
 - All chain interaction through `git zhi` CLI — never access refs directly
+- Use `git zhi chain list --ready` for ready-set queries (not `git zhi list`)
+- Reopen requires two state transitions: `--state reopen` then `--state start`
 - The inner loop is a Ralph Loop — it handles iteration, context preservation,
   and completion detection
 - Sanbao gate analyst determines review depth — measured complexity, not heuristics
+- Sanbao runs at milestone scope; gate analyst extracts single-issue metrics
 - PAAD is the outer gate — it determines whether an issue is truly done
 - code-simplifier is the inner gate — it keeps each commit clean
+- Max 3 PAAD-reopen cycles per issue — prevents infinite outer-loop cycling
 - The skill is idempotent: re-invoking it on a partially-executed milestone
   resumes from the current chain state (already-closed issues are skipped)
 - Human-in-the-loop: by default, pause between issues for confirmation.
