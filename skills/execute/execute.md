@@ -91,6 +91,15 @@ When ALL acceptance criteria are met, tests pass, and simplifier is clean:
 If the loop hits max without converging, stop and report: "Issue did not converge
 in 10 iterations — consider splitting it or clarifying the AC."
 
+**Known issue: completion promise detection may fail** on long conversations where
+the JSONL transcript contains unescaped control characters (see
+[claude-plugins-official#760](https://github.com/anthropics/claude-plugins-official/issues/760)).
+If the Ralph Loop does not terminate despite the promise being output, cancel it
+manually (`/cancel-ralph`) and verify completion by checking:
+- `git log` for commits covering all AC
+- `go test ./...` (or equivalent) for green tests
+- The issue state — proceed to Step 3.5 if work is done
+
 **Commit strategy:** Commit frequently with descriptive messages. Every iteration
 should leave committed state so the next iteration can build on it. Do not
 squash or amend — the commit history is the iteration history.
