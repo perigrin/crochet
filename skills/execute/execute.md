@@ -196,6 +196,16 @@ When all issues are closed:
 git zhi milestone edit <milestone> --state complete
 ```
 
+**Rebuild and install the binary** so subsequent milestones use the latest code:
+```bash
+make install
+```
+
+This runs `go build` with correct ldflags, installs to `~/.local/bin`, runs
+`git-zhi setup` for companion symlinks, and prints the version string for
+verification. Skipping this step causes the stale-binary problem where CLI
+behavior and sanbao output do not reflect recent code changes.
+
 Then run the postmortem:
 ```
 /postmortem <milestone>
