@@ -56,7 +56,11 @@ Report success and the installed version.
 ## Key Constraints
 
 - Always ask before downloading and executing anything.
-- If `go` is available and the user prefers building from source, offer that instead:
-  `go install github.com/perigrin/git-zhi@latest && git zhi setup`
+- Always use the binary download via `install.sh` first. It is faster and does
+  not require a Go toolchain.
+- Only fall back to `go install github.com/perigrin/git-zhi@latest && git zhi setup`
+  if the binary download fails (network error, unsupported platform, curl not
+  available) or if the user explicitly asks to build from source.
+- Do NOT offer `go build` as an alternative just because `go` is on `$PATH`.
 - If the install fails, show the error and suggest manual installation from
   https://github.com/perigrin/git-zhi/releases
