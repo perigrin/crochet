@@ -1,7 +1,7 @@
 {
   "name": "crochet",
-  "description": "Intelligence layer for git-zhi — refinement, assessment, import, reporting, onboarding, pushback, and alignment skills",
-  "version": "0.3.1",
+  "description": "Intelligence layer for git-zhi — SDLC pipeline skills (assess, refinement, chain-review, execute, postmortem) with superpowers and PAAD integration",
+  "version": "0.4.0",
   "author": {
     "name": "Chris Prather"
   },

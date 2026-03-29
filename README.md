@@ -8,15 +8,19 @@ generating reports, onboarding repos, and validating pipeline outputs.
 
 | Skill | Purpose |
 |-------|---------|
+| `crochet:assess` | Analyze a PRD against the codebase to identify gaps, partial implementations, and blockers before decomposition |
 | `crochet:refinement` | Decompose a spec into an executable git-zhi chain (architect, decomposer, SQE, tech writer) |
-| `crochet:assess` | Analyze a PRD against the codebase to identify gaps, partial implementations, and blockers |
-| `crochet:import` | Assisted ticket import from Jira or other trackers with dependency inference |
-| `crochet:report` | Generate narrative reports from user-defined templates with Mermaid charts |
-| `crochet:onboard` | Step-by-step git-zhi adoption walkthrough with verification at each step |
-| `crochet:pushback` | Pre-flight validation of specs, historian output, and report templates |
-| `crochet:alignment` | Post-pipeline verification: refinement vs PRD, historian vs git log, forward vs historical chain |
+| `crochet:chain-review` | Review a decomposed issue chain for quality, coverage, and dependency integrity before execution |
+| `crochet:execute` | Execute issues from the chain via TDD with Ralph Loop inner cycle and PAAD outer gate |
 | `crochet:postmortem` | Mandatory process retrospective at milestone completion |
 | `crochet:install` | Install git-zhi binary and companion symlinks |
+| `crochet:preflight` | Validate environment and prerequisites before starting a pipeline run |
+| `crochet:verify` | Verify pipeline outputs meet acceptance criteria at each stage |
+| `crochet:onboard` | Step-by-step git-zhi adoption walkthrough with verification at each step |
+| `crochet:import` | Assisted ticket import from Jira or other trackers with dependency inference |
+| `crochet:report` | Generate narrative reports from user-defined templates with Mermaid charts |
+
+Internal skills (not directly user-invocable): `crochet:pushback`, `crochet:alignment`
 
 ## Prerequisites
 

@@ -40,7 +40,7 @@ Each step is a gate — do not proceed until the current step passes.
 ### Skill Roles
 
 **Pipeline skills** drive the SDLC sequence. **Infrastructure skills**
-(install, preflight, verify, onboard) set up the environment. **Support skills**
+(install, preflight, crochet:verify, onboard) set up the environment. **Support skills**
 (import, report) serve auxiliary workflows.
 
 ### crochet:refinement Agent Roles
