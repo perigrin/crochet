@@ -5,7 +5,11 @@ description: Drive the full SDLC execution loop — pick issues from the DAG, ru
 
 ## Prerequisites
 
-Before proceeding, verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up.
+**If `crochet:preflight` is available** (check preflight capabilities):
+  Invoke `crochet:preflight` and use the returned capabilities map for all conditional references below.
+
+**Otherwise:**
+  Verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up. Proceed without a capabilities map; treat all conditionals below as "not available."
 
 # crochet:execute
 
@@ -35,19 +39,25 @@ Count open issues. If zero, skip to Step 5 (completion).
 
 ### Step 2: Pick Next Issue
 
-```bash
-git zhi list --milestone <milestone> --ready --format json
-```
+**If `superpowers:dispatching-parallel-agents` is available** (check preflight capabilities):
+  Identify all ready issues (all dependencies satisfied, state = pending) and dispatch
+  parallel agents for each, one agent per issue. Follow the dispatching-parallel-agents
+  skill for agent coordination and result collection.
 
-Select the first ready issue (all dependencies satisfied, state = pending).
-If no issues are ready but open issues exist, report the blocker and stop.
+**Otherwise:**
+  ```bash
+  git zhi list --milestone <milestone> --ready --format json
+  ```
 
-Start the issue:
+  Select the first ready issue (all dependencies satisfied, state = pending).
+  If no issues are ready but open issues exist, report the blocker and stop.
+
+Start each issue before executing:
 ```bash
 git zhi issue edit <id> --state start
 ```
 
-### Step 3: Inner Loop (TDD Cycle)
+### Step 3: Execute Issue
 
 Read the issue's full context:
 ```bash
@@ -57,45 +67,38 @@ git zhi issue show <id> --format json
 Extract from the issue:
 - Title and acceptance criteria (positive and negative scenarios)
 - Context paths (files to read)
-- Steps (RED-GREEN-COMMIT choreography if present)
+- Steps (implementation choreography if present)
 - Review findings from prior PAAD passes (if issue was reopened)
 
-**Launch a Ralph Loop** with this prompt template (filled from issue data):
+**If `superpowers:test-driven-development` is available** (check preflight capabilities):
+  Follow the `superpowers:test-driven-development` skill for the implementation cycle.
+  Pass the issue's acceptance criteria as the definition of done.
+  After tests pass, run: `/simplify` (code-simplifier on changed files).
+  If simplifier finds issues, fix them and re-run tests.
+  Commit frequently with descriptive messages.
 
-```
-/ralph-loop "Execute issue <id>: <title>
+**Otherwise:**
+  Implement the issue using best judgment.
+  After implementation, run the project test suite manually and verify all tests pass.
+  After tests pass, run: `/simplify` (code-simplifier on changed files).
+  If simplifier finds issues, fix them and re-run tests.
+  Commit frequently with descriptive messages.
 
-Acceptance criteria:
-<AC from issue body>
+**Max iterations safety valve:** If implementation does not converge after 10 passes:
 
-Context files: <paths>
+**If `superpowers:systematic-debugging` is available** (check preflight capabilities):
+  Invoke `superpowers:systematic-debugging` to diagnose why the issue is stuck
+  before continuing.
 
-Review findings to address (if any):
-<findings from ### Review Findings section, or 'None'>
+**Otherwise:**
+  Stop and report the blocker. Consider splitting the issue or clarifying the AC
+  before retrying.
 
-Instructions:
-1. Read the issue context files
-2. Check git log and git diff for work from previous iterations
-3. If review findings exist, address those first
-4. Follow TDD: write a failing test, implement, verify green
-5. After tests pass, run: /simplify (code-simplifier on changed files)
-6. If simplifier finds issues, fix them and re-run tests
-7. Commit frequently with descriptive messages
-8. Repeat for each AC item
-
-When ALL acceptance criteria are met, tests pass, and simplifier is clean:
-" --completion-promise "ISSUE_COMPLETE" --max-iterations 10
-```
-
-**Max iterations is a safety valve.** 10 is generous enough for well-sized issues.
-If the loop hits max without converging, stop and report: "Issue did not converge
-in 10 iterations — consider splitting it or clarifying the AC."
-
-**Known issue: completion promise detection may fail** on long conversations where
+**Known issue: completion detection may fail** on long conversations where
 the JSONL transcript contains unescaped control characters (see
 [claude-plugins-official#760](https://github.com/anthropics/claude-plugins-official/issues/760)).
-If the Ralph Loop does not terminate despite the promise being output, cancel it
-manually (`/cancel-ralph`) and verify completion by checking:
+If execution does not terminate despite work being done, cancel manually and
+verify completion by checking:
 - `git log` for commits covering all AC
 - `go test ./...` (or equivalent) for green tests
 - The issue state — proceed to Step 3.5 if work is done
@@ -106,7 +109,7 @@ squash or amend — the commit history is the iteration history.
 
 ### Step 3.5: Sanbao Gate Analysis
 
-After the inner loop completes, close the issue and compute a sanbao snapshot
+After execution completes, close the issue and compute a sanbao snapshot
 to determine review tier.
 
 ```bash
@@ -164,7 +167,7 @@ Run PAAD based on the tier determined by the gate analyst.
 - **In-scope findings** (directly related to this issue's AC) AND reopens < 3:
   append findings to the issue body as a `### Review Findings` section, reopen
   the issue via two-step state transition, and return to Step 3 for another
-  inner-loop pass.
+  execution pass.
   ```bash
   # Append findings to issue body via --body on stdin
   echo "<current body>
@@ -175,7 +178,7 @@ Run PAAD based on the tier determined by the gate analyst.
   git zhi issue edit <id> --state reopen
   git zhi issue edit <id> --state start
   ```
-  The next Ralph Loop iteration reads the issue and sees the findings.
+  The next execution pass reads the issue and sees the findings.
 
 - **In-scope findings AND reopens >= 3:** Stop and report: "Issue <id> exceeded
   max review passes (3). Consider splitting the issue or revising the AC."
@@ -195,6 +198,14 @@ When all issues are closed:
 ```bash
 git zhi milestone edit <milestone> --state complete
 ```
+
+**If `superpowers:verification-before-completion` is available** (check preflight capabilities):
+  Invoke `superpowers:verification-before-completion` before marking the milestone
+  complete and before rebuilding.
+
+**Otherwise:**
+  Run the project test suite and build manually to confirm everything passes
+  before proceeding.
 
 **Rebuild and install the binary** so subsequent milestones use the latest code:
 ```bash
@@ -218,7 +229,7 @@ Output summary:
 Milestone <name> complete.
 
 Issues executed: N
-  <id> "<title>" — closed (M inner iterations, tier T, K review passes)
+  <id> "<title>" — closed (M iterations, tier T, K review passes)
   ...
 
 Gate analysis:
@@ -238,13 +249,11 @@ Postmortem: see output above
 - All chain interaction through `git zhi` CLI — never access refs directly
 - Use `git zhi list --milestone <ms> --ready` for ready-set queries
 - Reopen requires two state transitions: `--state reopen` then `--state start`
-- The inner loop is a Ralph Loop — it handles iteration, context preservation,
-  and completion detection
 - Sanbao gate analyst determines review depth — measured complexity, not heuristics
 - Sanbao runs at milestone scope; gate analyst extracts single-issue metrics
 - PAAD is the outer gate — it determines whether an issue is truly done
 - code-simplifier is the inner gate — it keeps each commit clean
-- Max 3 PAAD-reopen cycles per issue — prevents infinite outer-loop cycling
+- Max 3 PAAD-reopen cycles per issue — prevents infinite cycling
 - The skill is idempotent: re-invoking it on a partially-executed milestone
   resumes from the current chain state (already-closed issues are skipped)
 - Human-in-the-loop: by default, pause between issues for confirmation.
@@ -253,9 +262,13 @@ Postmortem: see output above
 
 ## Integration
 
+- **crochet:preflight** runs first — provides capabilities map for all conditionals
 - **crochet:refinement** creates the chain this skill executes
 - **crochet:postmortem** runs at milestone completion
-- **ralph-loop** drives the inner TDD cycle
+- **superpowers:test-driven-development** drives the implementation cycle (if available)
+- **superpowers:systematic-debugging** handles stuck issues (if available)
+- **superpowers:dispatching-parallel-agents** enables parallel issue execution (if available)
+- **superpowers:verification-before-completion** gates milestone completion (if available)
 - **sanbao** provides per-issue complexity metrics for gate analysis
 - **paad:alignment** always runs at issue gate (tier 1)
 - **paad:agentic-architecture, paad:agentic-review** escalation at issue gate (tier 2)

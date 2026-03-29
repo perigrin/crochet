@@ -1,6 +1,6 @@
 ---
 name: postmortem
-description: Generate a mandatory process retrospective at milestone completion — four-question framework analyzing what worked, what didn't, what puzzles, and what to change
+description: Generate a mandatory process retrospective at milestone completion — structured analysis of what worked, what didn't, what surprised us, and what to do differently
 ---
 
 # crochet:postmortem
@@ -10,6 +10,18 @@ Required at milestone completion. A process retrospective, not a bug report. Mod
 ## Trigger
 
 All issues done, resolution command passed, verify clean. Invoked before `git zhi milestone edit --state complete`.
+
+## Preflight
+
+Invoke `crochet:preflight` as the first step. Use the returned capabilities map for all conditional checks below.
+
+## Verification
+
+**If `superpowers:verification-before-completion` is available** (check preflight capabilities):
+  Invoke it now, before data gathering. Follow it; do not reimplement it.
+
+**If unavailable:**
+  Proceed to data gathering with the information at hand.
 
 ## Data Gathering
 
@@ -59,7 +71,7 @@ Analyze the data for negative signals:
 - **Forecast misses:** Predicted vs actual completion time — and *why* the forecast was off, not just that it was. Was the critical chain longer than expected? Did parallelization not materialize?
 - **Quality gaps:** ACs that passed but should not have (false positives), regressions caught late, doc drift.
 
-### 3. What puzzles us?
+### 3. What surprised us?
 
 Flag unexpected patterns:
 
@@ -93,7 +105,7 @@ git zhi milestone edit <name> --postmortem <<'EOF'
 ## What Didn't Work
 ...
 
-## What Puzzles Us
+## What Surprised Us
 ...
 
 ## What Will We Do Differently

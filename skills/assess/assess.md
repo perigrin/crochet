@@ -5,7 +5,7 @@ description: Analyze a PRD against the existing codebase and chain to identify g
 
 ## Prerequisites
 
-Before proceeding, verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up.
+Run `crochet:preflight` as the first step. It checks git-zhi availability, reads the capabilities manifest, and returns a capabilities map used for conditional skill delegation below.
 
 # crochet:assess
 
@@ -13,7 +13,7 @@ Reads a PRD and analyzes it against the existing codebase and chain state to pro
 
 ## Trigger
 
-User provides a PRD file path, or invokes after brainstorming produces a spec.
+`crochet:assess` is the required entry point for the SDLC pipeline. Run it when a user provides a PRD file path, invokes it after brainstorming produces a spec, or initiates any structured feature development. No pipeline step should begin before assess has run.
 
 ## Inputs
 
@@ -24,6 +24,22 @@ User provides a PRD file path, or invokes after brainstorming produces a spec.
 5. **Git history** — `git log` for recent changes in relevant areas
 
 ## Process
+
+### Step 0: Spec Quality Validation
+
+**If `paad:pushback` is available** (check preflight capabilities):
+  Run `paad:pushback` on the PRD. Follow the skill — do not reimplement it. Resolve or acknowledge all pushback findings before continuing. The user may choose to proceed at any point; this is a quality gate, not a hard blocker.
+
+**Otherwise:**
+  Run inline spec checks before proceeding to gap analysis:
+
+  - **Contradictions** — scan for requirements that conflict with each other (e.g., "must be fast" and "must be fully synchronous with no caching"). Call each out explicitly.
+  - **Ambiguity** — flag requirements with no measurable acceptance criteria. "Should be responsive" is not testable; "must respond within 200ms at p95" is.
+  - **Scope red flags** — identify any requirement that implies rewriting or replacing an existing major subsystem without naming it as a deliberate refactor. Flag scope that looks unbounded or that quietly entails large unstated work.
+  - **Missing error handling** — note any flow described with no mention of failure modes. If the spec says "user submits form and sees confirmation" with no error path, flag it.
+  - **Security surface** — call out any requirement that expands the security attack surface: authentication, authorization, data storage, external input, or third-party integrations without specifying a threat model or constraints.
+
+  Present findings as a short, labeled list. The user may proceed at any point — these are advisory, not blocking. Note at the end: installing `paad` provides deeper analysis including contradiction trees, requirement traceability, and structured pushback sessions.
 
 ### Step 1: Parse Requirements
 
