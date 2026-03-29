@@ -9,7 +9,7 @@ Before proceeding, verify that `git-zhi` is available by running `which git-zhi`
 
 # crochet:refinement
 
-Replaces `superpowers:writing-plans`. Transforms a validated design spec into an executable git-zhi chain.
+Replaces `superpowers:writing-plans`. Transforms a validated design spec into an executable git-zhi chain. This skill sits between brainstorming and chain-review in the pipeline.
 
 ## Trigger
 
@@ -21,7 +21,21 @@ A spec file path (e.g., `docs/plans/2026-03-15-parser-design.md`).
 
 ## Process
 
-Four agent roles execute in sequence. Each role reads the spec and the codebase, then creates or modifies chain state through `git zhi` CLI commands.
+Agent roles execute in sequence. Each role reads the spec and the codebase, then creates or modifies chain state through `git zhi` CLI commands.
+
+### Step 0: Preflight
+
+Invoke `crochet:preflight` as the first action. This checks git-zhi availability, reads the capabilities manifest, and returns the capabilities map used for conditional dispatch in later steps.
+
+### Step 0.5: Pipeline-Readiness Pre-Checks
+
+Before decomposition begins, run three pipeline-readiness checks against the spec and codebase:
+
+1. **source control conflicts** — run `git status` and `git diff --stat`. If there are uncommitted changes or merge conflicts, report them and ask the user to resolve before continuing. A dirty working tree can cause chain issues later.
+2. **Omissions check** — scan the spec for referenced files, modules, or dependencies that do not exist in the codebase. List any omissions and ask the user to confirm they are intentional (new work) or unintentional (missing context).
+3. **Scope check** — read the codebase structure and compare it against the spec. Flag any areas where the spec appears to contradict existing architecture or naming conventions. Do not block on this — surface findings and continue unless the user asks to stop.
+
+If all three checks pass cleanly, proceed to Step 1. If issues are found, surface them as a numbered list and ask the user: "Proceed anyway, or stop to address these first?"
 
 ### Step 1: Lazy Initialization
 
@@ -62,7 +76,17 @@ Before any agent runs:
 - Batch creation via stdin: `git zhi issue add` with `---` separators
 - Dependencies wired via `git zhi issue edit <id> --block <other-id>`
 
-### Step 4: SQE Agent
+### Steps 4 and 5: Quality and Documentation (Parallel Dispatch)
+
+After decomposition, two independent agents enrich the issues: one adds negative scenarios, the other adds documentation steps. These agents do not depend on each other's output and may run concurrently.
+
+**If `superpowers:dispatching-parallel-agents` is available** (check preflight capabilities):
+  Dispatch both agents in parallel using `dispatching-parallel-agents`. Each agent receives its system prompt and the issue list. Collect results from both before proceeding to Step 6.
+
+**If `superpowers:dispatching-parallel-agents` is absent from the capabilities map:**
+  Run Step 4 to completion, then run Step 5.
+
+#### Step 4: SQE Agent
 
 **System prompt:** `sqe-prompt.md`
 
@@ -75,7 +99,7 @@ Before any agent runs:
 - Negative scenarios for each issue: boundary conditions, error paths, race conditions, invalid inputs, state corruption
 - Updates issues via `git zhi issue edit <id>` with updated body containing `### Negative Scenarios`
 
-### Step 5: Technical Writer Agent
+#### Step 5: Technical Writer Agent
 
 **System prompt:** `techwriter-prompt.md`
 
@@ -112,6 +136,6 @@ Run: git zhi list
 ## Key Constraints
 
 - All chain interaction through `git zhi` CLI commands — never access `refs/zhi/` directly
-- The SQE agent never sees implementation code — only specs and acceptance criteria
+- The quality agent never sees implementation code — only specs and acceptance criteria
 - Each agent role runs as a fresh subagent with its own system prompt
 - Lazy init is idempotent — safe to run on repos that already have docs structure
