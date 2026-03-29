@@ -1,0 +1,4 @@
+# ABOUTME: Git ignore rules for the crochet project.
+# ABOUTME: Excludes machine-local files that must not be committed.
+
+.claude/crochet/capabilities.json
