@@ -3,6 +3,9 @@ name: install
 description: Install git-zhi and create companion symlinks — downloads the correct binary for the current platform from GitHub releases
 ---
 
+<!-- ABOUTME: Skill for installing git-zhi binary and seeding the plugin manifest under ~/.claude/crochet/. -->
+<!-- ABOUTME: Downloads the correct platform binary, verifies installation, and writes a JSON manifest of detected plugins. -->
+
 # crochet:install
 
 Installs git-zhi if it is not already on `$PATH`. Downloads the correct
@@ -52,6 +55,46 @@ git zhi setup  # ensure all companion symlinks exist
 ```
 
 Report success and the installed version.
+
+### Step 5: Seed capabilities manifest
+
+Create the `.claude/crochet/` directory if it does not exist:
+
+```bash
+mkdir -p ~/.claude/crochet/
+```
+
+Scan the following directories for installed skills and plugins:
+
+- `~/.claude/skills/` — superpowers skills
+- `~/.claude/plugins/marketplaces/paad/plugins/paad/skills/` — paad skills
+- `~/.claude/plugins/cache/superpowers-marketplace/` — superpowers marketplace cache
+
+For each scan path, check whether the directory exists. If it exists, list the
+skill names found inside it (subdirectory names or `*.md` file stems). If it
+does not exist, record `"installed": false` for that plugin source.
+
+Build a capabilities JSON object of the form:
+
+```json
+{
+  "superpowers": {
+    "installed": true,
+    "skills": ["skill-name", "..."]
+  },
+  "paad": {
+    "installed": false
+  },
+  "superpowers_cache": {
+    "installed": true,
+    "skills": ["skill-name", "..."]
+  }
+}
+```
+
+Write the result to `~/.claude/crochet/capabilities.json`.
+
+Report how many capabilities were found across all sources.
 
 ## Key Constraints
 
