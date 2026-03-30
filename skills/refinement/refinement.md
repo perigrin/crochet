@@ -31,7 +31,7 @@ Invoke `crochet:preflight` as the first action. This checks git-zhi availability
 
 Before decomposition begins, run pipeline-readiness checks against the spec and codebase:
 
-1. **Source control conflicts** — run `git status` and `git diff --stat`. If there are uncommitted changes or merge conflicts, report them and ask the user to resolve before continuing. A dirty working tree can cause chain issues later.
+1. **Source control conflicts** — check for source control issues by running `git status` and `git diff --stat`. If there are uncommitted changes or merge conflicts, report them and ask the user to resolve before continuing. A dirty working tree can cause chain issues later.
 2. **Omissions check** — scan the spec for referenced files, modules, or dependencies that do not exist in the codebase. List any omissions and ask the user to confirm they are intentional (new work) or unintentional (missing context).
 3. **Scope check** — read the codebase structure and compare it against the spec. Flag any areas where the spec appears to contradict existing architecture or naming conventions. Do not block on this — surface findings and continue unless the user asks to stop.
 4. **Feasibility assessment** — check whether the spec is feasible given the codebase maturity, existing dependencies, and available infrastructure. Flag any aspects that appear infeasible and ask the user to confirm before proceeding.

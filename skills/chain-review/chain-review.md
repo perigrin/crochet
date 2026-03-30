@@ -34,8 +34,8 @@ Run `crochet:preflight` as the first step. This checks git-zhi availability and 
 
 chain-review runs two internal skills:
 
-- **alignment** — coverage lens. Verifies that refinement output covers the PRD completely without scope creep.
-- **pushback** — plan quality lens. Reviews the issue chain for sizing problems, missing QA tasks, dependency cycles, critical chain issues, and untestable acceptance criteria.
+- **crochet:alignment** — coverage lens. Verifies that refinement output covers the PRD completely without scope creep.
+- **crochet:pushback** — plan quality lens. Reviews the issue chain for sizing problems, missing QA tasks, dependency cycles, critical chain issues, and untestable acceptance criteria.
 
 **If `dispatching-parallel-agents` is available** (check preflight capabilities):
   Dispatch alignment and pushback as concurrent agents. Collect both result sets before proceeding to Step 3.
@@ -49,7 +49,7 @@ Present findings from both lenses together, grouped by lens. For each finding, s
 
 When both lenses produce no findings, confirm to the user that the chain is ready for execution and suggest running `crochet:execute`.
 
-When either lens produces findings, present them and ask the user how to proceed. The user may choose to address findings before execution or proceed anyway.
+When either lens produces findings, present them and stop. Do not proceed to execution until the user decides how to handle the findings. The user may choose to address them first or proceed anyway.
 
 ## Key Constraints
 
