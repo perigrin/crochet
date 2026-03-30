@@ -63,9 +63,13 @@ Execute has two nested loops:
 
 Crochet builds on top of superpowers and paad when they are installed.
 See `docs/plans/2026-03-28-superpowers-paad-integration-design.md` for the
-full design. The pattern: detect availability via capabilities manifest
-(`.claude/crochet/capabilities.json`), delegate to the skill when present,
-fall back to inline behavior when absent.
+full design.
+
+**Conditional reference pattern:** Each integration point checks
+"If `<skill>` is available" (via the capabilities manifest at
+`.claude/crochet/capabilities.json`). When available, delegate to the skill.
+Otherwise, use inline fallback behavior. Crochet never reimplements what
+superpowers or paad already provides.
 
 ## Conventions
 

@@ -36,7 +36,7 @@ Every code issue should have at least one negative scenario in its acceptance cr
 
 ### 3. Dependency Sanity
 
-Dependency relationships between issues must form a DAG (no cycles) and no single issue should block an unreasonable number of downstream issues.
+Check dependency sanity: relationships between issues must form a DAG (no cycles) and no single issue should block an unreasonable number of downstream issues.
 
 - Trace all `blocks` / `blocked-by` references and check for cycles
 - Flag any issue that blocks more than four downstream issues — this is a bottleneck and may need decomposition

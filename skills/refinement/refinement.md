@@ -29,11 +29,12 @@ Invoke `crochet:preflight` as the first action. This checks git-zhi availability
 
 ### Step 0.5: Pipeline-Readiness Pre-Checks
 
-Before decomposition begins, run three pipeline-readiness checks against the spec and codebase:
+Before decomposition begins, run pipeline-readiness checks against the spec and codebase:
 
-1. **source control conflicts** — run `git status` and `git diff --stat`. If there are uncommitted changes or merge conflicts, report them and ask the user to resolve before continuing. A dirty working tree can cause chain issues later.
+1. **Source control conflicts** — run `git status` and `git diff --stat`. If there are uncommitted changes or merge conflicts, report them and ask the user to resolve before continuing. A dirty working tree can cause chain issues later.
 2. **Omissions check** — scan the spec for referenced files, modules, or dependencies that do not exist in the codebase. List any omissions and ask the user to confirm they are intentional (new work) or unintentional (missing context).
 3. **Scope check** — read the codebase structure and compare it against the spec. Flag any areas where the spec appears to contradict existing architecture or naming conventions. Do not block on this — surface findings and continue unless the user asks to stop.
+4. **Feasibility assessment** — check whether the spec is feasible given the codebase maturity, existing dependencies, and available infrastructure. Flag any aspects that appear infeasible and ask the user to confirm before proceeding.
 
 If all three checks pass cleanly, proceed to Step 1. If issues are found, surface them as a numbered list and ask the user: "Proceed anyway, or stop to address these first?"
 
@@ -83,8 +84,8 @@ After decomposition, two independent agents enrich the issues: one adds negative
 **If `superpowers:dispatching-parallel-agents` is available** (check preflight capabilities):
   Dispatch both agents in parallel using `dispatching-parallel-agents`. Each agent receives its system prompt and the issue list. Collect results from both before proceeding to Step 6.
 
-**If `superpowers:dispatching-parallel-agents` is absent from the capabilities map:**
-  Run Step 4 to completion, then run Step 5.
+**Otherwise:**
+  Run Step 4 and Step 5 sequentially — SQE first, then technical writer.
 
 #### Step 4: SQE Agent
 

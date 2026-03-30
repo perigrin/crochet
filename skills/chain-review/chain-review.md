@@ -40,8 +40,8 @@ chain-review runs two internal skills:
 **If `dispatching-parallel-agents` is available** (check preflight capabilities):
   Dispatch alignment and pushback as concurrent agents. Collect both result sets before proceeding to Step 3.
 
-**If `dispatching-parallel-agents` is not in the capabilities map:**
-  Run alignment, then run pushback. Collect both result sets before proceeding to Step 3.
+**Otherwise:**
+  Run alignment and pushback sequentially — first alignment, then pushback. Collect both result sets before proceeding to Step 3.
 
 ## Step 3: Present Findings
 

@@ -7,7 +7,7 @@ description: Environment health check skill — runs four verification areas aga
 
 # crochet:verify
 
-This skill runs an explicit environment health check. It is invoked directly by users who want to audit the crochet environment. Other crochet skills use `crochet:preflight` for their automatic lightweight startup check; this skill goes deeper.
+This is a thorough, on-demand environment health check. It is invoked directly by users who want to audit the crochet environment. Other crochet skills use `crochet:preflight` for their automatic lightweight startup check; this skill goes deeper.
 
 ## First Step
 

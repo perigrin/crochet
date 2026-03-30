@@ -57,7 +57,10 @@ Start each issue before executing:
 git zhi issue edit <id> --state start
 ```
 
-### Step 3: Execute Issue
+### Step 3: Inner Loop (Execute Issue)
+
+The inner loop drives TDD iteration per issue. When available, this uses a
+Ralph Loop for automated iteration with completion detection.
 
 Read the issue's full context:
 ```bash
@@ -72,19 +75,20 @@ Extract from the issue:
 
 **If `superpowers:test-driven-development` is available** (check preflight capabilities):
   Follow the `superpowers:test-driven-development` skill for the implementation cycle.
+  Write a failing test first, then implement until it passes (red-green-refactor).
   Pass the issue's acceptance criteria as the definition of done.
   After tests pass, run: `/simplify` (code-simplifier on changed files).
   If simplifier finds issues, fix them and re-run tests.
   Commit frequently with descriptive messages.
 
 **Otherwise:**
-  Implement the issue using best judgment.
-  After implementation, run the project test suite manually and verify all tests pass.
+  Follow TDD manually: write a failing test for the next AC item, implement
+  until it passes, then refactor. Repeat for each acceptance criterion.
   After tests pass, run: `/simplify` (code-simplifier on changed files).
   If simplifier finds issues, fix them and re-run tests.
   Commit frequently with descriptive messages.
 
-**Max iterations safety valve:** If implementation does not converge after 10 passes:
+**Max iterations safety valve:** If the issue did not converge after 10 passes:
 
 **If `superpowers:systematic-debugging` is available** (check preflight capabilities):
   Invoke `superpowers:systematic-debugging` to diagnose why the issue is stuck

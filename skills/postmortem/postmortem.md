@@ -20,8 +20,9 @@ Invoke `crochet:preflight` as the first step. Use the returned capabilities map 
 **If `superpowers:verification-before-completion` is available** (check preflight capabilities):
   Invoke it now, before data gathering. Follow it; do not reimplement it.
 
-**If unavailable:**
-  Proceed to data gathering with the information at hand.
+**Otherwise (not available):**
+  Note that verification-before-completion is unavailable. Gather available
+  data sources and note any missing sources in the postmortem output.
 
 ## Data Gathering
 
@@ -71,7 +72,7 @@ Analyze the data for negative signals:
 - **Forecast misses:** Predicted vs actual completion time — and *why* the forecast was off, not just that it was. Was the critical chain longer than expected? Did parallelization not materialize?
 - **Quality gaps:** ACs that passed but should not have (false positives), regressions caught late, doc drift.
 
-### 3. What surprised us?
+### 3. What puzzles us?
 
 Flag unexpected patterns:
 
@@ -80,7 +81,7 @@ Flag unexpected patterns:
 - Lineage surprises — coupling nobody anticipated
 - Sentiment anomalies without obvious cause
 
-### 4. What will we do differently?
+### 4. What will we change?
 
 Propose concrete, actionable process changes:
 
@@ -105,10 +106,10 @@ git zhi milestone edit <name> --postmortem <<'EOF'
 ## What Didn't Work
 ...
 
-## What Surprised Us
+## What Puzzles Us
 ...
 
-## What Will We Do Differently
+## What Will We Change
 ...
 
 ---
