@@ -1,3 +1,5 @@
+<!-- ABOUTME: Claude Code configuration for the crochet plugin project. -->
+<!-- ABOUTME: Documents architecture, pipeline, conventions, and superpowers/paad integration. -->
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
