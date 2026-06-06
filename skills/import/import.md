@@ -68,13 +68,20 @@ Proposed issue from LOPS-142:
 
 ### Step 5: Create Issue
 
-On acceptance, pipe the final YAML to core:
+On acceptance, create the issue with a positional title and `--body` (the body
+holds everything below the `---` frontmatter; `title` and `milestone` become the
+positional title and `--milestone` flag). `issue add` requires a title and has no
+working stdin/batch form, so create one issue per invocation:
 
 ```bash
-echo "<issue yaml>" | git zhi issue add
+git zhi issue add "<title>" --milestone "<milestone>" --body "<body>"
 ```
 
-If the user chose edit, open the YAML for modification before piping.
+Capture the new issue's id from the output, then wire any inferred dependencies
+post-creation with `git zhi issue edit <id> --block <other-id>` (the add-time
+`--after`/`--before` flags are not yet implemented).
+
+If the user chose edit, let them modify the title/body before creating the issue.
 
 ## Key Constraints
 

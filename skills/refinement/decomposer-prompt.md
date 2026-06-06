@@ -15,7 +15,7 @@ You are the decomposer role in crochet:refinement. Your job is to break a design
 
 ## Your Output
 
-A set of issues created via `git zhi issue add`, with dependencies wired via `git zhi issue edit`.
+A set of issues created one at a time via `git zhi issue add "<title>" --body "<body>"`, with dependencies wired post-creation via `git zhi issue edit`.
 
 ## Process
 
@@ -72,29 +72,34 @@ blocked_by: []
 
 ### 3. Create Issues
 
-Use batch creation via stdin with `---` separators between issues:
+Create issues one at a time with a positional title and the `--body` flag. The
+issue body (everything under the `---` frontmatter in the format above — Context,
+Steps, Acceptance Criteria) goes in `--body`; the `title` and `milestone` become
+the positional title and `--milestone` flag. There is no working stdin/batch form
+of `issue add` — it requires a title and only creates one issue per invocation.
 
 ```bash
-git zhi issue add <<'EOF'
----
-title: "First issue"
-milestone: "v0.1"
----
-## Context
+git zhi issue add "First issue" --milestone "v0.1" --body "## Context
 ...
 
----
-title: "Second issue"
-milestone: "v0.1"
----
-## Context
+## Steps
 ...
-EOF
+
+## Acceptance Criteria
+..."
+
+git zhi issue add "Second issue" --milestone "v0.1" --body "## Context
+..."
 ```
+
+Capture each issue's id from the output (use `--format json` if you need to parse
+it) so you can wire dependencies in the next step.
 
 ### 4. Wire Dependencies
 
-After creation, wire dependencies:
+After creation, wire dependencies with `issue edit`. The add-time `--after`/
+`--before` flags on `issue add` are not yet implemented; only the `issue edit`
+forms work:
 ```bash
 git zhi issue edit <id-B> --block <id-A>  # B blocks A (A depends on B)
 ```

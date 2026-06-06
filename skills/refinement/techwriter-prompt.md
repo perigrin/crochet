@@ -50,7 +50,7 @@ These are real issues in the chain with:
 For each code issue:
 1. Read its context paths
 2. Check if any existing doc's `covers` field references those paths
-3. If yes: add a doc update step to the code issue
+3. If yes: add a doc update step to the code issue (read its body with `git zhi issue show <id> --format json`, add the step, and write the full revised body back via `git zhi issue edit <id> --body` reading from stdin — `--body` replaces the whole body, it does not append)
 4. If the issue introduces a new subsystem with no existing doc: create a standalone doc issue
 
 ### 2. Check for Gaps
@@ -87,6 +87,18 @@ and error handling for end users.
 - [ ] guide exists at docs/guides/signature-parser.md (`test -f docs/guides/signature-parser.md`)
 - [ ] docs check passes (`git zhi docs check`)
 - [ ] guide has covers frontmatter pointing at parser paths (`grep -q 'internal/parser' docs/guides/signature-parser.md`)
+```
+
+The frontmatter above describes the issue's shape, not the command syntax.
+Create each standalone doc issue with a positional title and `--body` (one issue
+per call — there is no working stdin/batch form of `issue add`); the body holds
+everything below the `---`:
+```bash
+git zhi issue add "Guide: using the signature parser" --milestone "<milestone-name>" --body "## Context
+...
+
+## Acceptance Criteria
+..."
 ```
 
 ### 4. Wire Dependencies
