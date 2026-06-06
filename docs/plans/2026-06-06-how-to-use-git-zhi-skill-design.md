@@ -107,9 +107,16 @@ work, re-confirmed against the binary during implementation.
 
 Each section carries the drift-handling clause: "If a command errors or behaves
 unexpectedly, confirm the current surface with `git zhi <cmd> --help`. This
-reference is verified against git-zhi 0.3.9 and the CLI evolves." Also flag
+reference is verified against git-zhi `<version>` and the CLI evolves." Also flag
 known `not-yet-implemented` surfaces (e.g. `issue add --after/--before`,
 `list --graph`) so an agent does not lean on them.
+
+> **Version anchor directive.** The `<version>` recorded in the self-correction
+> clause is the version actually exercised during the behavioral walkthrough —
+> i.e. the output of `git zhi version` on the machine where the skill is
+> verified (currently `0.4.0`), not the `git_zhi_min_version` floor (`0.3.9`).
+> The string records what was tested, so an agent can judge how stale the
+> reference may be against its own installed version.
 
 ## Discovery Wiring
 
@@ -118,8 +125,16 @@ Two shared files gain a pointer so the skill is consulted, not merely present:
 - `skills/require-git-zhi.md` — append one line: "For command syntax and input
   modes, consult `crochet:how-to-use-git-zhi`." This propagates to every skill
   that includes the prerequisite block.
-- `skills/preflight/preflight.md` — a brief mention in preflight's output so the
-  agent is reminded at the start of every crochet skill.
+- `skills/preflight/preflight.md` — extend the existing step 6 ("Report pipeline
+  orientation") output guidance with a one-line pointer: when reporting the next
+  gate, also note "consult `crochet:how-to-use-git-zhi` for the exact `git zhi`
+  command syntax." Placing it on the orientation step (rather than a new step)
+  keeps it where the agent is already being told what to do next.
+
+> **Note for planning.** The exact `--format json` shapes and final flag lists
+> are not pre-specified here by design — they are harvested from the live binary
+> during implementation (this repo's verify-against-reality model). The plan must
+> budget a live-binary inspection step rather than treating the shapes as given.
 
 ## Other Touches
 
@@ -161,7 +176,7 @@ walkthrough against the real `git zhi` CLI.
 - [ ] Intent→command table marks every row's input mode as `arg`/`flag`/`stdin`/`none`, verified against the binary
 - [ ] Documents the verb-vs-noun state model with a mapping table, harvested from the live binary
 - [ ] Documents `--format json` shapes for `status`, `list`, `next`, `issue show`, matching real output
-- [ ] Each section carries the `git zhi <cmd> --help` self-correction pointer and notes the verified version (0.3.9)
+- [ ] Each section carries the `git zhi <cmd> --help` self-correction pointer and records the version actually exercised during verification (the `git zhi version` output, currently `0.4.0`), not the `0.3.9` floor
 - [ ] Flags known not-yet-implemented surfaces so agents do not rely on them
 - [ ] `skills/require-git-zhi.md` points to the skill
 - [ ] `skills/preflight/preflight.md` points to the skill
