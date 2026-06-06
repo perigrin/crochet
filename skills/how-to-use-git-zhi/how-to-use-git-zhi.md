@@ -51,3 +51,22 @@ The two vocabularies are different — an agent reading a noun must map back to 
 | `done` | `done` | (terminal) |
 
 Note: the reported noun is `in-progress` with a **hyphen**, not `in_progress`.
+
+## Intent → command
+
+| Intent | Command | Input mode | Output |
+|---|---|---|---|
+| Find next work | `git zhi next [--actor <id>] [--label <l>]` | flag | the HEAD issue |
+| Inspect the chain | `git zhi list [--ready] [--milestone <m>] [--label <l>] [--all] [--critical]` | flag | issue list |
+| View an issue | `git zhi issue show [<ref>]` | arg | issue detail |
+| Check work state | `git zhi status` | none | HEAD + ready_count |
+| Create an issue | `git zhi issue add "<title>" --body "<text>" [--milestone <m>]` | arg + flag | new issue (JSON array) |
+| Transition / edit an issue | `git zhi issue edit <ref> --state <verb> [--assign <id>] [--label <l>] …` | arg + flag | updated issue |
+| Replace an issue body | `git zhi issue edit <ref> --body` | stdin | updated issue |
+| Bulk edits | `git zhi issue edit <ref> --batch` | stdin (JSON ops) | results |
+| Split an issue | `git zhi issue edit <ref> --split` | stdin | new issues |
+| Manage milestones | `git zhi milestone add|edit|list|show <name>` | arg + flag | milestone(s) |
+
+Input mode is one of `arg` (positional), `flag`, `stdin` (piped), or `none`.
+Note the asymmetry from the stdin section: `issue add` is `arg + flag` (no stdin);
+`issue edit --body`/`--batch`/`--split` are `stdin`.
