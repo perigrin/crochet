@@ -125,7 +125,10 @@ so the two files cannot drift apart.
 
 Each section carries the drift-handling clause: "If a command errors or behaves
 unexpectedly, confirm the current surface with `git zhi <cmd> --help`. This
-reference is verified against git-zhi `<version>` and the CLI evolves."
+reference is verified against git-zhi `<version>` and the CLI evolves." Add the
+resolution rule explicitly: **when `--help` and this reference disagree,
+`--help` wins** — proceed using `--help`'s current surface and do not treat this
+reference as authoritative for that command.
 
 Rather than maintaining a list of unfinished flags (which rots in both
 directions as flags graduate to implemented), state the **principle**: git-zhi
@@ -194,13 +197,16 @@ walkthrough against the real `git zhi` CLI.
   created; README internal-skills note updated; require-git-zhi and preflight
   pointers added.
 - **Behavioral (the substantive gate):** every command in the intent table is
-  run against the live binary and its actual input mode and output shape
-  confirmed — the `arg`/`flag`/`stdin`/`none` labels must match reality, and the
-  documented JSON shapes must match `--format json` output.
+  run against the live binary and its actual input mode confirmed — the
+  `arg`/`flag`/`stdin`/`none` labels must match reality. The JSON field
+  inventory must list keys that actually appear in `--format json` output (the
+  inventory, not literal structures, is what gets verified).
 - **Cross-consistency:** the verb/noun state table agrees with the onboard
-  procedure (`--state start/done`) and the preflight orientation table
-  (`pending`/`in_progress` nouns) — no contradiction across the three places
-  state is described.
+  procedure's transition verbs (`--state start/done`) and with whatever state
+  nouns the preflight orientation table uses — no contradiction across the
+  three places state is described. **If the observed nouns differ from the
+  `in_progress` the preflight orientation table currently assumes, flag it:
+  preflight's table may itself be unverified and need correction too.**
 
 ## Acceptance Criteria
 
@@ -210,9 +216,10 @@ walkthrough against the real `git zhi` CLI.
 - [ ] Leads with the stdin-convention section including a WRONG/RIGHT example
 - [ ] Intent→command table marks every row's input mode as `arg`/`flag`/`stdin`/`none`, verified against the binary
 - [ ] Documents the verb-vs-noun state model with a mapping table, built from nouns OBSERVED by transitioning a throwaway issue through the states (then purging it), not inferred
-- [ ] Documents `--format json` output as a per-command field inventory (keys an agent relies on) rather than literal JSON blocks, and points to preflight as canonical for the `status`/`list` shapes rather than duplicating them
+- [ ] Documents `--format json` output as a per-command field inventory (keys an agent relies on) rather than literal JSON blocks, and points to preflight as canonical for the `status`/`list` shapes rather than duplicating them; verification checks the inventory keys against real output, not literal structures
+- [ ] Cross-consistency check is value-agnostic about the state nouns and directs the implementer to flag preflight's assumed `in_progress` for correction if the observed nouns differ
 - [ ] Each section carries the `git zhi <cmd> --help` self-correction pointer and records the version actually exercised during verification (the `git zhi version` output, currently `0.4.0`), not the `0.3.9` floor
-- [ ] States the "trust `--help` for whether a flag works" principle (git-zhi self-documents unfinished surfaces) rather than maintaining a list of not-yet-implemented flags
+- [ ] States the "trust `--help` for whether a flag works" principle (git-zhi self-documents unfinished surfaces) rather than maintaining a list of not-yet-implemented flags, and the rule that `--help` wins when it disagrees with the reference
 - [ ] Discovery is wired via explicit by-name pointers in require-git-zhi and preflight (the proven internal-skill pattern), with preflight's pointer framed as "consult before any `git zhi` write command"
 - [ ] `skills/require-git-zhi.md` points to the skill
 - [ ] `skills/preflight/preflight.md` points to the skill
