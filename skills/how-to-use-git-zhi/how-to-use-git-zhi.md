@@ -70,3 +70,15 @@ Note: the reported noun is `in-progress` with a **hyphen**, not `in_progress`.
 Input mode is one of `arg` (positional), `flag`, `stdin` (piped), or `none`.
 Note the asymmetry from the stdin section: `issue add` is `arg + flag` (no stdin);
 `issue edit --body`/`--batch`/`--split` are `stdin`.
+
+## JSON output (field inventory)
+
+Pass `--format json` (a global flag) to get machine-readable output. For commands
+an agent parses, the keys it relies on:
+
+- **`git zhi status`** — `head`, `title`, `state`, `milestone`, `ready_count` (and a `message` field with `ready_count` instead of the chain keys when no chain exists). The literal shape is documented canonically in the **Pipeline Orientation** section of `crochet:preflight`; consult that rather than duplicating it here.
+- **`git zhi list`** — `{ "issues": [ … ] }`; each issue carries `id`, `title`, `state`, `urgency`, `milestone`, `labels`, `created`, `updated`, `body`. Canonical shape: see `crochet:preflight`'s orientation section.
+- **`git zhi next`** — the same per-issue keys as a `list` issue plus a `description` key (it resolves the HEAD issue). Errors when the chain is empty.
+- **`git zhi issue show <ref>`** — the same per-issue keys as `next` (the `list` issue keys plus `description`).
+
+To see the live shape of any of these, run `git zhi <cmd> --format json`.
