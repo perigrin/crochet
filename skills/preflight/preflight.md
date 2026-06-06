@@ -1,6 +1,6 @@
 ---
 name: preflight
-description: Internal infrastructure skill — runs before every crochet skill to check git-zhi availability, read or create the capabilities manifest, cross-check it against the system-reminder skill list, and return a capabilities map
+description: Internal infrastructure skill — runs before every crochet skill to check git-zhi availability and version, read or create the capabilities manifest, cross-check it against the system-reminder skill list, report pipeline orientation, and return a capabilities map
 ---
 <!-- ABOUTME: Internal infrastructure skill invoked at the start of every crochet skill invocation. -->
 <!-- ABOUTME: Checks git-zhi availability and maintains the capabilities manifest at .claude/crochet/capabilities.json. -->
