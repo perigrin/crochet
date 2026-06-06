@@ -145,3 +145,4 @@ The skill is named explicitly. The fallback is the simpler or current inline beh
 - **Lightweight and automatic.** Preflight is designed to be fast. It is not a thorough environment health check — that is the job of `crochet:verify`.
 - **Never block on discrepancy.** When the manifest is updated, tell the user what changed and continue. Do not pause for confirmation.
 - **Never reimplement plugin skills.** When a plugin skill is available, delegate to it. Describe what to do, not how to do it.
+- **Version check and orientation are advisory.** Both the git-zhi version warning and pipeline orientation report information and continue. Neither ever blocks a skill, and both fail open — on a parse failure, missing key, or unexpected `git zhi status` shape, skip the affected report silently.
