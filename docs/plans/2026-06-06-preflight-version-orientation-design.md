@@ -91,13 +91,23 @@ To resolve the soft boundaries, preflight also consults
 
 ### Inference table
 
-| Chain state observed | Inferred position | Reported next gate |
-|---|---|---|
-| `status` has `message` / no `milestone`; `list` issues empty | Pre-chain (brainstorming → assess → refinement) | "No chain yet — next gate is `crochet:refinement` to create the milestone and issues" |
-| Milestone exists; `list` issues all `pending`; none `in_progress`; none closed | Chain just built | "Chain built — next gate is `crochet:chain-review`, then `crochet:execute`" |
-| Milestone exists; an issue `in_progress` | Mid-execute | "Executing issue `<title>` — continue `crochet:execute`" |
-| Milestone exists; `ready_count > 0`; none `in_progress` | Ready to execute | "`<N>` issues ready — next gate is `crochet:execute`" |
-| Milestone exists; `list` issues all closed | Chain complete | "All issues closed — next gate is `crochet:postmortem`" |
+Evaluate the rows **in order** and report the first that matches:
+
+| # | Chain state observed | Inferred position | Reported next gate |
+|---|---|---|---|
+| 1 | `status` has `message` / no `milestone`; `list` issues empty | Pre-chain (brainstorming → assess → refinement) | "No chain yet — next gate is `crochet:refinement` to create the milestone and issues" |
+| 2 | Milestone exists; an issue `in_progress` | Mid-execute | "Executing issue `<title>` — continue `crochet:execute`" |
+| 3 | Milestone exists; `list` issues all closed; none `pending`/`in_progress` | Chain complete | "All issues closed — next gate is `crochet:postmortem`" |
+| 4 | Milestone exists; one or more issues `pending`; none `in_progress` | Chain built / ready to execute | "Chain ready — next gate is `crochet:chain-review`, then `crochet:execute` (`<N>` ready)" |
+| 5 | Milestone exists, but JSON matches none of the above shapes | Unknown | Skip orientation silently (fail open) |
+
+Rows 2 and 3 are the unambiguous states (something is in progress; everything is
+closed). Row 4 deliberately **merges** "chain just built" and "ready to execute"
+into one bucket — those two are indistinguishable from `status` alone (an
+all-`pending` chain always has `ready_count > 0`), so the single row keeps the
+`chain-review`-then-`execute` phrasing visible rather than forcing a choice
+between them. Row 5 is the explicit fallback for an unrecognized JSON shape
+(e.g. a future git-zhi adds fields): never guess, never block.
 
 ### Reporting discipline
 
@@ -105,9 +115,9 @@ To resolve the soft boundaries, preflight also consults
   (e.g. `milestone v0.1, 1 ready, 0 in progress, 0 closed`) next to the inferred
   next gate, so the agent sees the basis and can override a wrong inference.
 - **Honor the one soft boundary.** A freshly built chain and a ready-to-execute
-  chain are indistinguishable in `status` alone. Preflight names the likely next
-  gate but phrases it as "chain-review, then execute" so both stay visible
-  rather than hard-asserting one.
+  chain are indistinguishable in `status` alone — table row 4 merges them and
+  phrases the gate as "chain-review, then execute" so both stay visible rather
+  than hard-asserting one.
 - **Advisory only.** Like the version warning, orientation never blocks. If
   `git zhi status` errors for any reason other than "no chain," skip orientation
   silently.
