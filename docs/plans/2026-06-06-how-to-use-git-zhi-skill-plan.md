@@ -35,7 +35,7 @@ The spec's 16 acceptance criteria are the coverage target; Task 7 walks them.
 - **Modify:** `skills/require-git-zhi.md` — append a one-line by-name pointer (Task 6).
 - **Modify:** `skills/preflight/preflight.md` — extend step 6 with an explicit write-command pointer (Task 6).
 - **Modify:** `README.md:23` — add the skill to the internal-skills note (Task 6).
-- **Possibly modify:** `skills/preflight/preflight.md` orientation table — ONLY if Task 2's observation contradicts its assumed `in_progress` noun (Task 2, conditional).
+- **Modify:** `skills/preflight/preflight.md` orientation table — correct `in_progress` (underscore) to the observed `in-progress` (hyphen) in all three rows (Task 2; confirmed needed, not conditional). This is in addition to the step-6 discovery pointer added in Task 6.
 
 No `commands/` file is created. No `.claude-plugin/plugin.json` change (a reference skill does not alter plugin scope; confirm in Task 7).
 
@@ -46,10 +46,10 @@ No `commands/` file is created. No `.claude-plugin/plugin.json` change (a refere
 **Files:**
 - Create: `skills/how-to-use-git-zhi/how-to-use-git-zhi.md`
 
-- [ ] **Step 1: Confirm the require-git-zhi block to reuse**
+- [ ] **Step 1: Confirm the prerequisite pattern**
 
-Run: `cat skills/require-git-zhi.md`
-Expected: the shared `## Dependency: git-zhi` block ending "Do not proceed until git-zhi is confirmed available." This is included (referenced) by the new skill, not copy-pasted verbatim if the repo's pattern is to reference it — check how `skills/onboard/onboard.md` includes it and match that pattern.
+Run: `cat skills/require-git-zhi.md` and `head -10 skills/onboard/onboard.md`
+Expected: `require-git-zhi.md` is a shared block (CLAUDE.md:82 calls it a copy block — there is no include mechanism, and `onboard.md` does NOT reference it; it inlines its own one-line `which git-zhi` prerequisite). Match the **inline** prerequisite pattern onboard uses — write a short prerequisite directly in the new skill, as shown in Step 2.
 
 - [ ] **Step 2: Create the file with frontmatter, ABOUTME, prerequisite, and the stdin lead section**
 
@@ -75,19 +75,26 @@ If not found, run `crochet:install` to set it up.
 
 ## The stdin convention
 
-Titles and short metadata are positional args or flag values. **Bodies, batch
-edits, and splits arrive via stdin pipe — not as arguments.** Passing a
-multi-line body as a positional argument fails.
+Titles and short metadata are positional args or flag values. **`issue edit`
+body/batch/split content arrives via stdin pipe — not as arguments.** Note the
+asymmetry: **`issue add` has NO stdin form** — it needs a positional title and
+a `--body` flag; only `issue edit --body`/`--batch`/`--split` read stdin.
 
 ​```bash
-# WRONG: body as positional arg
-git zhi issue add "Fix login" "Long body text..."
-# RIGHT: title as arg, body via stdin
+# WRONG: issue add does NOT read a body from stdin (errors: title required / no content)
 echo "Long body text..." | git zhi issue add "Fix login"
+# RIGHT: issue add takes a positional title and a --body flag
+git zhi issue add "Fix login" --body "Long body text..."
+
+# stdin IS the input mode for issue edit body replacement:
+echo "New body text..." | git zhi issue edit <ref> --body
 ​```
 ```
 
 (Replace the `​```` markers above with real triple backticks — three plain backtick characters — in the file.)
+
+This asymmetry is verified against the binary and matches the repo's own
+`skills/refinement/refinement.md:77` ("no working stdin/batch form" of issue add).
 
 - [ ] **Step 3: Verify structure**
 
@@ -107,7 +114,7 @@ git commit -m "Scaffold how-to-use-git-zhi skill with stdin convention"
 
 **Files:**
 - Modify: `skills/how-to-use-git-zhi/how-to-use-git-zhi.md` (add the verb-vs-noun section)
-- Possibly modify: `skills/preflight/preflight.md` (only if observation contradicts its `in_progress` assumption)
+- Modify: `skills/preflight/preflight.md` (correct `in_progress` → `in-progress`, confirmed needed)
 
 - [ ] **Step 1: Confirm the transition verbs (the "arg" side)**
 
@@ -120,20 +127,24 @@ This is the empirical step. The live chain has only `pending` issues, so the
 other nouns are unobservable without creating one. Run:
 
 ```bash
-# create scratch issue, capture its ref
-REF=$(git zhi issue add "SCRATCH: state observation — delete me" --format json | python3 -c "import json,sys; print(json.load(sys.stdin).get('id',''))")
+# create scratch issue — issue add REQUIRES --body (no stdin form) and returns a JSON ARRAY
+REF=$(git zhi issue add "SCRATCH: state observation — delete me" --body "scratch" --format json | python3 -c "import json,sys; print(json.load(sys.stdin)[0]['id'])")
 echo "scratch ref: $REF"
 # capture reported noun at each transition
-git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after add  ->', json.load(sys.stdin).get('state'))"
-git zhi issue edit "$REF" --state start  >/dev/null; git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after start->', json.load(sys.stdin).get('state'))"
-git zhi issue edit "$REF" --state pause  >/dev/null; git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after pause->', json.load(sys.stdin).get('state'))"
+git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after add   ->', json.load(sys.stdin).get('state'))"
+git zhi issue edit "$REF" --state start  >/dev/null; git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after start ->', json.load(sys.stdin).get('state'))"
+git zhi issue edit "$REF" --state pause  >/dev/null; git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after pause ->', json.load(sys.stdin).get('state'))"
 git zhi issue edit "$REF" --state resume >/dev/null; git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after resume->', json.load(sys.stdin).get('state'))"
-git zhi issue edit "$REF" --state done --force >/dev/null; git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after done ->', json.load(sys.stdin).get('state'))"
+git zhi issue edit "$REF" --state done --force >/dev/null; git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after done  ->', json.load(sys.stdin).get('state'))"
 ```
 
-Record the exact noun printed at each line. (`--force` on `done` is needed
-because the scratch issue has zero commits — see `issue edit --help`.) If any
-transition errors, capture the error and adjust; do not guess the noun.
+Record the exact noun printed at each line. Two things verified against the
+binary you should expect (confirm, don't assume): the started noun is
+**`in-progress`** (hyphen, not underscore), and **`pause`/`resume` both report
+`in-progress`** — there is no distinct `paused` noun, so the mapping table
+collapses them rather than giving each verb its own row. (`--force` on `done` is
+needed because the scratch issue has zero commits — see `issue edit --help`.) If
+any transition errors, capture the error and adjust; do not guess the noun.
 
 - [ ] **Step 3 (cleanup): purge the throwaway issue**
 
@@ -141,7 +152,12 @@ transition errors, capture the error and adjust; do not guess the noun.
 git zhi issue edit "$REF" --purge --yes
 git zhi list --all --format json | python3 -c "import json,sys; ids=[i['id'] for i in json.load(sys.stdin).get('issues',[])]; print('scratch still present:' , '$REF' in ids)"
 ```
-Expected: `scratch still present: False`. If the issue created any commits, also confirm the tree is clean (`git status --porcelain`).
+Expected: `scratch still present: False`, and `git status --porcelain` empty.
+
+**Safety — do not skip.** The scratch issue lives in the **real v0.1 crochet
+chain**. If `--purge` fails or the issue is still present, **STOP and surface it
+to the human** — do not proceed leaving an orphaned `SCRATCH` issue in the live
+milestone. The clearly-marked title is a safeguard, not a license to leave it.
 
 - [ ] **Step 4 (GREEN — document): write the verb-vs-noun section from the OBSERVED nouns**
 
@@ -162,13 +178,26 @@ that advances it. Example skeleton (fill nouns from observation):
 | <observed> | <verb> | <verb> |
 ```
 
-- [ ] **Step 5 (reconcile — conditional): check preflight's assumed noun against observation**
+- [ ] **Step 5 (reconcile — confirmed needed): correct preflight's `in_progress` to the observed `in-progress`**
 
 Run: `grep -n 'in_progress' skills/preflight/preflight.md`
-The preflight orientation table (merged in PR #5) assumes the started-state
-noun is `in_progress`. Compare against what Step 2 observed:
-- **If they match:** no change to preflight. Note "preflight's `in_progress` confirmed by observation" in the commit message.
-- **If they differ:** this is the spec's reconcile directive. Update the preflight orientation table rows 2/4 to the observed noun, and note the correction. (If the change feels larger than a noun swap, STOP and surface to the human — it may warrant its own follow-up.)
+The preflight orientation table (merged in PR #5) uses `in_progress`
+(underscore). Step 2 observes the real noun is `in-progress` (hyphen) — so the
+reconcile path **will** trigger; this is a confirmed bug, not a hypothetical.
+The grep returns **three** rows (2, 3, and 4). Replace `in_progress` with the
+observed `in-progress` in **all three** — do not stop at rows 2/4. An agent
+matching `state == "in_progress"` against real output never matches, so this
+correction is the point.
+
+```bash
+sed -i 's/in_progress/in-progress/g' skills/preflight/preflight.md
+grep -c 'in-progress' skills/preflight/preflight.md   # expect 3
+grep -c 'in_progress' skills/preflight/preflight.md   # expect 0
+```
+
+(Confirm Step 2 actually observed `in-progress` before running the sed — if
+observation somehow differs from the verified expectation, STOP and surface to
+the human rather than blindly substituting.)
 
 - [ ] **Step 6: Verify and commit**
 
@@ -201,9 +230,10 @@ git zhi issue edit --help
 git zhi milestone --help
 ```
 
-Note especially: `issue add` takes a positional title (arg) with body via
-stdin; `issue edit --body`/`--batch`/`--split` read stdin; `status` takes no
-input (`none`).
+Note especially: `issue add` takes a positional title (arg) plus a `--body`
+flag — **input mode `arg + flag`, NOT stdin** (it has no stdin form);
+`issue edit --body`/`--batch`/`--split` read stdin; `status` takes no input
+(`none`).
 
 - [ ] **Step 2 (GREEN — document): write the intent→command table**
 
