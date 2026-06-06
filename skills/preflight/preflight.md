@@ -104,9 +104,9 @@ Evaluate these rows **in order** and report the first that matches:
 | # | Chain state observed | Inferred position | Reported next gate |
 |---|---|---|---|
 | 1 | `status` has a `message` field / no `milestone`; `list` issues empty | Pre-chain (brainstorming → assess → refinement) | "No chain yet — next gate is `crochet:refinement` to create the milestone and issues" |
-| 2 | Milestone exists; an issue is `in_progress` | Mid-execute | "Executing issue `<title>` — continue `crochet:execute`" |
-| 3 | Milestone exists; all `list` issues closed; none `pending`/`in_progress` | Chain complete | "All issues closed — next gate is `crochet:postmortem`" |
-| 4 | Milestone exists; one or more issues `pending`; none `in_progress` | Chain built / ready to execute | "Chain ready — next gate is `crochet:chain-review`, then `crochet:execute` (`<N>` ready)" |
+| 2 | Milestone exists; an issue is `in-progress` | Mid-execute | "Executing issue `<title>` — continue `crochet:execute`" |
+| 3 | Milestone exists; all `list` issues closed; none `pending`/`in-progress` | Chain complete | "All issues closed — next gate is `crochet:postmortem`" |
+| 4 | Milestone exists; one or more issues `pending`; none `in-progress` | Chain built / ready to execute | "Chain ready — next gate is `crochet:chain-review`, then `crochet:execute` (`<N>` ready)" |
 | 5 | Milestone exists, but JSON matches none of the above | Unknown | Skip orientation silently (fail open) |
 
 Rows 2 and 3 are the unambiguous states. Row 4 deliberately merges "chain just

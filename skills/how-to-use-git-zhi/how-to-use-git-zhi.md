@@ -36,3 +36,18 @@ echo "New body text..." | git zhi issue edit <ref> --body
 
 This asymmetry is verified against the binary and matches the repo's own
 `skills/refinement/refinement.md:77` ("no working stdin/batch form" of issue add).
+
+## State model: verbs vs nouns
+
+`git zhi issue edit <ref> --state` takes a transition **verb**:
+`start`, `pause`, `resume`, `done`, `cancel`.
+`git zhi status` / `git zhi list --format json` **report** a state **noun**.
+The two vocabularies are different — an agent reading a noun must map back to the verb.
+
+| Reported noun | Reached by | Advanced by |
+|---|---|---|
+| `pending` | (initial state on `issue add`) | `start` → `in-progress` |
+| `in-progress` | `start` (also where `pause`/`resume` land — no distinct `paused` noun) | `done` → `done` |
+| `done` | `done` | (terminal) |
+
+Note: the reported noun is `in-progress` with a **hyphen**, not `in_progress`.
