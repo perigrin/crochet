@@ -20,7 +20,7 @@ generating reports, onboarding repos, and validating pipeline outputs.
 | `crochet:import` | Assisted ticket import from Jira or other trackers with dependency inference |
 | `crochet:report` | Generate narrative reports from user-defined templates with Mermaid charts |
 
-The following are internal skills (not directly user-invocable): `crochet:pushback`, `crochet:alignment`
+The following are internal skills (not directly user-invocable): `crochet:pushback`, `crochet:alignment`, `crochet:how-to-use-git-zhi`
 
 ## Prerequisites
 

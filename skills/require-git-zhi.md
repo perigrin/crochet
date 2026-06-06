@@ -15,3 +15,5 @@ If `git-zhi` is not found, stop and tell the user:
 > ```
 
 Do not proceed until git-zhi is confirmed available.
+
+For command syntax and input modes, consult `crochet:how-to-use-git-zhi`.
