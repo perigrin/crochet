@@ -138,6 +138,10 @@ git zhi issue edit "$REF" --state resume >/dev/null; git zhi issue show "$REF" -
 git zhi issue edit "$REF" --state done --force >/dev/null; git zhi issue show "$REF" --format json | python3 -c "import json,sys; print('after done  ->', json.load(sys.stdin).get('state'))"
 ```
 
+Note the JSON-shape asymmetry in the commands above: `issue add` returns a JSON
+**array** (hence `[0]['id']`), while `issue show` returns a single **object**
+(hence `.get('state')`). Different commands, different shapes — both correct.
+
 Record the exact noun printed at each line. Two things verified against the
 binary you should expect (confirm, don't assume): the started noun is
 **`in-progress`** (hyphen, not underscore), and **`pause`/`resume` both report
