@@ -82,3 +82,20 @@ an agent parses, the keys it relies on:
 - **`git zhi issue show <ref>`** — the same per-issue keys as `next` (the `list` issue keys plus `description`).
 
 To see the live shape of any of these, run `git zhi <cmd> --format json`.
+
+## When this reference and the CLI disagree
+
+Confirm the current surface with `git zhi <cmd> --help`. This reference is
+verified against git-zhi 0.4.0, and the CLI evolves. **When `--help` and this
+reference disagree, `--help` wins** — proceed using `--help`'s current surface
+and do not treat this reference as authoritative for that command.
+
+git-zhi marks unfinished surfaces inline in its own `--help` output (e.g.
+"not yet implemented"), so for whether a specific flag works, trust `--help`.
+For example, `git zhi issue add --after`/`--before` and `git zhi list --graph`
+are not yet implemented — but treat that as an illustration of the pattern, not
+a maintained list; always confirm with `--help`.
+
+## Companion subcommands
+
+Companion subcommands — `historian`, `jira`, `sanbao`, `docs`, `mermaid`, `project` — exist; run `git zhi <name> --help` for their surface.
