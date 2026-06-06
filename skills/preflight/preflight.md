@@ -11,7 +11,7 @@ description: Internal infrastructure skill — runs before every crochet skill t
 
 ## Responsibilities
 
-Preflight runs six checks in order:
+Preflight runs seven checks in order:
 
 1. **Check git-zhi availability and version** — run `which git-zhi`. If not found, stop and tell the user to run `crochet:install`. If found, run `git zhi version`, take the first line (shaped `git-zhi <semver> (<os>/<arch>)`), and read the second whitespace-delimited field as the installed semver. Read `git_zhi_min_version` from `.claude-plugin/plugin.json` and compare as a numeric triplet (major, then minor, then patch). If the installed version is **older** than the minimum, **warn and continue — do not block**:
 
@@ -22,7 +22,8 @@ Preflight runs six checks in order:
 3. **Cross-check manifest against system-reminder skill list** — compare the skills listed in the manifest against the skills present in the current system-reminder. Additions and removals both count as discrepancies.
 4. **Update manifest on discrepancy** — if the cross-check finds a discrepancy, update the manifest and tell the user what changed (e.g. "Detected superpowers:dispatching-parallel-agents is now available — updated capabilities manifest").
 5. **Warn if manifest cannot be written** — if the filesystem is read-only or the write fails for any reason, warn the user: "Cannot write capabilities manifest — using runtime-only detection for this session." Proceed with in-memory detection for the rest of the session.
-6. **Return capabilities map** — make the capabilities map available to the calling skill so it can apply the conditional reference pattern (see Usage below).
+6. **Report pipeline orientation** — run `git zhi status --format json` (and `git zhi list --format json` to resolve soft boundaries) and report the agent's position in the SDLC pipeline plus the likely next gate, following the inference table in the Pipeline Orientation section below. This is advisory output only — it never blocks, and it skips silently on any `git zhi status` error other than an empty chain.
+7. **Return capabilities map** — make the capabilities map available to the calling skill so it can apply the conditional reference pattern (see Usage below).
 
 ## Manifest
 
@@ -81,6 +82,48 @@ If the manifest cannot be read or written (read-only filesystem, permission erro
 3. Proceed normally — all conditional reference checks in the calling skill work from the in-memory map.
 
 The fallback does not retry the write during the same session.
+
+## Pipeline Orientation
+
+The SDLC pipeline runs in strict order:
+
+```
+superpowers:brainstorming → crochet:assess → crochet:refinement → crochet:chain-review → crochet:execute → crochet:postmortem
+```
+
+Preflight infers the agent's position from chain state. The **absence** of chain
+state is itself meaningful — it means the work is still in the pre-chain stages.
+
+**Primary signal:** `git zhi status --format json` (exit 0 even on an empty
+chain). To resolve the soft boundaries, also consult `git zhi list --format json`,
+whose `issues[]` carry a per-issue `state`. Do **not** use `git zhi next` as the
+primary signal — it errors on an empty chain where `status` degrades gracefully.
+
+Evaluate these rows **in order** and report the first that matches:
+
+| # | Chain state observed | Inferred position | Reported next gate |
+|---|---|---|---|
+| 1 | `status` has a `message` field / no `milestone`; `list` issues empty | Pre-chain (brainstorming → assess → refinement) | "No chain yet — next gate is `crochet:refinement` to create the milestone and issues" |
+| 2 | Milestone exists; an issue is `in_progress` | Mid-execute | "Executing issue `<title>` — continue `crochet:execute`" |
+| 3 | Milestone exists; all `list` issues closed; none `pending`/`in_progress` | Chain complete | "All issues closed — next gate is `crochet:postmortem`" |
+| 4 | Milestone exists; one or more issues `pending`; none `in_progress` | Chain built / ready to execute | "Chain ready — next gate is `crochet:chain-review`, then `crochet:execute` (`<N>` ready)" |
+| 5 | Milestone exists, but JSON matches none of the above | Unknown | Skip orientation silently (fail open) |
+
+Rows 2 and 3 are the unambiguous states. Row 4 deliberately merges "chain just
+built" and "ready to execute" — they are indistinguishable from `status` alone
+(an all-`pending` chain always has `ready_count > 0`), so the single row keeps
+the `chain-review`-then-`execute` phrasing visible rather than forcing a choice.
+Row 5 is the explicit fallback for an unrecognized shape: never guess, never block.
+
+**Report facts alongside the inference.** Print the observed state next to the
+inferred gate, e.g.:
+
+```
+Pipeline: milestone v0.1, 1 ready, 0 in progress, 0 closed
+Next gate: crochet:chain-review, then crochet:execute
+```
+
+so the agent can see the basis and override a wrong inference.
 
 ## Usage by Downstream Skills
 
