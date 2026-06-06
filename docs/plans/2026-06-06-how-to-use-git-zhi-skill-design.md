@@ -213,8 +213,9 @@ walkthrough against the real `git zhi` CLI.
 - [ ] `skills/how-to-use-git-zhi/how-to-use-git-zhi.md` exists with ABOUTME header and `name`+`description` frontmatter
 - [ ] No `commands/how-to-use-git-zhi.md` stub is created
 - [ ] Skill includes the shared require-git-zhi prerequisite
+- [ ] The frontmatter `description` names the skill's job concretely (a git-zhi command reference) and signals *when* to consult it (before running `git zhi` commands, especially writes that take stdin) — not a bare label
 - [ ] Leads with the stdin-convention section including a WRONG/RIGHT example
-- [ ] Intent→command table marks every row's input mode as `arg`/`flag`/`stdin`/`none`, verified against the binary
+- [ ] Intent→command table lists each row's intent, command, and input mode (`arg`/`flag`/`stdin`/`none`), with the input-mode labels verified against the binary
 - [ ] Documents the verb-vs-noun state model with a mapping table, built from nouns OBSERVED by transitioning a throwaway issue through the states (then purging it), not inferred
 - [ ] Documents `--format json` output as a per-command field inventory (keys an agent relies on) rather than literal JSON blocks, and points to preflight as canonical for the `status`/`list` shapes rather than duplicating them; verification checks the inventory keys against real output, not literal structures
 - [ ] Cross-consistency check is value-agnostic about the state nouns and directs the implementer to flag preflight's assumed `in_progress` for correction if the observed nouns differ
@@ -224,4 +225,4 @@ walkthrough against the real `git zhi` CLI.
 - [ ] `skills/require-git-zhi.md` points to the skill
 - [ ] `skills/preflight/preflight.md` points to the skill
 - [ ] README internal-skills note lists the skill; user-facing skills table is unchanged
-- [ ] Companion subcommands are covered only by a one-line pointer, not documented in full
+- [ ] Companion subcommands (`historian`, `jira`, `sanbao`, `docs`, `mermaid`, `project`) are covered by exactly a one-line pointer ("these exist; run `git zhi <name> --help`"), not documented in full — enforcing both presence and the YAGNI cap
