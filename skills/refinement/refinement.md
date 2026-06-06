@@ -60,8 +60,8 @@ Before any agent runs:
 
 **Produces:**
 - Milestone name, due date, resolution command
-- Milestone body: Context, File Structure, Design Rationale sections
-- Calls: `git zhi milestone add <name> --due <date>` with body via stdin
+- A milestone context block (Context, File Structure, Design Rationale) returned to the orchestrator — the CLI has no milestone-body/resolution setter, so this context is folded into issue bodies by the decomposer rather than attached to the milestone
+- Calls: `git zhi milestone add <name> --due <date>` (only `--due` is accepted)
 
 ### Step 3: Decomposer Agent
 
@@ -74,8 +74,8 @@ Before any agent runs:
 
 **Produces:**
 - Issues with titles, dependencies (blocked_by), structured context (paths, commands, entrypoints), Steps (RED-GREEN-COMMIT choreography), and positive acceptance criteria
-- Batch creation via stdin: `git zhi issue add` with `---` separators
-- Dependencies wired via `git zhi issue edit <id> --block <other-id>`
+- One issue per call: `git zhi issue add "<title>" --milestone <name> --body "<body>"` (no working stdin/batch form)
+- Dependencies wired post-creation via `git zhi issue edit <id> --block <other-id>` (the add-time `--after`/`--before` flags are not yet implemented)
 
 ### Steps 4 and 5: Quality and Documentation (Parallel Dispatch)
 
@@ -98,7 +98,7 @@ After decomposition, two independent agents enrich the issues: one adds negative
 
 **Produces:**
 - Negative scenarios for each issue: boundary conditions, error paths, race conditions, invalid inputs, state corruption
-- Updates issues via `git zhi issue edit <id>` with updated body containing `### Negative Scenarios`
+- Updates issues via `git zhi issue edit <id> --body` (full-body replace reading from stdin) with the revised body containing `### Negative Scenarios`
 
 #### Step 5: Technical Writer Agent
 
@@ -112,7 +112,7 @@ After decomposition, two independent agents enrich the issues: one adds negative
 **Produces:**
 - Doc update steps added to code issues (e.g., "update docs/architecture/parser-design.md")
 - Standalone documentation issues for new guides, ADRs, architecture overviews
-- Issues created via `git zhi issue add` with appropriate dependencies
+- Issues created one at a time via `git zhi issue add "<title>" --body "<body>"`, with dependencies wired post-creation via `git zhi issue edit`
 
 ### Step 6: Report
 

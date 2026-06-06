@@ -52,10 +52,16 @@ Format:
 
 ### 4. Update Issues
 
-For each issue, update its body to include the negative scenarios:
+For each issue, update its body to include the negative scenarios. `issue edit
+--body` replaces the entire body (it is not an append), so read the current body
+first, add a `### Negative Scenarios` block under `## Acceptance Criteria`, and
+pipe the full revised body back via stdin:
 ```bash
-git zhi issue edit <id>
-# Append ### Negative Scenarios under ## Acceptance Criteria
+git zhi issue show <id> --format json   # read current body
+# ...construct revised body with ### Negative Scenarios added...
+git zhi issue edit <id> --body <<'EOF'
+<full revised body, including the original content and the new negative scenarios>
+EOF
 ```
 
 ## Constraints
