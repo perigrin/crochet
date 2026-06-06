@@ -24,14 +24,20 @@ to use. There is no single place an agent consults to answer "what command do
 I run to do X, and how does its input arrive." Two facts in particular are easy
 to get wrong from memory and have no home today:
 
-- **Input mode.** Several write commands read from **stdin**, not arguments
-  (`issue edit --body`, `--batch`, `--split`; `issue add` body-via-stdin). An
-  agent that passes a multi-line body as a positional argument fails.
+- **Input mode.** Several `issue edit` write commands read from **stdin**, not
+  arguments (`--body`, `--batch`, `--split`). And there is an asymmetry that
+  trips agents: `issue add` has **no** stdin form — it needs a positional title
+  and a `--body` flag — whereas `issue edit --body` *does* read stdin. An agent
+  that assumes the two work the same way fails one of them.
 - **Verb-vs-noun state.** `issue edit --state` takes transition **verbs**
   (`start`, `pause`, `resume`, `done`, `cancel`), while `status`/`list
-  --format json` **report** state **nouns** (`pending`, `in_progress`, …). The
-  onboard procedure uses the verbs; the preflight orientation table reads the
-  nouns. Nothing documents the mapping between them.
+  --format json` **report** state **nouns** (`pending`, `in-progress`, `done`).
+  Verified against the binary: the started noun is `in-progress` (hyphen), and
+  `pause`/`resume` both report `in-progress` (there is no distinct `paused`
+  noun). The onboard procedure uses the verbs; the preflight orientation table
+  reads the nouns — and currently uses the **wrong** spelling `in_progress`
+  (underscore), which this skill's work corrects. Nothing documents the mapping
+  between them.
 
 ## Identity and Structure
 
@@ -52,14 +58,20 @@ to get wrong from memory and have no home today:
 ### 1. The stdin convention (lead section)
 
 State the rule plainly: titles and short metadata are positional args or flag
-values; **bodies, batch edits, and splits arrive via stdin pipe.** Include the
-canonical failure it prevents:
+values; **`issue edit` body/batch/split content arrives via stdin pipe — not as
+arguments.** Note the important asymmetry, verified against the binary: **there
+is NO working stdin form of `issue add`** — it requires a positional title and
+takes its body from `--body`. stdin applies to `issue edit --body`/`--batch`/
+`--split`, not to `issue add`. Include the canonical failure it prevents:
 
 ```bash
-# WRONG: body as positional arg
-git zhi issue add "Fix login" "Long body text..."
-# RIGHT: title as arg, body via stdin
+# WRONG: issue add does NOT read a body from stdin (errors: title required / no content)
 echo "Long body text..." | git zhi issue add "Fix login"
+# RIGHT: issue add takes a positional title and a --body flag
+git zhi issue add "Fix login" --body "Long body text..."
+
+# stdin IS the input mode for issue edit body replacement:
+echo "New body text..." | git zhi issue edit <ref> --body
 ```
 
 ### 2. Intent → command table
@@ -74,7 +86,7 @@ Every row marks input mode explicitly as one of `arg` / `flag` / `stdin` /
 | Inspect the chain | `git zhi list [--ready] [--milestone <m>] [--label <l>] [--all] [--critical]` | flag | issue list |
 | View an issue | `git zhi issue show [<ref>]` | arg | issue detail |
 | Check work state | `git zhi status` | none | HEAD + ready_count |
-| Create an issue | `git zhi issue add "<title>" [--body <text>] [--milestone <m>]` (body also via stdin) | arg + stdin | new issue |
+| Create an issue | `git zhi issue add "<title>" --body "<text>" [--milestone <m>]` (no stdin form; returns a JSON array) | arg + flag | new issue |
 | Transition / edit an issue | `git zhi issue edit <ref> [--state <verb>] [--assign <id>] [--label <l>] …` | arg + flag | updated issue |
 | Replace an issue body | `git zhi issue edit <ref> --body` | stdin | updated issue |
 | Bulk edits | `git zhi issue edit <ref> --batch` | stdin (JSON ops) | results |
@@ -204,9 +216,10 @@ walkthrough against the real `git zhi` CLI.
 - **Cross-consistency:** the verb/noun state table agrees with the onboard
   procedure's transition verbs (`--state start/done`) and with whatever state
   nouns the preflight orientation table uses — no contradiction across the
-  three places state is described. **If the observed nouns differ from the
-  `in_progress` the preflight orientation table currently assumes, flag it:
-  preflight's table may itself be unverified and need correction too.**
+  three places state is described. **Confirmed: the observed noun is
+  `in-progress` (hyphen) but the preflight orientation table uses `in_progress`
+  (underscore) in three rows — this work corrects preflight's table to the
+  observed spelling as part of the same change.**
 
 ## Acceptance Criteria
 
