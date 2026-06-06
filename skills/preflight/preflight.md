@@ -13,7 +13,11 @@ description: Internal infrastructure skill — runs before every crochet skill t
 
 Preflight runs six checks in order:
 
-1. **Check git-zhi availability** — run `which git-zhi`. If not found, stop and tell the user to run `crochet:install`.
+1. **Check git-zhi availability and version** — run `which git-zhi`. If not found, stop and tell the user to run `crochet:install`. If found, run `git zhi version`, take the first line (shaped `git-zhi <semver> (<os>/<arch>)`), and read the second whitespace-delimited field as the installed semver. Read `git_zhi_min_version` from `.claude-plugin/plugin.json` and compare as a numeric triplet (major, then minor, then patch). If the installed version is **older** than the minimum, **warn and continue — do not block**:
+
+   > Installed git-zhi `<installed>` is older than the minimum `<minimum>` this Crochet version expects. Some `git zhi` commands may behave unexpectedly. Run `crochet:install` or `git zhi update` to upgrade.
+
+   **Fail open:** if the version line cannot be parsed, or `git_zhi_min_version` is absent from `plugin.json`, skip the version comparison silently. A version-check failure must never block a skill.
 2. **Read or create capabilities manifest** — read `.claude/crochet/capabilities.json`. If the file does not exist, create it by scanning for installed plugin skills (see Manifest Creation below).
 3. **Cross-check manifest against system-reminder skill list** — compare the skills listed in the manifest against the skills present in the current system-reminder. Additions and removals both count as discrepancies.
 4. **Update manifest on discrepancy** — if the cross-check finds a discrepancy, update the manifest and tell the user what changed (e.g. "Detected superpowers:dispatching-parallel-agents is now available — updated capabilities manifest").
