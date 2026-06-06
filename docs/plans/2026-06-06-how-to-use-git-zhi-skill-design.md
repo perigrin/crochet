@@ -95,21 +95,44 @@ reached it (`start`) and the verb that advances it (`done`).
 > The exact set of reported state nouns is harvested from the live binary
 > during implementation — not hand-authored — and must agree with both the
 > onboard procedure and the preflight orientation table.
+>
+> **Observation directive.** The current chain contains only `pending` issues,
+> so the other nouns cannot be read from existing state. Implementation must
+> create a throwaway issue and transition it through the verbs to observe the
+> real reported nouns: `git zhi issue add` a scratch issue, then
+> `git zhi issue edit <ref> --state start` and capture the reported `state`,
+> `--state done` and capture again (and `pause`/`cancel` as needed), then
+> `git zhi issue edit <ref> --purge --yes` to remove it. The mapping table is
+> built from what was observed, not inferred.
 
-### 4. JSON output shapes
+### 4. JSON output (field inventory, not literal blocks)
 
-Document the `--format json` global flag and the real output shapes for the
-commands an agent parses programmatically: `status`, `list`, `next`,
-`issue show`. Reuse the shapes already verified for the preflight orientation
-work, re-confirmed against the binary during implementation.
+Document the `--format json` global flag and, for the commands an agent parses
+programmatically (`status`, `list`, `next`, `issue show`), list the **keys an
+agent relies on** rather than pasting whole JSON objects — e.g. `status`:
+`head`, `title`, `state`, `milestone`, `ready_count`. A field inventory has a
+lower drift surface than literal structures (key names change less often than
+full shapes) and a stale literal block fails silently — the agent parses
+against a wrong schema rather than getting an error.
+
+Each entry carries a one-line "run `git zhi <cmd> --format json` to see the
+live shape" pointer. Do **not** duplicate the literal `status`/`list` blocks
+already documented in the preflight orientation section; point to preflight as
+the canonical source for those two and keep this section to the key inventory,
+so the two files cannot drift apart.
 
 ### 5. Per-section --help pointer (self-correcting)
 
 Each section carries the drift-handling clause: "If a command errors or behaves
 unexpectedly, confirm the current surface with `git zhi <cmd> --help`. This
-reference is verified against git-zhi `<version>` and the CLI evolves." Also flag
-known `not-yet-implemented` surfaces (e.g. `issue add --after/--before`,
-`list --graph`) so an agent does not lean on them.
+reference is verified against git-zhi `<version>` and the CLI evolves."
+
+Rather than maintaining a list of unfinished flags (which rots in both
+directions as flags graduate to implemented), state the **principle**: git-zhi
+marks unfinished surfaces inline in its own `--help` output (e.g. "not yet
+implemented"), so for whether a specific flag works, **trust `--help` over this
+reference**. Cite `issue add --after/--before` and `list --graph` as
+illustrations of the pattern, not as a maintained registry.
 
 > **Version anchor directive.** The `<version>` recorded in the self-correction
 > clause is the version actually exercised during the behavioral walkthrough —
@@ -120,16 +143,28 @@ known `not-yet-implemented` surfaces (e.g. `issue add --after/--before`,
 
 ## Discovery Wiring
 
-Two shared files gain a pointer so the skill is consulted, not merely present:
+**Discovery follows the proven pattern in this repo, not description-driven
+auto-selection.** Every internal skill here (`preflight`, `pushback`,
+`alignment`) is reached by an **explicit by-name reference from another skill's
+steps** — "Run `crochet:preflight` as the first step", "use `crochet:pushback`
+for the plan-quality lens". No internal skill relies on the agent
+spontaneously noticing its `description`. This skill is wired the same way:
+two shared files carry an explicit by-name pointer.
 
 - `skills/require-git-zhi.md` — append one line: "For command syntax and input
   modes, consult `crochet:how-to-use-git-zhi`." This propagates to every skill
   that includes the prerequisite block.
 - `skills/preflight/preflight.md` — extend the existing step 6 ("Report pipeline
-  orientation") output guidance with a one-line pointer: when reporting the next
-  gate, also note "consult `crochet:how-to-use-git-zhi` for the exact `git zhi`
-  command syntax." Placing it on the orientation step (rather than a new step)
-  keeps it where the agent is already being told what to do next.
+  orientation") output guidance with an **explicit directive** (not a soft
+  mention): "Before running any `git zhi` write command (`issue add`,
+  `issue edit`, `milestone add/edit`), consult `crochet:how-to-use-git-zhi` for
+  the exact syntax and input mode." Placing it on the orientation step keeps it
+  where the agent is already being told what to do next, and the write-command
+  framing matches where the cost of getting input mode wrong is highest.
+
+The sharp frontmatter `description` remains valuable, but it is a secondary
+aid, not the primary discovery mechanism — the two explicit pointers are the
+load-bearing path.
 
 > **Note for planning.** The exact `--format json` shapes and final flag lists
 > are not pre-specified here by design — they are harvested from the live binary
@@ -174,10 +209,11 @@ walkthrough against the real `git zhi` CLI.
 - [ ] Skill includes the shared require-git-zhi prerequisite
 - [ ] Leads with the stdin-convention section including a WRONG/RIGHT example
 - [ ] Intent→command table marks every row's input mode as `arg`/`flag`/`stdin`/`none`, verified against the binary
-- [ ] Documents the verb-vs-noun state model with a mapping table, harvested from the live binary
-- [ ] Documents `--format json` shapes for `status`, `list`, `next`, `issue show`, matching real output
+- [ ] Documents the verb-vs-noun state model with a mapping table, built from nouns OBSERVED by transitioning a throwaway issue through the states (then purging it), not inferred
+- [ ] Documents `--format json` output as a per-command field inventory (keys an agent relies on) rather than literal JSON blocks, and points to preflight as canonical for the `status`/`list` shapes rather than duplicating them
 - [ ] Each section carries the `git zhi <cmd> --help` self-correction pointer and records the version actually exercised during verification (the `git zhi version` output, currently `0.4.0`), not the `0.3.9` floor
-- [ ] Flags known not-yet-implemented surfaces so agents do not rely on them
+- [ ] States the "trust `--help` for whether a flag works" principle (git-zhi self-documents unfinished surfaces) rather than maintaining a list of not-yet-implemented flags
+- [ ] Discovery is wired via explicit by-name pointers in require-git-zhi and preflight (the proven internal-skill pattern), with preflight's pointer framed as "consult before any `git zhi` write command"
 - [ ] `skills/require-git-zhi.md` points to the skill
 - [ ] `skills/preflight/preflight.md` points to the skill
 - [ ] README internal-skills note lists the skill; user-facing skills table is unchanged
