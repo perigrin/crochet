@@ -76,8 +76,8 @@ Note the asymmetry from the stdin section: `issue add` is `arg + flag` (no stdin
 Pass `--format json` (a global flag) to get machine-readable output. For commands
 an agent parses, the keys it relies on:
 
-- **`git zhi status`** — `head`, `title`, `state`, `milestone`, `ready_count` (and a `message` field with `ready_count` instead of the chain keys when no chain exists). The literal shape is documented canonically in the **Pipeline Orientation** section of `crochet:preflight`; consult that rather than duplicating it here.
-- **`git zhi list`** — `{ "issues": [ … ] }`; each issue carries `id`, `title`, `state`, `urgency`, `milestone`, `labels`, `created`, `updated`, `body`. Canonical shape: see `crochet:preflight`'s orientation section.
+- **`git zhi status`** — `head`, `title`, `state`, `milestone`, `ready_count` (and a `message` field with `ready_count` instead of the chain keys when no chain exists). `crochet:preflight`'s **Pipeline Orientation** section shows how these keys map to pipeline position; run `git zhi status --format json` for the live shape.
+- **`git zhi list`** — `{ "issues": [ … ] }`; each issue carries `id`, `title`, `state`, `urgency`, `milestone`, `labels`, `created`, `updated`, `body`. `crochet:preflight` uses these same keys for orientation; run `git zhi list --format json` for the live shape.
 - **`git zhi next`** — the same per-issue keys as a `list` issue plus a `description` key (it resolves the HEAD issue). Errors when the chain is empty.
 - **`git zhi issue show <ref>`** — the same per-issue keys as `next` (the `list` issue keys plus `description`).
 
