@@ -44,6 +44,27 @@ Count open issues. If zero, skip to Step 5 (completion).
   parallel agents for each, one agent per issue. Follow the dispatching-parallel-agents
   skill for agent coordination and result collection.
 
+  **Give each parallel agent its own git worktree.** Parallel agents that commit
+  to the same repo and branch race on git's shared staging index — even with
+  fully disjoint file scope. One agent's `git add`/`commit` can sweep another
+  agent's staged files into the wrong commit, forcing soft-resets and
+  serializing the work that parallelism was supposed to overlap. This directly
+  conflicts with the "each agent commits its own changes, never squash"
+  discipline (Step 3). To get true concurrency, isolate each agent:
+
+  - **Preferred:** run each agent in its own git worktree (e.g. the Agent tool's
+    `isolation: "worktree"`), so each has a private index; collect and integrate
+    the branches after the agents finish.
+  - **Or partition by repo** — if the ready issues touch different repositories,
+    dispatch at most one agent per repo so no two share an index.
+  - **If agents must share a branch** (no isolation available): instruct each to
+    stage only its own paths (`git add -- <exact files>`, never `git add -A` or
+    `git add .`) and to re-check `git status` immediately before committing,
+    expecting to soft-reset and re-stage if another agent's files were swept in.
+
+  Disjoint file scope is necessary but NOT sufficient for concurrent commits —
+  index isolation is what makes parallel execution actually parallel.
+
 **Otherwise:**
   ```bash
   git zhi list --milestone <milestone> --ready --format json
