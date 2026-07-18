@@ -1,6 +1,6 @@
 ---
 name: pushback
-description: Plan quality validation for issue chains — catches sizing problems, missing QA tasks, dependency cycles, critical chain issues, and untestable acceptance criteria before chain-review completes
+description: Plan quality validation for issue chains — catches sizing problems, missing QA tasks, dependency cycles, critical chain issues, untestable acceptance criteria, and ACs whose commands git-zhi-verify cannot execute, before chain-review completes
 ---
 
 ## Prerequisites
@@ -57,6 +57,27 @@ Acceptance criteria must be concrete enough to write a test against. Vague crite
 - Flag criteria using unmeasurable language: "works correctly", "is fast", "looks good", "handles edge cases"
 - Each criterion should specify an observable outcome: a return value, an exit code, a rendered element, a logged message
 - Flag criteria with no observable output at all
+
+### 6. AC command executability
+
+Testability (check 5) is about whether an AC is *conceptually* checkable. This check is about whether `git-zhi-verify` can *actually execute* the command — because `milestone edit --state complete` runs the verify gate, and an AC whose command is not runnable blocks completion with a false "regression".
+
+`git-zhi-verify` extracts and runs exactly the command inside the FIRST paren-wrapped backtick span — `` - [ ] <desc> (`<command>`) `` — on each checkbox line under `## Acceptance Criteria` (and its `### Positive Scenarios` / `### Negative Scenarios` subsections). **Parenthesization is the only marker**: a bare backtick span with no surrounding parens (`` `code fragment` ``) is treated as prose and ignored; a paren-wrapped span is run verbatim via `sh -c`.
+
+Run the gate's own extractor to see what it WOULD run, without executing:
+
+```bash
+git-zhi verify <milestone> --dry-run
+```
+
+Flag, per issue:
+
+- **No extractable command** — an issue with zero paren-wrapped AC commands. It cannot be verified; `--state complete` will mark it unverifiable.
+- **Non-runnable paren-wrapped span** — a `(`...`)` command that is not a real shell command line: an un-substituted placeholder (`` (`t/<name>.t`) ``, `` (`<verification command>`) ``), a bare word (`` (`gate`) ``), or a language/code fragment (`` (`if ($c) {...}`) ``, `` (`sub foo { }`) ``). These fail as invalid shell and become false "regressions".
+- **Code fragment wrongly paren-wrapped** — a Negative Scenario whose *subject* code was written as `` (`<perl fragment>`) `` instead of bare backticks. The subject is a description, not a command; only the SCENARIO's verification command belongs in parens. Bare-backtick the fragment; paren-wrap only the runnable check.
+- **Multiple commands on one line** — `git-zhi-verify` runs only the FIRST paren-wrapped span per checkbox and silently drops the rest. Flag AC lines with two or more `(`...`)` spans; split them across lines.
+
+The fix for a flagged AC is: paren-wrap exactly one runnable shell command (a `prove`/`perl`/`go test`/`git` invocation with real paths, runnable from repo root), and demote every code fragment or placeholder to a bare backtick (which the extractor ignores).
 
 ## Presentation
 
