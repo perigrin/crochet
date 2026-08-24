@@ -38,8 +38,21 @@ For each positive scenario, ask:
 
 Each negative scenario must:
 - Have a clear description of what goes wrong
-- Include a backtick-delimited verification command (e.g., `go test -run TestParser_MalformedInput -v`)
+- Include a REAL runnable verification command inside a paren-wrapped backtick span — `` (`cmd`) `` (e.g., `` (`go test -run TestParser_MalformedInput -v`) ``)
 - Be independently testable — the executing agent can write the test without additional context
+
+**git-zhi-verify contract (critical for negative scenarios).** `git-zhi-verify`
+runs the FIRST paren-wrapped backtick span on each AC checkbox line — including
+under `### Negative Scenarios` — verbatim via `sh -c`, and `--state complete`
+blocks on a failure. So:
+- ONLY paren-wrap a real runnable command. The scenario's *condition* — the code
+  or input that triggers the failure — is a DESCRIPTION, not a command. If you
+  show it, use a BARE backtick span (`` `sub foo { }` ``, `` `if ($c) {...}` ``)
+  with NO surrounding parens, so git-zhi-verify treats it as prose and ignores it.
+- NEVER write the failing-condition code as `` (`<code fragment>`) ``. A
+  paren-wrapped code fragment fails as invalid shell and becomes a false
+  "regression" that blocks milestone completion. This is the #1 way negative
+  scenarios break the verify gate.
 
 Format:
 ```markdown

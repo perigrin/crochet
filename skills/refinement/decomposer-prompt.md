@@ -66,9 +66,26 @@ blocked_by: []
 ## Acceptance Criteria
 
 ### Positive Scenarios
-- [ ] <behavior description> (`<verification command>`)
-- [ ] <behavior description> (`<verification command>`)
+- [ ] <behavior description> (`<runnable shell command>`)
+- [ ] <behavior description> (`<runnable shell command>`)
 ```
+
+**AC command format (git-zhi-verify contract).** `git-zhi-verify` extracts and
+runs the command inside the paren-wrapped backtick span — `` (`...`) `` — on each
+AC checkbox line, verbatim via `sh -c`, and `milestone edit --state complete`
+runs it. So the paren-wrapped span MUST be an actually-runnable shell command:
+
+- Paren-wrap exactly ONE real command that exits 0 on success and runs from the
+  repo root: a concrete `go test -run TestX`, `prove t/foo.t`, `perl -Ilib t/foo.t`,
+  `pytest tests/test_x.py::test_y`, `git ...` — with REAL paths, not placeholders.
+- NEVER paren-wrap a placeholder (`` (`t/<name>.t`) ``, `` (`<verification command>`) ``),
+  a bare word (`` (`gate`) ``), or a code/language fragment. These fail as invalid
+  shell and become false "regressions" that block completion.
+- If you must show a code fragment in an AC description, use a BARE backtick span
+  (`` `if ($c) {...}` ``) — with no surrounding parens. git-zhi-verify ignores
+  unwrapped backticks, treating them as prose.
+- One command per checkbox line — git-zhi-verify runs only the FIRST paren-wrapped
+  span and drops the rest.
 
 ### 3. Create Issues
 
@@ -106,7 +123,7 @@ git zhi issue edit <id-B> --block <id-A>  # B blocks A (A depends on B)
 
 ## Constraints
 
-- Each issue must have at least one positive acceptance criterion with a backtick-delimited verification command
+- Each issue must have at least one positive acceptance criterion whose verification command is a REAL runnable shell command inside a paren-wrapped backtick span — `` (`cmd`) `` — not a placeholder, bare word, or code fragment (see "AC command format" above). git-zhi-verify runs it at `--state complete`.
 - Steps follow RED-GREEN-COMMIT cadence — write test, verify fail, implement, verify pass, commit
 - Context paths must be specific files or directories, not wildcards
 - Do not generate negative scenarios — that's the SQE agent's job
