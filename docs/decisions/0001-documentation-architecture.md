@@ -245,37 +245,46 @@ live-layer field, and git-zhi already exempts this directory from drift
 checking, so it stays out along with `stability:`.
 
 **Sections.** Problem Statement, then Proposal, are required. Scope of Change
-is required for any entry that can reach `implemented`: it names the live
+is required for any entry that calls for work: it names the live
 documents and code the decision projects into. Acceptance Criteria is required
 in the same case, in the form the pipeline already enforces: one runnable
 command per checkbox line in a paren-wrapped backtick span, so that
 `git-zhi-verify` can run it. Open Questions and References are optional.
 
-**States**, distinguishing three ways of not being in force:
+**States.** `state:` carries only the four a human declares:
 
-- `proposed` → `accepted` → `implemented` (evidenced by commit trailers)
+- `proposed` → `accepted`
 - `declined`: proposed, never accepted
-- `abandoned`: accepted, never implemented
 - `superseded`: was right, stopped being right
 
-The transitions are the pipeline's existing gates, named:
+**Implementation status is not among them.** *Implemented* and *abandoned* are
+derived from the trailers described below: a decision with a reachable
+`Implements:` commit is built, and an accepted one without is abandoned. They
+were never declarations. The rule under it:
+
+> A declared state is an act of judgment. A derived one is a fact about the
+> world. Judgment goes in frontmatter; facts get queried.
+
+Declaring them would repeat the objection that removes the citation field
+below — a second write nobody performs at authoring time — and would give "was
+this built" two sources that can disagree. In the discipline table it moves
+implementation status out of **Verified** and into **Derived**: one row up, and
+it stops being able to drift.
+
+The two declared transitions are the pipeline's existing gates, named:
 
 | Transition | Already happens at |
 |---|---|
 | written → `proposed` | brainstorming produces the spec; `crochet:assess` reads it |
 | `proposed` → `accepted` | chain-review passes and the human says execute |
-| `accepted` → `implemented` | `milestone edit --state complete`; `crochet:postmortem` runs |
 
-Today the second and third are events with no record in the document. The
-postmortem skill is the natural rung-1 home for the third: it already runs at
-completion and already reads the milestone, so writing `state: implemented` is
-one more step in an operation that cannot be skipped. That is a change to the
-plugin, not this repo's docs, and is listed under Scope of Change as such.
+Today the second is an event with no record in the document.
 
-`implemented` is the contribution over both prior arts. ADR stops at accepted,
-RFD at published; both assume the decision is the artifact. For a decision that
-requires work, accepted-but-not-built is a real state, and one this series can
-see rather than infer.
+**Accepted-but-not-built remains the contribution over both prior arts.** ADR
+stops at accepted, RFD at published; both assume the decision is the artifact.
+For a decision that requires work that state is real and dangerous. It is now a
+query rather than a field, which is strictly better: a field can be stale, a
+query cannot.
 
 **The citation is a commit trailer.** Every commit implementing a decision
 carries `Implements: NNNN` in its message. That is the whole mechanism; there
@@ -299,21 +308,41 @@ Three reasons the citation lives in the commit rather than pointing at it:
    for "was this built" to be declared, and two declarations can disagree —
    which is RFD 0's failure, three states that contradict each other.
 
-This makes `abandoned` computable rather than asserted: at milestone
-completion, an accepted decision with no reachable commit carrying its trailer
-is abandoned by definition. Unreachability from `pu` is the correct reading —
-work on a branch that never merged is work that never happened.
+This makes `abandoned` computable rather than noticed: at milestone completion,
+an accepted decision with no reachable commit carrying its trailer is abandoned
+by definition. Unreachability from `pu` is the correct reading — work on a
+branch that never merged is work that never happened.
 
-The cost, stated plainly: a decision read alone, without a shell, no longer
-shows what implemented it. That is a real regression against the read-alone
-principle that keeps supersession bidirectional, and it is accepted here
-because the two cases differ. Both halves of a supersession link are known to
-one author at one moment and are written in one commit; the implementing
-citation is known to nobody at authoring time. The duplication rule presumes
-both sides are writable together, so it governs supersession and not this.
+Net: the only thing written by hand is one trailer line. Citation, state and
+abandonment all fall out of it plus an operation already running, which moves
+the bookkeeping from rung 4 to rung 2 — the first point in this design where it
+stops depending on anyone's diligence.
 
-The remaining gap is that nothing forces the trailer, which is a `commit-msg`
-hook's job — rung 2, and listed under Scope of Change.
+The cost is real: a decision read with no shell, on a web view or in an agent's
+context, no longer shows whether it shipped. That is unavoidable rather than a
+tradeoff, because the alternative is not a correct field but a stale one —
+`accepted` sitting on something that shipped a year ago, which is worse than
+silence. It is also not a breach of the read-alone principle that keeps
+supersession bidirectional, because the two cases differ: both halves of a
+supersession link are known to one author at one moment and written in one
+commit, while the implementing citation is known to nobody at authoring time.
+The duplication rule presumes both sides are writable together, so it governs
+supersession and not this.
+
+**The remaining soft spot is the trailer itself, and no hook can close it.** An
+earlier draft proposed a `commit-msg` hook rejecting a branch that touches
+`docs/decisions/` without an `Implements:` trailer. That is backwards twice
+over: editing a decision is *authoring*, not implementing, so the rule would
+reject exactly the commits that write decisions; and more fundamentally a hook
+cannot distinguish a commit implementing decision 7 from unrelated work. Only
+the author knows, and no mechanism recovers intent the author did not state.
+
+So enforcement stays where it already is, at milestone completion. That catches
+the decision nobody built. It cannot catch the decision somebody built and
+forgot to label, which reads as abandoned though the code shipped, and that
+residue is unclosable — so the check asks rather than asserts: *this decision
+is accepted with no implementing commits; abandoned, or unlabelled?* A question
+to a human at the one moment they can answer it is the honest ceiling.
 
 **Supersession is bidirectional.** `supersedes` and `superseded-by`, both
 written, in one commit. This duplicates a fact deliberately: derive when a tool
@@ -328,8 +357,14 @@ three places and they disagree, which is the failure this rule makes
 impossible.
 
 **Mutability follows state.** A `proposed` entry is under discussion and may
-change, as the design docs already do under review. From `accepted` on it is
-immutable in content and append-only in status: `state` and `superseded-by`.
+change freely, as the design docs already do under review — the
+how-to-use-git-zhi spec took six commits, all before its merge and none after.
+Revising a draft in flight is the lifecycle, not a breach of it. At `accepted`
+the entry freezes: immutable in content, append-only in status (`state` and
+`superseded-by`), and from then on the only way to change what it says is to
+supersede it. Supersession discipline governs accepted decisions, not drafts
+under review, and reaching for a new number while a proposal is still open is
+the wrong instrument.
 
 **Inclusion gate.** The well-attested failure of decision records is
 enthusiasm through 012 and then silence, a partial archive that implies
@@ -468,22 +503,19 @@ Each item is a live-layer edit and lands with whatever makes it true.
   `superseded-by` and there are no cycles; the runner itself exits non-zero on
   a deliberately broken fixture, so a runner that stopped running is visible.
   Crochet's next milestone uses `sh xt/run.sh` as its resolution command.
-- **A `commit-msg` hook** that rejects a commit on a branch implementing a
-  numbered decision when no `Implements:` trailer is present, with an error
-  message naming the decision and the trailer to add. Without it the citation
-  is rung 4; with it the series can compute `abandoned`. It is installed in the
-  repo, not the plugin, and `xt/` tests that it fires.
-- **Plugin changes, recorded here and numbered separately when taken up**:
-  `crochet:postmortem` writes `state: implemented` on the spec it closes, and
-  reports any accepted decision whose trailer it cannot find as `abandoned`;
-  `crochet:onboard` Step 2 and `crochet:refinement` Step 1 install an `xt/`
-  runner and the `commit-msg` hook alongside `docs init`, fitted to the repo's
-  ecosystem, so an onboarded repo passes its checks with crochet uninstalled.
+- **Plugin changes, recorded here and numbered separately when taken up**: at
+  milestone completion `crochet:postmortem` asks, for each accepted decision
+  with no reachable `Implements:` commit, whether it is abandoned or merely
+  unlabelled — a question, not a written state; `crochet:onboard` Step 2 and
+  `crochet:refinement` Step 1 install an `xt/` runner alongside `docs init`,
+  fitted to the repo's ecosystem, so an onboarded repo passes its checks with
+  crochet uninstalled.
 
 ### Acceptance Criteria
 
-`implemented` for this document means all of the following pass on `pu`, with
-the commits that made them pass carrying `Implements: 0001`.
+This document reads as implemented — a query, not a field — when all of the
+following pass on `pu` and the commits that made them pass carry
+`Implements: 0001`.
 
 - [ ] docs check passes (`git zhi docs check`)
 - [ ] an architecture doc exists under docs/ (`test -n "$(ls docs/architecture/*.md 2>/dev/null)"`)
@@ -507,15 +539,12 @@ Carried from the source design, still open:
 
 Surfaced by writing this document in its own format:
 
-- `state` still carries `implemented` and `abandoned`, which are now derivable
-  from the trailers rather than declared. That leaves the same fact in two
-  places, which is the objection that removed the citation field. The
-  consistent move is for `state` to carry only what a human declares —
-  `proposed`, `accepted`, `declined`, `superseded` — and for implementation
-  status to be computed. That would put it in the **Derived** row of the
-  discipline table, which cannot drift, rather than the **Verified** row. Not
-  taken here because it changes the state model this document also proposes,
-  and it should be one decision rather than a revision in flight.
+- The check that computes `abandoned` cannot distinguish a decision nobody
+  built from one somebody built and forgot to label, so it asks a human at
+  milestone completion. That is the honest ceiling, but it puts a question in
+  the path of an operation meant to run unattended. Whether the question is
+  worth its interruption is answerable only after the series has enough
+  entries to see how often it fires.
 
 ## References
 
