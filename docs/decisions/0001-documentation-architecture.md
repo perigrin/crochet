@@ -1,12 +1,10 @@
 ---
 title: Documentation architecture
-type: rfc
 state: proposed
 author: Chris Prather
 date: 2026-09-18
 supersedes: []
 superseded-by: []
-implemented-by: []
 ---
 
 # 0001: Documentation architecture
@@ -215,25 +213,36 @@ no hook will check it; it belongs in the identity document, not here.
 same base: a dated record of a choice and its rationale under a stable
 identifier. They diverge while live and converge once frozen, which is exactly
 how `docs/plans/*-design.md` already behaves: edited under review, untouched
-after merge. So: one series, one number space, a `type:` discriminator, not one
-directory per kind.
+after merge. So: one series, one number space, one directory — not one
+directory per kind, and no field naming the kind.
 
 **Identity.** The filename is `NNNN-kebab-title.md`, four digits, matching what
 `git zhi docs health` already checks. The number is the citation; the title is
 free to change. Cite the number.
 
-**Type.** One of `prd` (a requirement, what should exist), `rfc` (a design
-under discussion, how), or `adr` (a settled choice recorded after the fact,
-why). In this repo the ordinary entry is an `rfc`: the design spec that
+**No kind field.** An earlier draft carried `type:` — `prd`, `rfc`, `adr` —
+doing two jobs. Both are dropped. As a genus label it re-erects the boundary
+the containment argument just dissolved, and invites an unanswerable argument
+about whether a given document is really a requirement or really a decision.
+As a routing key naming which live document the decision projects into, it is
+redundant with the implementing commits, which show what changed rather than
+what was intended, and wrong in shape besides: one decision can change both the
+architecture and the method. Intent is carried by the Scope of Change section,
+in prose; fact is carried by the commits.
+
+**What belongs here.** In this repo the ordinary entry is the design spec that
 `crochet:assess` takes as input. A postmortem is archive but not a decision; it
 stays in `docs/postmortems/`, keyed by milestone, and a lesson in it that earns
 a decision gets a number here. That is the promotion path: postmortem (what
 happened) → decision (what we chose and why) → live layer (what is in force).
 
-**Frontmatter.** Every entry carries `title`, `type`, `state`, `author`,
-`date`, `supersedes`, `superseded-by`, `implemented-by`. No `covers:` or
-`stability:`; those are live-layer fields, and git-zhi already exempts this
-directory from drift checking.
+**Frontmatter.** Every entry carries `title`, `state`, `author`, `date`,
+`supersedes`, `superseded-by`. Six fields, and every one is a relation or a
+status. That is the test for any field proposed later: if it answers "what kind
+of thing is this", it does not belong; if it answers "where does this stand and
+what does it connect to", it does. `covers:` would pass the test but is a
+live-layer field, and git-zhi already exempts this directory from drift
+checking, so it stays out along with `stability:`.
 
 **Sections.** Problem Statement, then Proposal, are required. Scope of Change
 is required for any entry that can reach `implemented`: it names the live
@@ -244,7 +253,7 @@ command per checkbox line in a paren-wrapped backtick span, so that
 
 **States**, distinguishing three ways of not being in force:
 
-- `proposed` → `accepted` → `implemented` (with commit citations)
+- `proposed` → `accepted` → `implemented` (evidenced by commit trailers)
 - `declined`: proposed, never accepted
 - `abandoned`: accepted, never implemented
 - `superseded`: was right, stopped being right
@@ -259,19 +268,52 @@ The transitions are the pipeline's existing gates, named:
 
 Today the second and third are events with no record in the document. The
 postmortem skill is the natural rung-1 home for the third: it already runs at
-completion and already reads the milestone, so writing `state: implemented` and
-the merge citations is one more step in an operation that cannot be skipped.
-That is a change to the plugin, not this repo's docs, and is listed under Scope
-of Change as such.
+completion and already reads the milestone, so writing `state: implemented` is
+one more step in an operation that cannot be skipped. That is a change to the
+plugin, not this repo's docs, and is listed under Scope of Change as such.
 
 `implemented` is the contribution over both prior arts. ADR stops at accepted,
 RFD at published; both assume the decision is the artifact. For a decision that
-requires work, accepted-but-not-built is a real state, and an empty
-`implemented-by:` makes it visible instead of silent.
+requires work, accepted-but-not-built is a real state, and one this series can
+see rather than infer.
 
-**Cite commits, not chains.** Record post-merge SHAs or PR numbers. The
-rebase-and-force-push workflow rewrites every SHA on a feature branch, so a
-mid-flight SHA is a reference that quietly stops existing.
+**The citation is a commit trailer.** Every commit implementing a decision
+carries `Implements: NNNN` in its message. That is the whole mechanism; there
+is no corresponding frontmatter field, and the relation is recovered by
+searching:
+
+```bash
+git log --grep='^Implements: 0001'
+```
+
+Three reasons the citation lives in the commit rather than pointing at it:
+
+1. **It cannot be written anywhere else.** Doc-first puts the document and the
+   code in one PR, but a post-merge SHA does not exist until that PR merges. A
+   field would need a second write, after the fact, that nothing forces — and
+   the table already records what becomes of a field nobody is obliged to fill.
+2. **It survives the workflow.** A rebase-and-force-push rewrites every SHA on
+   a feature branch while preserving commit messages, so a trailer is immune to
+   exactly the operation that makes a recorded SHA dangle.
+3. **It leaves one source.** A field mirroring the trailer is a second place
+   for "was this built" to be declared, and two declarations can disagree —
+   which is RFD 0's failure, three states that contradict each other.
+
+This makes `abandoned` computable rather than asserted: at milestone
+completion, an accepted decision with no reachable commit carrying its trailer
+is abandoned by definition. Unreachability from `pu` is the correct reading —
+work on a branch that never merged is work that never happened.
+
+The cost, stated plainly: a decision read alone, without a shell, no longer
+shows what implemented it. That is a real regression against the read-alone
+principle that keeps supersession bidirectional, and it is accepted here
+because the two cases differ. Both halves of a supersession link are known to
+one author at one moment and are written in one commit; the implementing
+citation is known to nobody at authoring time. The duplication rule presumes
+both sides are writable together, so it governs supersession and not this.
+
+The remaining gap is that nothing forces the trailer, which is a `commit-msg`
+hook's job — rung 2, and listed under Scope of Change.
 
 **Supersession is bidirectional.** `supersedes` and `superseded-by`, both
 written, in one commit. This duplicates a fact deliberately: derive when a tool
@@ -287,8 +329,7 @@ impossible.
 
 **Mutability follows state.** A `proposed` entry is under discussion and may
 change, as the design docs already do under review. From `accepted` on it is
-immutable in content and append-only in status: `state`, `implemented-by`,
-`superseded-by`.
+immutable in content and append-only in status: `state` and `superseded-by`.
 
 **Inclusion gate.** The well-attested failure of decision records is
 enthusiasm through 012 and then silence, a partial archive that implies
@@ -388,8 +429,8 @@ Rules that follow:
 - `supersedes:` accepts a path for a pre-series document, so the first decision
   that revises the superpowers/paad design can point at it. Nothing is written
   back into the superseded file; it is frozen.
-- New design specs enter the series as `type: rfc`. `docs/plans/` receives no
-  new files; it is not removed.
+- New design specs enter the series. `docs/plans/` receives no new files; it is
+  not removed.
 - `docs/postmortems/` continues as is. `milestone edit --postmortem` exists at
   git-zhi HEAD and not in the installed 0.4.0, so the v0.4 postmortem is a file
   and later ones may be either; both are archive, and neither is cited by the
@@ -427,16 +468,22 @@ Each item is a live-layer edit and lands with whatever makes it true.
   `superseded-by` and there are no cycles; the runner itself exits non-zero on
   a deliberately broken fixture, so a runner that stopped running is visible.
   Crochet's next milestone uses `sh xt/run.sh` as its resolution command.
+- **A `commit-msg` hook** that rejects a commit on a branch implementing a
+  numbered decision when no `Implements:` trailer is present, with an error
+  message naming the decision and the trailer to add. Without it the citation
+  is rung 4; with it the series can compute `abandoned`. It is installed in the
+  repo, not the plugin, and `xt/` tests that it fires.
 - **Plugin changes, recorded here and numbered separately when taken up**:
-  `crochet:postmortem` writes `state: implemented` and `implemented-by:` on the
-  spec it closes; `crochet:onboard` Step 2 and `crochet:refinement` Step 1
-  install an `xt/` runner alongside `docs init`, fitted to the repo's
+  `crochet:postmortem` writes `state: implemented` on the spec it closes, and
+  reports any accepted decision whose trailer it cannot find as `abandoned`;
+  `crochet:onboard` Step 2 and `crochet:refinement` Step 1 install an `xt/`
+  runner and the `commit-msg` hook alongside `docs init`, fitted to the repo's
   ecosystem, so an onboarded repo passes its checks with crochet uninstalled.
 
 ### Acceptance Criteria
 
-`implemented` for this document means all of the following pass on `pu`, cited
-in `implemented-by:`.
+`implemented` for this document means all of the following pass on `pu`, with
+the commits that made them pass carrying `Implements: 0001`.
 
 - [ ] docs check passes (`git zhi docs check`)
 - [ ] an architecture doc exists under docs/ (`test -n "$(ls docs/architecture/*.md 2>/dev/null)"`)
@@ -444,6 +491,7 @@ in `implemented-by:`.
 - [ ] contributing docs do not describe a Go build (`! grep -rq 'go build' docs/contributing`)
 - [ ] CLAUDE.md imports the live layer (`grep -q '^@docs/' CLAUDE.md`)
 - [ ] postmortem no longer asserts the unbuilt loop (`! grep -q '^## Feedback Loop' skills/postmortem/postmortem.md`)
+- [ ] this decision's implementing commits are findable by trailer (`git log --grep='^Implements: 0001' --oneline | grep -q .`)
 - [ ] the author-test runner exists and passes (`sh xt/run.sh`)
 
 ## Open Questions
@@ -454,17 +502,20 @@ Carried from the source design, still open:
   setpoint in the parked self-driving design. Mapping `accepted` onto "the
   human says execute" after chain-review records the current answer without
   settling it.
-- Whether PR numbers beat merge SHAs as the implementation citation.
 - Whether the glossary is the one hand-maintained section of the architecture
   doc or whether terms get defined in the decisions that introduce them.
 
 Surfaced by writing this document in its own format:
 
-- The source design makes `type:` a routing key naming which live document an
-  accepted decision projects into. For this document that would be
-  `docs/contributing/`, and `type` holds `rfc`. Here the projection is carried
-  by the required Scope of Change section instead. Whether that is the rule or
-  a workaround is open.
+- `state` still carries `implemented` and `abandoned`, which are now derivable
+  from the trailers rather than declared. That leaves the same fact in two
+  places, which is the objection that removed the citation field. The
+  consistent move is for `state` to carry only what a human declares —
+  `proposed`, `accepted`, `declined`, `superseded` — and for implementation
+  status to be computed. That would put it in the **Derived** row of the
+  discipline table, which cannot drift, rather than the **Verified** row. Not
+  taken here because it changes the state model this document also proposes,
+  and it should be one decision rather than a revision in flight.
 
 ## References
 
