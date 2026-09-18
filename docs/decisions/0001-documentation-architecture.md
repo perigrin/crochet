@@ -527,21 +527,33 @@ Each item is a live-layer edit and lands with whatever makes it true.
 They are named here because a decision that silently depends on unshipped
 behaviour is the failure this document exists to prevent.
 
-- **Archive directories must inherit the reachability exemption.**
-  `git zhi docs check` counts a file unreachable when `CONTRIBUTING.md` does
-  not link it, and counts files rather than directories, so linking
-  `docs/plans` leaves all seven plan files unreachable. `docs/decisions/` is
-  already exempt; `docs/plans/` and `docs/postmortems/` are archive by the
-  same taxonomy and are not. Until they are, the first acceptance criterion
-  below cannot pass while Migration grandfathers those files in place.
+Both are the same defect wearing different clothes: the scaffolder writes the
+condition that blinds the checker, and the two commands are one line apart in
+the same tree.
+
+- **A linked directory must reach the files beneath it.** `git zhi docs check`
+  resolves each link in `CONTRIBUTING.md` and reads the target as a file; a
+  directory errors and is skipped, after the directory path itself has already
+  been recorded as reachable. So a link to `docs/plans` makes the directory
+  reachable and nothing inside it. `docs/decisions/` and `docs/postmortems/`
+  appear to work only because an allowlist exempts them — their links are
+  equally inert. `git zhi docs init` writes six such links and exactly two
+  files, and `docs init` immediately followed by `docs check` exits non-zero on
+  the two files the scaffolder itself just wrote. The first acceptance
+  criterion below cannot pass until this is fixed, and the fix is not an
+  exemption for archive directories: `docs/guides/` fails identically and is
+  not archive.
 - **`covers: []` must be a finding, and an empty document set must say so.**
   `git zhi docs health` treats an empty `covers:` as absent, so a repo whose
   only two live docs carry `covers: []` reports `0 high drift, 0 low drift, 0
   coverage gap(s)` while observing nothing; only `--format json` discloses
-  "no docs with covers frontmatter found". A sensor that reports green while
-  watching nothing has failed open, which is the condition this document
-  elsewhere requires a test for. `crochet:postmortem` and the technical writer
-  agent both consume that reading today.
+  "no docs with covers frontmatter found" — the honest summary is already
+  computed and stored, and the plain renderer recomputes its own line instead
+  of printing it. Those two docs are `docs init`'s own templates, which
+  hardcode `covers: []`. A sensor that reports green while watching nothing has
+  failed open, which is the condition this document elsewhere requires a test
+  for. `crochet:postmortem` and the technical writer agent both consume that
+  reading today.
 
 ### Acceptance Criteria
 
