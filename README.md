@@ -14,13 +14,12 @@ generating reports, onboarding repos, and validating pipeline outputs.
 | `crochet:execute` | Execute issues from the chain via TDD with Ralph Loop inner cycle and PAAD outer gate |
 | `crochet:postmortem` | Mandatory process retrospective at milestone completion |
 | `crochet:install` | Install git-zhi binary and companion symlinks |
-| `crochet:preflight` | Validate environment and prerequisites before starting a pipeline run |
 | `crochet:verify` | Verify pipeline outputs meet acceptance criteria at each stage |
 | `crochet:onboard` | Step-by-step git-zhi adoption walkthrough with verification at each step |
 | `crochet:import` | Assisted ticket import from Jira or other trackers with dependency inference |
 | `crochet:report` | Generate narrative reports from user-defined templates with Mermaid charts |
 
-The following are internal skills (not directly user-invocable): `crochet:pushback`, `crochet:alignment`, `crochet:how-to-use-git-zhi`
+The following are internal skills (not directly user-invocable): `crochet:preflight`, `crochet:pushback`, `crochet:alignment`, `crochet:how-to-use-git-zhi`
 
 ## Prerequisites
 
