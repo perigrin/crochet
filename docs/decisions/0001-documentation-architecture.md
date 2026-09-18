@@ -509,7 +509,39 @@ Each item is a live-layer edit and lands with whatever makes it true.
   unlabelled — a question, not a written state; `crochet:onboard` Step 2 and
   `crochet:refinement` Step 1 install an `xt/` runner alongside `docs init`,
   fitted to the repo's ecosystem, so an onboarded repo passes its checks with
-  crochet uninstalled.
+  crochet uninstalled; and `crochet:preflight` probes the load-bearing `git
+  zhi` flags the skills depend on, recording each in the capabilities map so
+  skills branch on binary capability the way they already branch on plugin
+  availability.
+
+  The flag probe belongs in preflight rather than `t/` because its consumer is
+  an agent about to run a command, and the placement rule puts documentation
+  inside the guardrail that fires at that moment. It is a declared set of
+  flags, not a scan of `skills/` on every invocation, which would cost more
+  than preflight is allowed to cost. It is advisory and fails open, like the
+  version check beside it. The trade is explicit: this catches skew for the
+  agent that would hit it, and does not catch a skill naming a flag that never
+  existed, which `t/` would have caught at authoring time.
+
+**Dependencies on git-zhi.** Two items above need the tool to change first.
+They are named here because a decision that silently depends on unshipped
+behaviour is the failure this document exists to prevent.
+
+- **Archive directories must inherit the reachability exemption.**
+  `git zhi docs check` counts a file unreachable when `CONTRIBUTING.md` does
+  not link it, and counts files rather than directories, so linking
+  `docs/plans` leaves all seven plan files unreachable. `docs/decisions/` is
+  already exempt; `docs/plans/` and `docs/postmortems/` are archive by the
+  same taxonomy and are not. Until they are, the first acceptance criterion
+  below cannot pass while Migration grandfathers those files in place.
+- **`covers: []` must be a finding, and an empty document set must say so.**
+  `git zhi docs health` treats an empty `covers:` as absent, so a repo whose
+  only two live docs carry `covers: []` reports `0 high drift, 0 low drift, 0
+  coverage gap(s)` while observing nothing; only `--format json` discloses
+  "no docs with covers frontmatter found". A sensor that reports green while
+  watching nothing has failed open, which is the condition this document
+  elsewhere requires a test for. `crochet:postmortem` and the technical writer
+  agent both consume that reading today.
 
 ### Acceptance Criteria
 

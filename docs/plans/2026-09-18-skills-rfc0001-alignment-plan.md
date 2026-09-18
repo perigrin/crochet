@@ -375,6 +375,10 @@ acceptance:** C1–C3 (#17, #28, #29, #30). **Nothing else is blocked.**
 
 **Files:** `.claude-plugin/plugin.json`
 
+> Step 1's probe is the gate for this phase and also the seed of the preflight
+> flag probe RFC 0001 now carries under Scope of Change. The same
+> `(subcommand, flag)` pairs feed both; do not build a second mechanism.
+
 - [ ] **Step 1 (observe):** `git zhi milestone edit --help | grep -q -- --postmortem && git zhi milestone add --help | grep -q -- --resolution` — until this passes, Phase B does not start. Record `git zhi version | head -1`.
 - [ ] **Step 2 (document):** set `git_zhi_min_version` to the semver Step 1 printed. Do not guess a number before the release exists.
 - [ ] **Step 3 (verify):** `python3 -c 'import json;print(json.load(open(".claude-plugin/plugin.json"))["git_zhi_min_version"])'` equals the installed semver; preflight's warning branch (`preflight.md:16-18`) reads it.
@@ -535,12 +539,24 @@ the honest name for pre-acceptance analysis, and the format was asked for.
 Numbering it 0002 now would put a second entry in a series whose first entry
 may be declined — and the RFC's own Mutability rule at `ef36c64` says
 "reaching for a new number while a proposal is still open is the wrong
-instrument"; a revision to 0001 in flight is the lifecycle, a new number is not. Making it a chain now would run refinement on a spec that is
-still `proposed`. When 0001 is accepted, the right move is not to convert this
-file but to run the pipeline on 0001 itself — `crochet:assess` then
-`crochet:refinement` — with this plan as the architect's and decomposer's
-input; its tasks are sized to lift into issues one to one, and each carries
-its verification as a paren-wrapped AC would. The plugin items then get the
+instrument"; a revision to 0001 in flight is the lifecycle, a new number is not.
+
+An earlier draft of this section also argued that chaining now would run
+refinement on a spec that is still `proposed`, and that this was premature.
+That reasoning was wrong and is withdrawn. The RFC's transitions table defines
+`proposed` → `accepted` as "chain-review passes and the human says execute",
+and `skills/chain-review/chain-review.md:12-18` places chain-review downstream
+of refinement, receiving "the milestone and spec file that refinement
+produced". Refinement therefore runs on a `proposed` spec by design; that is
+the route to acceptance, not a breach of the gate. Treating acceptance as a
+precondition for decomposition would leave every decision permanently
+`proposed`.
+
+The verdict stands on its other two legs. When 0001 is accepted, the right
+move is not to convert this file but to run the pipeline on 0001 itself —
+`crochet:assess` then `crochet:refinement` — with this plan as the architect's
+and decomposer's input; its tasks are sized to lift into issues one to one,
+and each carries its verification as a paren-wrapped AC would. The plugin items then get the
 decision number the RFC already promises them, and this file stays where it
 is: frozen, cited by path, the last of its kind.
 
