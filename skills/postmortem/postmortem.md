@@ -118,10 +118,6 @@ Data sources: issue list, milestone telemetry, verify results, docs health, sanb
 EOF
 ```
 
-## Feedback Loop
-
-Future `crochet:refinement` runs read past postmortems via `git zhi milestone show --format json` to avoid repeating process mistakes. The system accumulates institutional knowledge about *how to work*, not just what was built.
-
 ## Constraints
 
 - The postmortem is about **process**, not product. Code quality is handled by verify, sanbao, and docs. The postmortem asks: how is our way of working holding up?
