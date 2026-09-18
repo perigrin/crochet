@@ -36,7 +36,7 @@ Before decomposition begins, run pipeline-readiness checks against the spec and 
 3. **Scope check** — read the codebase structure and compare it against the spec. Flag any areas where the spec appears to contradict existing architecture or naming conventions. Do not block on this — surface findings and continue unless the user asks to stop.
 4. **Feasibility assessment** — check whether the spec is feasible given the codebase maturity, existing dependencies, and available infrastructure. Flag any aspects that appear infeasible and ask the user to confirm before proceeding.
 
-If all three checks pass cleanly, proceed to Step 1. If issues are found, surface them as a numbered list and ask the user: "Proceed anyway, or stop to address these first?"
+If all four checks pass cleanly, proceed to Step 1. If issues are found, surface them as a numbered list and ask the user: "Proceed anyway, or stop to address these first?"
 
 ### Step 1: Lazy Initialization
 
