@@ -148,10 +148,29 @@ orchestrator, and an orchestrator is a single serialisation point with no race
 to solve. If independent execution becomes real, the failure becomes
 observable and can be designed against then.
 
-**Cross-repo assignment** is out of scope. An issue whose work happens in
-another repository is modelled as an environmental precondition with a probe
-for an acceptance criterion, not as an assignment or a cross-chain dependency
-edge. Each repository keeps its own chain.
+**Cross-repo assignment** is out of scope, but not for the reason an earlier
+draft of this document gave. That draft implied the machinery did not exist. It
+does: `git-zhi-project` reads a YAML file describing multiple git-zhi repos and
+computes a cross-repo critical chain, CCPM buffers and per-worker
+recommendations, and `git zhi project next <file> --actor <worker>` is a
+cross-repo next-issue recommendation for a named worker.
+
+So the honest non-goal is narrower: **crochet does not use the project layer,
+and this decision does not change that.** Each repository keeps its own chain,
+and an issue whose work happens elsewhere is modelled as an environmental
+precondition with a probe for an acceptance criterion. Whether crochet should
+drive `git zhi project` is a real question and its own decision.
+
+Note what that layer implies for this one. `--actor` is *required* on
+`git zhi project next`. The cross-repo layer cannot be used at all without
+distinct worker identity, so the gap this decision closes is not only blocking
+parallel execution inside one repository — it is blocking the multi-repo layer
+from being reachable.
+
+Crochet names `git zhi project` exactly once across thirteen skills, at
+`skills/report/report.md:31`, and that reference is to a `project report`
+subcommand which does not exist; the binary offers `next` and `show`. An
+unused layer and a false claim about it are the same finding wearing two faces.
 
 ## Scope of Change
 
@@ -200,3 +219,5 @@ belongs in a script rather than an acceptance criterion.
   this decision makes reachable.
 - `internal/actor/actor.go` and `internal/cli/issue_edit.go` in git-zhi. Where
   a transition's actor is derived today.
+- `git-zhi-project` in git-zhi, `next --actor`. The cross-repo layer that
+  distinct worker identity is a precondition for.
