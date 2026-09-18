@@ -79,7 +79,7 @@ superpowers or paad already provides.
 - Every skill's Prerequisites section checks `which git-zhi` and directs to `crochet:install` if missing
 - All chain interaction through `git zhi` CLI — never access `refs/zhi/` directly
 - Skills are idempotent: re-invoking on partial state resumes from current chain state
-- The shared prerequisite block is in `skills/require-git-zhi.md`
+- Every skill states its own prerequisite inline. There is no include mechanism in this format, so no shared block exists to reference
 
 ## Working in This Repo
 
