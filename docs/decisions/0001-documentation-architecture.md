@@ -1,6 +1,6 @@
 ---
 title: Documentation architecture
-state: proposed
+state: accepted
 author: Chris Prather
 date: 2026-09-18
 supersedes: []
