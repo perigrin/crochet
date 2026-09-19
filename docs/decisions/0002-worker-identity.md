@@ -1,6 +1,6 @@
 ---
 title: Worker identity
-state: proposed
+state: accepted
 author: Chris Prather
 date: 2026-09-18
 supersedes: []
@@ -12,6 +12,18 @@ superseded-by: []
 git-zhi implements per-worker scheduling completely. Crochet cannot use any of
 it, because every agent working in a repo resolves to the same actor. The fix
 is one identity, not a scheduler.
+
+**Accepted without a chain.** Refinement normally writes this field while
+decomposing the decision into issues, and that is the path this repository
+should take. It was not taken here: the work was implemented directly, and the
+commits carrying `Implements: 0002` are the evidence that it was decided on.
+Acceptance is the decision that the work should be done; the chain is how that
+decision is normally expressed and executed, not what makes it true.
+
+What was lost by skipping it is the execution record rather than the decision —
+no milestone, so no verify gate over these criteria, no sanbao metrics, and no
+postmortem. Recorded here because a repository that shows only the outcome
+makes the bypass look like the ordinary path.
 
 ## Problem Statement
 
