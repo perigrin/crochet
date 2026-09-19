@@ -308,12 +308,24 @@ applies structurally to its SQE role, which never reads implementation code
 because a role that has not seen the code cannot write a test that merely
 restates it. The same isolation, applied to assessment.
 
-**And unlike a signature, it is checkable.** Worker identity from 0002 makes
-the actors on a milestone's work queryable — each issue carries `assigned`, and
-each transition carries an `actor`. An assessment records its own actor, and an
-assessment whose actor appears among the actors on the work it assesses is
-self-assessment and invalid. That is rung 2, where a rule about who signs a line
-of prose would have been rung 3 with no way to tell.
+**Assess dispatches a subagent, so independence is produced rather than
+remembered.** A prohibition requires the agent to notice it is disqualified,
+which is the same class of thing as remembering not to skip a gate. Dispatching
+the assessment to a separate agent means the actor differs by construction, and
+nobody has to check. Refinement already works this way — four roles, with the
+SQE's independence coming from never having read the implementation.
+
+**The subagent must be fresh, not a fork.** A fork inherits the orchestrator's
+context, so it carries the same reasoning that produced the work and reaches the
+same conclusions through a different process. Independence of actor without
+independence of context buys nothing.
+
+**And the rule stays checkable as a backstop.** A skill file is an instruction,
+not a constraint — an agent can assess inline instead of dispatching, so the
+dispatch is rung 3 with better ergonomics rather than rung 1. Worker identity
+from 0002 supplies the rung 2: each issue carries `assigned` and each transition
+an `actor`, so an assessment records its own actor, and one whose actor appears
+among the actors on the work it assesses is self-assessment and invalid.
 
 ### Units of delivery and units of work
 
@@ -474,10 +486,11 @@ document while a content edit cannot.
   milestone cannot carry a body and that the CLI cannot store a resolution
   command. Store the resolution command with `milestone edit --resolution`
   rather than routing it through the final issue's acceptance criterion.
-- **`skills/assess/assess.md`**: write the assessment to
-  `docs/assessments/<milestone>.md` rather than presenting it only; define the
-  cursory form and the three axes; refuse to assess work whose actors include
-  the assessing actor.
+- **`skills/assess/assess.md`**: dispatch the assessment to a fresh subagent
+  rather than performing it inline, so independence is structural; write the
+  assessment to `docs/assessments/<milestone>.md` rather than presenting it
+  only; define the cursory form and the three axes; refuse to assess work whose
+  actors include the assessing actor.
 - **`skills/review/review.md`** and **`commands/review.md`**: the new gate —
   two lenses over `pu...HEAD`, run to a bounded fixed point, verifying the
   milestone's acceptance criteria and recording the result.
@@ -519,6 +532,7 @@ document while a content edit cannot.
 - [ ] assess defines the cursory form (`grep -q 'cursory' skills/assess/assess.md`)
 - [ ] assess writes the assessment to the archive (`grep -q 'docs/assessments' skills/assess/assess.md`)
 - [ ] assess refuses to assess its own actor's work (`grep -q 'own work' skills/assess/assess.md`)
+- [ ] assess dispatches rather than assessing inline (`grep -q 'subagent' skills/assess/assess.md`)
 - [ ] the archive is reachable, so docs check can see it (`grep -q 'docs/assessments' CONTRIBUTING.md`)
 - [ ] review reads the branch diff (`grep -q 'pu\.\.\.HEAD' skills/review/review.md`)
 - [ ] review verifies the milestone's acceptance criteria (`grep -q 'acceptance criteria' skills/review/review.md`)
