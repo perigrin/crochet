@@ -189,6 +189,46 @@ accepted with no chain, because acceptance is the decision that the work should
 be done, and refinement is how that decision is normally expressed rather than
 what makes it true.
 
+### Who may accept
+
+0001 leaves this open — "Who accepts a proposal. Currently perigrin" — and this
+document cannot, because under it asking for refinement *is* accepting. A rule
+about acceptance with no rule about who may ask is a mechanism deciding a policy
+by accident.
+
+**An agent may accept a decision it did not author.** The bar is authorship, not
+species — the same self-versus-other rule the assessment already uses, applied
+to the other judgment an agent makes about a document. An agent accepting its
+own proposal is self-acceptance, and it is the failure this document forbids one
+paragraph earlier for assessment.
+
+**Today the bar is honoured, not enforced.** Agent authorship is recorded
+nowhere: `author:` reads `Chris Prather` on every decision in the series, and so
+does every commit author on `docs/decisions/`. An actor cannot look up whether it
+wrote the document it is about to accept. This is rung 3, and it stays there
+until agent authorship is recorded somewhere a check can read — the same
+limitation that keeps the autonomy audit's actor query out of reach, and the same
+one 0002 addressed for chain transitions and nothing else.
+
+**Consensus between several agents is better than one agent accepting.** Not
+required, but preferred, and for the same reason the assessment is dispatched:
+independence is a property of the number of separate judgments, not of the
+authority of any one of them. It is also the practical answer while the
+authorship bar is unenforceable — a second agent agreeing is a check that does
+not depend on knowing who wrote the thing.
+
+**Human contributors may override an agent decision.** This is where the human
+sits in the loop — not as a gate every acceptance waits on, which would cost the
+autonomy this exists to protect, but as a veto that needs no justification and
+no turn to arrive. An override that declines a decision is written down, because
+`declined` is already the one state with no other trace.
+
+**Policy decisions are recorded in a decision document.** This one included:
+the rule that policy needs an RFC is the reason this section exists rather than
+living in a skill file where it would be a mechanism nobody voted on. It is also
+the entry condition for the pipeline — a policy question is what makes a decision
+document owed in the first place.
+
 A single terminal checkpoint at milestone completion was considered and
 rejected. Backfilling at each gate surfaces a gap at the point where repair is
 cheapest; a terminal check would let a decision be refined, executed and
@@ -526,7 +566,13 @@ document while a content edit cannot.
   presently merged into the pre-chain row.
 - **`skills/refinement/refinement.md`**: move the assessment from
   `docs/assessments/` into the milestone body when creating the milestone, and
-  carry the decision's acceptance criteria onto the milestone.
+  carry the decision's acceptance criteria onto the milestone. Its Record
+  Acceptance step gains the authorship bar — refuse to accept a decision this
+  actor authored, and say that another agent may.
+- **`docs/decisions/0001-documentation-architecture.md`**: its open question
+  "Who accepts a proposal" is answered here. The answer lives in this document;
+  0001's body is not edited, and the existing `amended-by` link carries a reader
+  across.
 - **`CLAUDE.md`** and **`README.md`**: the pipeline ordering and the skills
   table. `docs/architecture/plugin-structure.md` states the ordering too, but
   0004 proposes absorbing that file into `docs/ARCHITECTURE.md`; whichever
@@ -550,6 +596,7 @@ document while a content edit cannot.
 - [ ] assess writes the assessment to the archive (`grep -q 'docs/assessments' skills/assess/assess.md`)
 - [ ] assess refuses to assess its own actor's work (`grep -q 'own work' skills/assess/assess.md`)
 - [ ] assess dispatches rather than assessing inline (`grep -q 'subagent' skills/assess/assess.md`)
+- [ ] refinement refuses to accept a decision this actor authored (`grep -q 'author' skills/refinement/refinement.md`)
 - [ ] the archive is reachable, so docs check can see it (`grep -q 'docs/assessments' CONTRIBUTING.md`)
 - [ ] review reads the branch diff (`grep -q 'pu\.\.\.HEAD' skills/review/review.md`)
 - [ ] review verifies the milestone's acceptance criteria (`grep -q 'acceptance criteria' skills/review/review.md`)
