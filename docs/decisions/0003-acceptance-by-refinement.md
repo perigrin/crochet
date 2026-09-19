@@ -66,8 +66,8 @@ prose, believed or not. Prose does not bind the thing reading it — agents
 holding this document in context skip gates it declares, and the skips are
 caught by people rather than by checks.
 
-**A skip is visible exactly when the gate wrote something down.** Refinement
-writes `state: accepted`, so `xt/run.sh` can report commits implementing a
+**A skip is visible exactly when the gate wrote something down.** Acceptance is
+written into the document, so `xt/run.sh` can report commits implementing a
 decision that was never accepted. Assess and chain-review write nothing, so
 nothing can report their absence. The difference is not the agent's diligence.
 
@@ -150,7 +150,7 @@ produces it.
 |---|---|---|---|---|
 | brainstorming | method | no | the spec | the spec document |
 | assess | judgment | **yes** | the spec aligns to the codebase, the architecture, and the intended direction of the repository — and the meeting it feeds produces the acceptance | `docs/assessments/<milestone>.md` |
-| refinement | method | no | the chain | `state: accepted` recorded in the document; the issues |
+| refinement | method | no | the chain | the issues, and `state: accepted` when refinement is the gate that observes unity |
 | chain-review | judgment | when a chain exists | the units of work are ready to be iterated on | a checklist entry in the milestone body |
 | execute | method | no | the code | commits carrying `Implements: NNNN` |
 | review | judgment | **yes** | the delivery matches the decision and the code is sound | a checklist entry in the milestone body |
@@ -509,8 +509,9 @@ rather than empty. The relation is already in use — 0001 carries
   describing it. Internal, so no command stub.
 - **`skills/refinement/refinement.md`**: record `state: accepted` on a decision
   whose assessment has converged, as a write rather than a decision. Backfill a
-  cursory assessment when none exists, move the assessment into the milestone
-  body, and carry the decision's acceptance criteria onto the milestone.
+  cursory assessment when none exists, copy the assessment into the milestone
+  body — the archive file stays — and carry the decision's acceptance criteria
+  onto the milestone.
 - **`skills/refinement/architect-prompt.md`** and
   **`skills/refinement/refinement.md`**: both carry the false claims that a
   milestone cannot hold a body and that the CLI has no resolution setter. On
@@ -519,7 +520,9 @@ rather than empty. The relation is already in use — 0001 carries
   acceptance criterion.
 - **`skills/review/review.md`** and **`commands/review.md`**: the new gate --
   two lenses over `pu...HEAD`, run to a bounded fixed point, verifying the
-  milestone's acceptance criteria and recording the result.
+  milestone's acceptance criteria and recording the result. It also writes
+  `state: accepted` when it is the gate that backfilled the assessment, which is
+  the finished-pull-request path where refinement never runs.
 - **`skills/chain-review/chain-review.md`** and **`skills/execute/execute.md`**:
   record their checklist entries, and backfill the upstream artifacts their
   position requires.
@@ -530,10 +533,16 @@ rather than empty. The relation is already in use — 0001 carries
 - **`skills/preflight/preflight.md`**: the inference table becomes the
   seven-gate state machine, and its row ordering is wrong in a way the table
   hides. Observed here with three completed milestones and twenty closed issues,
-  `status` returns no `milestone` field and `issue list` returns empty, because
-  completed milestones list nothing without `--all` — so **row 1 matches first**
-  and reports "No chain yet". Row 3, which would name the postmortem and skip
-  review, is never reached. Fixing row 3 alone fixes nothing. The table also
+  `status` returns no `milestone` field and `git zhi list --format json` — the
+  command preflight actually consults — returns `{"issues": []}`. So **row 1
+  matches first** and reports "No chain yet". Row 3, which would name the
+  postmortem and skip review, is never reached, and fixing row 3 alone fixes
+  nothing.
+
+  Adding `--all` does not help: `list --all` still returns `{"issues": []}`,
+  while `issue list --all` returns the twenty. Preflight has to change which
+  command it runs, not which flags it passes — a criterion that greps for
+  `--all` would go green on a flag that changes no behaviour. The table also
   gains the state "milestone exists, zero issues", presently merged into the
   pre-chain row.
 - **`CONTRIBUTING.md`**: link `docs/assessments/`, or the documentation
@@ -578,7 +587,7 @@ rather than empty. The relation is already in use — 0001 carries
 - [ ] participants end with a recommendation (`grep -q 'reject, modify or accept' skills/discernment/discernment.md`)
 - [ ] the live layer no longer says refinement is what accepts (`! grep -q 'Asking for refinement against a proposed decision' CLAUDE.md`)
 - [ ] refinement no longer carries that rationale either (`! grep -q 'Asking for refinement \*is\* the acceptance' skills/refinement/refinement.md`)
-- [ ] preflight distinguishes a finished chain from no chain (`grep -q 'all --format json\|--all' skills/preflight/preflight.md`)
+- [ ] preflight consults the command that sees a finished chain (`grep -q 'issue list --all' skills/preflight/preflight.md`)
 - [ ] preflight names the refinement-pending state (`grep -q 'zero issues' skills/preflight/preflight.md`)
 - [ ] the README lists the review command (`grep -q 'review' README.md`)
 - [ ] the runner refuses accepting a decision whose amends target is proposed (`grep -q 'it amends' xt/run.sh`)
