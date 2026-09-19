@@ -25,6 +25,9 @@ or "start working."
 A milestone name (e.g., `v0.3.4`). If omitted, use `git zhi milestone list --format json`
 to find the active milestone (state != completed).
 
+`--step` is the only flag: it asks for confirmation before each issue.
+Without it, execution runs straight through — see Loop control in Step 2.
+
 ## Process
 
 ### Step 1: Load Chain State
@@ -43,20 +46,26 @@ Count open issues. If zero, skip to Step 5 (completion).
 This is where the loop re-enters, so the rule lives here rather than in Key
 Constraints where it is too far away to be read at the moment it applies.
 
-- **Without `--auto`:** stop and confirm before starting the next issue.
-- **With `--auto`:** do not stop. Pick the next ready issue and keep going in
-  the same turn.
+**Continuing is the default.** Pick the next ready issue and keep going in the
+same turn. Only `--step` changes this, and then you confirm before each issue.
+
+Running through is the default because the pause was never what made this
+safe. The gates are the acceptance criteria, the dependency graph and the
+review at Step 4. A human approving each issue in turn is not review, and
+asking again re-litigates a decision already made: invoking this skill was the
+go-ahead, the same way asking for refinement is what accepts a proposal.
 
 **Ending your turn is a pause.** Reporting progress, summarising a finding or
-narrating what just happened all end the turn, and under `--auto` that is
-exactly what the flag forbids. There is no difference between stopping to ask
-a question and stopping to talk — the user has to prompt you again either way.
+narrating what just happened all end the turn, and that is exactly what the
+default forbids. There is no difference between stopping to ask a question and
+stopping to talk — the user has to prompt you again either way.
 
 The urge to report is not a reason to stop. Progress is already visible in the
 chain: `git zhi list --milestone <name>` and `git zhi milestone show <name>`
 show it without you in the loop. Anything worth saying keeps until the end.
 
-Under `--auto`, stop only when one of these is true:
+**Default does not mean never stop.** It means no routine pause between
+issues. Stop when one of these is true:
 
 - the ready set is empty;
 - every remaining issue is blocked by an unfinished one;
@@ -314,9 +323,9 @@ Postmortem: see output above
 - Max 3 PAAD-reopen cycles per issue — prevents infinite cycling
 - The skill is idempotent: re-invoking it on a partially-executed milestone
   resumes from the current chain state (already-closed issues are skipped)
-- Human-in-the-loop: by default, pause between issues for confirmation;
-  `--auto` runs without pauses. The rule is stated at the loop boundary
-  in Step 2 and not repeated here, so there is one place to read it.
+- Execution runs through by default; `--step` confirms before each issue. The
+  rule is stated at the loop boundary in Step 2 and not repeated here, so
+  there is one place to read it.
 - Commit frequently, never squash — iteration history is valuable
 
 ## Integration
