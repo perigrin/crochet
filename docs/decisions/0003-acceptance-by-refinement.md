@@ -365,25 +365,6 @@ applies structurally to its SQE role, which never reads implementation code
 because a role that has not seen the code cannot write a test that merely
 restates it. The same isolation, applied to assessment.
 
-**Assess dispatches a subagent, so independence is produced rather than
-remembered.** A prohibition requires the agent to notice it is disqualified,
-which is the same class of thing as remembering not to skip a gate. Dispatching
-the assessment to a separate agent means the actor differs by construction, and
-nobody has to check. Refinement already works this way — four roles, with the
-SQE's independence coming from never having read the implementation.
-
-**The subagent must be fresh, not a fork.** A fork inherits the orchestrator's
-context, so it carries the same reasoning that produced the work and reaches the
-same conclusions through a different process. Independence of actor without
-independence of context buys nothing.
-
-**Assessors persist across rounds and are resumed by name.** Only the agent that
-raised a finding may release it, so a round that replaces its assessors cannot
-reach a fixed point — the previous round's findings would have nobody left to
-release them, and the clerk may not infer a release. Each round therefore
-resumes the assessors already sitting and may add new ones; adding is how the
-meeting grows, substituting is how it forgets.
-
 **And the rule stays checkable as a backstop.** A skill file is an instruction,
 not a constraint — an agent can assess inline instead of dispatching, so the
 dispatch is rung 3 with better ergonomics rather than rung 1. Worker identity
@@ -444,10 +425,8 @@ spun on. A review that will not converge is a finding about the delivery.
 
 **Both lenses are ordinary skills.** `paad:agentic-review` and
 `ponytail:ponytail-review` are advertised by name, so preflight's existing
-comparison reaches them and the conditional pattern applies unchanged. An
-earlier draft claimed ponytail was a hook and therefore invisible; ponytail
-ships both, and its manifest declares only the hook while the runtime discovers
-the skills anyway. 0005 carries the correction.
+comparison reaches them and the conditional pattern applies unchanged. Ponytail ships a hook as well, and only the hook is
+undetectable; 0005 covers that half.
 
 ### The postmortem is an autonomy audit
 
@@ -521,7 +500,8 @@ rather than empty. The relation is already in use — 0001 carries
   rather than assessing inline; write the assessment to
   `docs/assessments/<milestone>.md` rather than presenting it only; define the
   cursory form and the three axes; require each participant to end with a
-  recommendation of reject, modify or accept.
+  recommendation of reject, modify or accept; and refuse to assess work whose
+  actors include the assessing actor.
 - **`skills/discernment/discernment.md`**: the convergence mechanism, built
   once and parameterised by subject and participants — dispatch, rounds,
   collecting recommendations, bounding the iteration, drafting the minute.
@@ -591,14 +571,16 @@ rather than empty. The relation is already in use — 0001 carries
 - [ ] assess defines the cursory form (`grep -q 'cursory' skills/assess/assess.md`)
 - [ ] assess writes the assessment to the archive (`grep -q 'docs/assessments' skills/assess/assess.md`)
 - [ ] assess refuses to assess its own actor's work (`grep -q 'own work' skills/assess/assess.md`)
-- [ ] assess dispatches rather than assessing inline (`grep -q 'subagent' skills/assess/assess.md`)
-- [ ] assess runs to a fixed point, since that is the acceptance (`grep -q 'fixed point' skills/assess/assess.md`)
+- [ ] discernment dispatches participants (`grep -q 'subagent' skills/discernment/discernment.md`)
+- [ ] discernment bounds its iteration (`grep -q 'fixed point' skills/discernment/discernment.md`)
 - [ ] the discernment skill exists (`test -f skills/discernment/discernment.md`)
 - [ ] assess delegates its session to it (`grep -q 'crochet:discernment' skills/assess/assess.md`)
 - [ ] participants end with a recommendation (`grep -q 'reject, modify or accept' skills/discernment/discernment.md`)
 - [ ] the live layer no longer says refinement is what accepts (`! grep -q 'Asking for refinement against a proposed decision' CLAUDE.md`)
 - [ ] refinement no longer carries that rationale either (`! grep -q 'Asking for refinement \*is\* the acceptance' skills/refinement/refinement.md`)
 - [ ] preflight distinguishes a finished chain from no chain (`grep -q 'all --format json\|--all' skills/preflight/preflight.md`)
+- [ ] preflight names the refinement-pending state (`grep -q 'zero issues' skills/preflight/preflight.md`)
+- [ ] the README lists the review command (`grep -q 'review' README.md`)
 - [ ] the runner refuses accepting a decision whose amends target is proposed (`grep -q 'it amends' xt/run.sh`)
 - [ ] chain-review records its checklist entry (`grep -q 'checklist' skills/chain-review/chain-review.md`)
 - [ ] execute records its checklist entry (`grep -q 'checklist' skills/execute/execute.md`)
@@ -631,20 +613,21 @@ rather than empty. The relation is already in use — 0001 carries
 
 - `0001-documentation-architecture.md`. The decision this one amends, and the
   source of the field test, the mutability rule and the transition table.
-- `0005-plugin-integration.md`. Where the ponytail detection problem is
-  recorded, and where the mechanism for review's second lens should be settled.
+- `0005-plugin-integration.md`. Where ponytail's undetectable half — the hook
+  rather than the skills — is recorded.
 - `pages/repo-documentation-architecture.md` in perigrin's commonplace book,
   where the ruling was made.
 - New England Yearly Meeting, *Faith and Practice*, "Corporate Discernment in
-  Meetings for Business" — the source of unity-without-unanimity, standing aside
-  against standing in the way, the rule that no individual can prevent the
-  meeting acting, and the minute of exercise.
+  Meetings for Business" — standing aside, and the minute of exercise. Its rule
+  that no individual can prevent the meeting acting is **not** adopted here;
+  this document takes the stricter form, where one held objection means not yet.
   <https://neym.org/faith-and-practice/decision-making>
 - Britain Yearly Meeting, *Quaker faith & practice*, 3.07 "The sense of the
-  meeting" and 3.12 "Clerkship" — the clerk's role in discernment, and the rule
-  that the outcome belongs to the meeting rather than to the clerk.
-  <https://qfp.quaker.org.uk/passage/3-07/> and
-  <https://qfp.quaker.org.uk/passage/3-12/>
+  meeting" — the rule that the outcome belongs to the meeting rather than to
+  whoever drafts the minute. <https://qfp.quaker.org.uk/passage/3-07/>
+- Britain Yearly Meeting, *Quaker faith & practice*, 12.26 — threshing meetings,
+  which air views before the meeting that decides.
+  <https://qfp.quaker.org.uk/passage/12-26/>
 
 Both are unprogrammed bodies. Passage numbering and wording vary between yearly
 meetings, so each quotation names its source rather than being offered as
