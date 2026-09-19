@@ -31,7 +31,14 @@ puts it after the work it authorises.
 **And the second line concedes a recordless event.** 0001 argues throughout
 that a claim with nothing connecting it to the world is the failure mode; it
 then records a transition it admits leaves no trace. A go-ahead is spoken and
-gone. A refinement request leaves a chain, which either exists or does not.
+gone.
+
+A refinement request leaves a trace, but an earlier draft named the wrong one.
+It said the trace is the chain, "which either exists or does not" — and 0001
+says the chain "is ephemeral and nothing cites it". A trace that evaporates
+when the milestone is cleaned up is not a trace. **The durable record is the
+commit in which refinement writes `state: accepted` into the document.** The
+chain is the occasion for that write, not the evidence of it.
 
 This was not a disagreement about intent. perigrin believed crochet already
 worked this way; 0001 said the opposite; both readings were drawn from the same
@@ -134,8 +141,8 @@ document while a content edit cannot.
 ## Open Questions
 
 - Whether `state:` should shrink further. `proposed`, `accepted` and
-  `superseded` all now have mechanical traces — a file, a chain, a superseding
-  document — which leaves only `declined` strictly needing declaration. Against
+  `superseded` all now have mechanical traces — a file, the commit that writes
+  `state: accepted`, a superseding document — which leaves only `declined` strictly needing declaration. Against
   that is the read-alone principle: a fully derived status shows nothing about
   where a decision stands to someone reading it on a web view with no shell.
   Recorded as open; not proposed here.
