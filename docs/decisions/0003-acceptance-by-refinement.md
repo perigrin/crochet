@@ -104,6 +104,21 @@ crochet:chain-review → crochet:execute → crochet:review → crochet:postmort
 `crochet:review` is new. It sits between execute and postmortem and reviews the
 unit of delivery against the decision that authorised it.
 
+### What the protocol is for
+
+Crochet exists to maximise the autonomy of agents delivering software
+iteratively, in collaboration with a human. That is the standard this protocol
+is built against, and it is the direction assess's third axis measures a
+document's alignment to.
+
+It decides the questions the rest of this document would otherwise leave open.
+A gate backfills rather than refuses, because a refusal needs a human to clear
+it and every such gate is a stop in an autonomous run. An assessment requires a
+different actor rather than a human one, because the property that matters is
+independence and an agent supplies it. The human is a collaborator in the loop,
+not a semaphore in it — and where this document does put a person in the path,
+that is a cost to be justified rather than a default.
+
 ### Mandatory means backfilled, not ordered
 
 The pipeline is a loop that can be entered at any point. A gate is mandatory
@@ -123,29 +138,56 @@ backfill, backfill. A protocol that refuses gets worked around, and then there
 is neither the gate nor the record of having skipped it, which is the condition
 this document exists to end.
 
-The one line an agent cannot deliver is the intent axis of a backfilled
-assessment. That is not a refusal but a handoff: the scene continues, and the
-other player has to say that line.
+The one thing an agent cannot deliver is an assessment of its own work. That is
+not a refusal but a handoff: the scene continues, and another player has to say
+that line.
 
 This is what separates a legal skip from an omission. A skipped step whose
 property was established another way and recorded is legal. An unrecorded skip
 is an omission however reasonable the judgment behind it was, because nothing
 distinguishes it from having forgotten.
 
-| Gate | Mandatory | The property it establishes |
-|---|---|---|
-| brainstorming | no | — |
-| assess | yes | the spec aligns to the codebase, to the architecture, and to the intended direction of the repository |
-| refinement | yes | the spec is decomposed into units of work; the document is now part of the architecture |
-| chain-review | yes | the units of work are ready to be iterated on |
-| execute | yes | the units of work are built |
-| review | yes | the delivery matches the decision and the code is sound |
-| postmortem | yes | friction and process decisions are captured |
+### Methods and judgments
 
-**Brainstorming is the one optional gate.** Its artifact is the spec, and a
-spec can be written without it. What is mandatory is that a spec exists, which
-every gate downstream enforces. Decision 0005 is the standing example: written
-directly as a placeholder, never brainstormed, and legitimately `proposed`.
+Gates are not alike, and the difference decides which are mandatory.
+
+A gate that **produces an artifact** is a method. Methods are optional: when
+the artifact arrives some other way, the method is skipped and nothing is owed
+for it. A gate that **produces a judgment** is mandatory, because nothing else
+produces it.
+
+| Gate | Kind | Mandatory | What must exist |
+|---|---|---|---|
+| brainstorming | method | no | the spec |
+| assess | judgment | **yes** | the spec aligns to the codebase, to the architecture, and to the intended direction of the repository |
+| refinement | method | no | acceptance — the decision that the work should be done |
+| chain-review | judgment | when a chain exists | the units of work are ready to be iterated on |
+| execute | method | no | the code |
+| review | judgment | **yes** | the delivery matches the decision and the code is sound |
+| postmortem | judgment | **yes** | friction and process decisions are captured |
+
+Three gates are mandatory outright. The rest are the ordinary way of producing
+something that must exist, and a document, an acceptance or a body of code that
+arrives another way satisfies them.
+
+**The case that fixes this is a finished pull request.** Code arrives fully
+formed and none of the pipeline ran. Execute's artifact exists, so execute is
+not owed. Nobody has judged whether the code aligns with anything, so assess is
+owed — and the spec is owed with it, because assess needs a subject. Entry is at
+review, and what gets backfilled is the assessment and the decision, not the
+work.
+
+**A chain is not backfilled.** Chain-review is vacuous when no chain exists, and
+creating one for finished work would duplicate git history to no purpose — the
+honest chain for a merged pull request is a single issue reading "merged PR",
+which records nothing git does not already hold. 0001 already says the chain is
+transient work state that nothing durable cites, with durable citations pointing
+at commits instead; this is that rule reaching its conclusion.
+
+**Acceptance survives the skip.** 0002 is the precedent already in the series:
+accepted with no chain, because acceptance is the decision that the work should
+be done, and refinement is how that decision is normally expressed rather than
+what makes it true.
 
 A single terminal checkpoint at milestone completion was considered and
 rejected. Backfilling at each gate surfaces a gap at the point where repair is
@@ -181,19 +223,36 @@ whether it happened.
 | Gate | Record |
 |---|---|
 | brainstorming | the spec document |
-| assess | the assessment, in the milestone body |
+| assess | `docs/assessments/<milestone>.md`, moved into the milestone body by refinement |
 | refinement | `state: accepted` written into the document; the issues |
 | chain-review | a checklist entry in the milestone body |
 | execute | commits carrying `Implements: NNNN` |
 | review | a checklist entry in the milestone body |
 | postmortem | `docs/postmortems/<milestone>.md`, attached with `milestone edit --postmortem` |
 
-**The assessment lives in the milestone body, written when refinement creates
-the milestone.** Refinement cannot paste an assessment it does not have, so the
-record is the assessment itself rather than an assertion that one was made.
-Skipping assess does not mean answering a question untruthfully; it means
-fabricating a gap analysis, which is more work than performing one and is
-reviewable afterwards.
+**Assess writes the assessment to `docs/assessments/`; refinement moves it into
+the milestone body.** This mirrors the postmortem exactly — written to the
+archive first, attached to the milestone second — and for the same reason. An
+assessment that exists only in conversation is lost at the first compaction or
+agent handoff, and this protocol instructs the orchestrator to compact between
+units of delivery. The gate's record cannot live in the context the protocol
+tells you to discard.
+
+The record is the assessment itself rather than an assertion that one was made.
+Refinement cannot paste an assessment it does not have, so skipping assess does
+not mean answering a question untruthfully; it means fabricating a gap
+analysis, which is more work than performing one and is reviewable afterwards.
+
+`docs/assessments/` must be reachable from `CONTRIBUTING.md`, or `git zhi docs
+check` reports every file in it unreachable.
+
+**Each milestone gets its own assessment.** A decision spanning several
+milestones is not assessed once and cited thereafter. The second assessment
+starts from the first plus the changes since, so the cost is a diff rather than
+a fresh analysis — and because it measures the codebase as it stands rather
+than checking whether a record has aged, it captures the influence of work that
+was never recorded at all. A dated reference can only report that it is old. An
+assessment reports what is there.
 
 This is possible because a milestone can carry a body. The architect prompt
 currently states the opposite — that there is "no flag, stdin, or `$EDITOR`
@@ -238,13 +297,23 @@ what backfill produces.
 This is the migration path, not a hypothetical. No milestone in this repository
 records an assessment.
 
-**In a backfilled assessment the intent axis is signed by the human, not by an
-agent.** The first two axes can be recovered from artifacts at any time: the
-code and the architecture are both present to compare. Intent cannot. Asking
-whether shipped work is the direction the repository should go, of the agent
-that shipped it, returns yes — the document and the code agree because the work
-made them agree. That is this repository's recorded failure mode, and the
-signature requirement is the guard against it.
+**An agent may not assess its own work.** Asking whether shipped work is the
+direction the repository should go, of the agent that shipped it, returns yes —
+the document and the code agree because the work made them agree. That is this
+repository's recorded failure mode.
+
+The constraint is self versus other, not human versus agent. A different agent
+satisfies it; a human is not required. This is the rule refinement already
+applies structurally to its SQE role, which never reads implementation code
+because a role that has not seen the code cannot write a test that merely
+restates it. The same isolation, applied to assessment.
+
+**And unlike a signature, it is checkable.** Worker identity from 0002 makes
+the actors on a milestone's work queryable — each issue carries `assigned`, and
+each transition carries an `actor`. An assessment records its own actor, and an
+assessment whose actor appears among the actors on the work it assesses is
+self-assessment and invalid. That is rung 2, where a rule about who signs a line
+of prose would have been rung 3 with no way to tell.
 
 ### Units of delivery and units of work
 
@@ -265,6 +334,25 @@ lenses over the diff after it finishes.
 |---|---|---|
 | coverage | `crochet:alignment` — does the chain cover the spec? | does the diff cover the decision? |
 | quality | `paad:pushback` — is the plan sound? | agentic code review and ponytail review |
+
+**The diff is the branch — `pu...HEAD`.** A milestone is a unit of delivery, a
+unit of delivery is a pull request, and a pull request's diff is its branch
+diff. git-zhi exposes no issue-to-commit linkage: neither `milestone show
+--format json` nor `issue show --format json` carries a commit or sha key, and
+reading `refs/zhi/` directly is forbidden. The alternatives are worse rather
+than merely unavailable — collecting commits by `Implements:` trailer inherits
+the trailer's soft spot and would miss exactly the untrailered commits most
+worth catching. The branch diff needs no new capability and is what a human
+reviewer looks at.
+
+**A milestone carries acceptance criteria, and review records them.** Criteria
+exist today on issues, which are units of work, and nowhere on the milestone,
+which is the unit of delivery; the architect's resolution command is pushed down
+into the final issue's criteria for want of anywhere else to put it. The
+decision's own acceptance criteria are the milestone's, and review verifies them
+against the branch and records the result in the milestone body. Without this,
+nothing checks a decision's criteria at the boundary where the decision is
+delivered.
 
 **Review runs to a fixed point.** Run the lenses, apply what they find, run
 again, until the findings stop changing. A single pass reports what one look
@@ -356,15 +444,27 @@ document while a content edit cannot.
   milestone cannot carry a body and that the CLI cannot store a resolution
   command. Store the resolution command with `milestone edit --resolution`
   rather than routing it through the final issue's acceptance criterion.
-- **`skills/assess/assess.md`**: define the cursory assessment and the three
-  axes, and state that the intent axis of a backfilled assessment is signed by
-  the human.
-- **`skills/review/review.md`** and **`commands/review.md`**: the new gate.
+- **`skills/assess/assess.md`**: write the assessment to
+  `docs/assessments/<milestone>.md` rather than presenting it only; define the
+  cursory form and the three axes; refuse to assess work whose actors include
+  the assessing actor.
+- **`skills/review/review.md`** and **`commands/review.md`**: the new gate —
+  two lenses over `pu...HEAD`, run to a bounded fixed point, verifying the
+  milestone's acceptance criteria and recording the result.
+- **`CONTRIBUTING.md`**: link `docs/assessments/`, or `git zhi docs check`
+  reports everything in it unreachable.
 - **`skills/chain-review/chain-review.md`**, **`skills/execute/execute.md`**,
   **`skills/postmortem/postmortem.md`**: record their checklist entries, and
   backfill the upstream artifacts their position requires.
-- **`skills/preflight/preflight.md`**: the pipeline gains a seventh step, and
-  the inference table gains the state "milestone exists, zero issues".
+- **`skills/preflight/preflight.md`**: the inference table becomes the
+  seven-gate state machine rather than a patched row. Its "all issues closed"
+  row currently reports the postmortem as the next gate, which would advise
+  skipping review at exactly the point review should run. The table also gains
+  the state "milestone exists, zero issues", which is refinement pending and is
+  presently merged into the pre-chain row.
+- **`skills/refinement/refinement.md`**: move the assessment from
+  `docs/assessments/` into the milestone body when creating the milestone, and
+  carry the decision's acceptance criteria onto the milestone.
 - **`CLAUDE.md`**, **`docs/architecture/plugin-structure.md`**,
   **`README.md`**: the pipeline ordering and the skills table.
 - **`xt/run.sh`**: whatever of this is checkable from the repository.
@@ -381,8 +481,14 @@ document while a content edit cannot.
 - [ ] the architect no longer denies that a milestone carries a body (`! grep -q 'no flag, stdin, or' skills/refinement/architect-prompt.md`)
 - [ ] the architect stores the resolution command on the milestone (`grep -q 'milestone edit .*--resolution' skills/refinement/architect-prompt.md`)
 - [ ] refinement backfills an assessment when none exists (`grep -q 'cursory assessment' skills/refinement/refinement.md`)
-- [ ] assess defines the cursory form and who signs intent (`grep -q 'cursory' skills/assess/assess.md`)
-- [ ] decision numbering stays sequential (`git zhi docs check`)
+- [ ] assess defines the cursory form (`grep -q 'cursory' skills/assess/assess.md`)
+- [ ] assess writes the assessment to the archive (`grep -q 'docs/assessments' skills/assess/assess.md`)
+- [ ] assess refuses to assess its own actor's work (`grep -q 'own work' skills/assess/assess.md`)
+- [ ] the archive is reachable, so docs check can see it (`grep -q 'docs/assessments' CONTRIBUTING.md`)
+- [ ] review reads the branch diff (`grep -q 'pu\.\.\.HEAD' skills/review/review.md`)
+- [ ] review verifies the milestone's acceptance criteria (`grep -q 'acceptance criteria' skills/review/review.md`)
+- [ ] review bounds its fixed-point loop (`grep -q 'fixed point' skills/review/review.md`)
+- [ ] nothing in the repository is unreachable or misnumbered (`git zhi docs check`)
 
 ## Open Questions
 
