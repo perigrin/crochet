@@ -88,8 +88,24 @@ So this introduces a second relation:
 - **`amended-by:`** — its mirror, written into the amended document.
 
 Both are written in one commit, like `supersedes`/`superseded-by`, and checked
-by the same symmetry rule. They pass 0001's field test: each answers where a
-document stands and what it connects to, not what kind of thing it is.
+by the same symmetry rule. They pass 0001's field test:
+each answers where a document stands and what it connects to, not what kind of
+thing it is.
+
+**Presence differs from the pair it mirrors, deliberately.** `supersedes` and
+`superseded-by` are required by 0001 and written empty when unused, because
+they are the series' core vocabulary and a reader should see the concept on
+every entry. `amends` and `amended-by` are written only when the relation
+exists; an entry that amends nothing omits the key rather than carrying
+`amends: []`.
+
+That is not the `covers: []` mistake in another costume, and the distinction is
+worth stating because it is easy to over-apply. An empty `covers:` was a
+problem because something *read* it: the drift sensor consumed the list and
+went blind on an empty one, so the emptiness was load-bearing and silent. An
+empty `supersedes:` is inert — nothing computes from it, and the symmetry check
+skips it. The test is not whether a field can be empty. It is whether anything
+depends on it being non-empty.
 
 The distinction is observable rather than stylistic. After supersession the old
 document is not in force. After amendment it is, minus the amended rule — which
