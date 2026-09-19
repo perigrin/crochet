@@ -112,6 +112,19 @@ if [ -d "$DEC" ]; then
     link_check amends amended-by
 fi
 
+# ------------------------------------------------- decisions cite symbols
+# A decision names a symbol, never a line: line numbers decay silently, and a
+# citation into another repository has no check anywhere in the world. The
+# reasoning is in docs/contributing/coding-conventions.md.
+if [ -d "$DEC" ]; then
+    for f in "$DEC"/*.md; do
+        [ -f "$f" ] || continue
+        for h in $(grep -oE '[A-Za-z0-9_./-]+\.(go|md|json|sh|ya?ml):[0-9]+(-[0-9]+)?' "$f" | sort -u); do
+            note "${f#"$ROOT"/} cites a line number, not a symbol: $h"
+        done
+    done
+fi
+
 # -------------------------------------------------------------- self-test
 # The runner must be able to fail. A guardrail that silently stopped firing
 # has failed open, and you stopped watching for what it caught.

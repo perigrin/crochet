@@ -60,6 +60,26 @@ imitation, which meant every agent that met it decided again.
   exist on `$PATH` and no longer dispatch, so `git zhi <sub> --help` answers the
   real question where `test -x` does not.
 
+## Citing code from a decision
+
+A decision names a symbol, never a line. `Graph.headForActor`, `ReadySet`, the
+`no actionable issues for actor` error — each of those survives an edit above it
+and can be found with a grep. `graph.go:439-444` decays the moment anything
+shifts, and decays *silently*, because nothing reads a decision at build time.
+
+**This matters most across a repository boundary.** A citation into git-zhi's
+tree cannot be checked from here at all: `xt/run.sh` and `git zhi docs check`
+observe this repository, so a line number pointing into another one has no check
+anywhere. Three separate assess passes over `0002-worker-identity.md` found
+stale git-zhi citations — one of them naming a call the function no longer
+makes — a decision describing a codebase that had moved out from under it.
+
+Where a claim is behavioural rather than structural, name the version it was
+observed on, as in "Observed on 0.6.0". That tells a reader what to re-run
+rather than what to re-read. `xt/run.sh` rejects a `file:line` citation under
+`docs/decisions/`; the version marker stays convention, because nothing here can
+verify another repository's behaviour.
+
 ## Naming and prose
 
 Names are evergreen: nothing is `new`, `improved` or `enhanced`, because what is
