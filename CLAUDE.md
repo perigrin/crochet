@@ -1,5 +1,5 @@
-<!-- ABOUTME: Claude Code configuration for the crochet plugin project. -->
-<!-- ABOUTME: Documents architecture, pipeline, conventions, and superpowers/paad integration. -->
+<!-- ABOUTME: The agent's door onto crochet's live documentation layer. -->
+<!-- ABOUTME: Imports the live documents rather than restating them; holds only what is agent-specific. -->
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -8,89 +8,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Crochet is a Claude Code plugin — an intelligence layer for
 [git-zhi](https://github.com/perigrin/git-zhi). It provides skills that drive
-an SDLC pipeline: assess a PRD against a codebase, decompose it into an
-executable chain of issues, review the chain for quality, execute issues via TDD
-with review gates, and run retrospectives at milestone completion.
+an SDLC pipeline: assess a spec against a codebase, decompose it into an
+executable chain of issues, review the chain for quality, execute issues via
+TDD with review gates, and run retrospectives at milestone completion.
 
-Crochet interacts with chain state exclusively through `git zhi` CLI commands.
-It never accesses `refs/zhi/` directly.
+## The live layer
 
-## Architecture
+@docs/architecture/plugin-structure.md
+@docs/contributing/coding-conventions.md
+@docs/contributing/development-workflow.md
 
-### Plugin Structure
+Those three are imported rather than pointed at. For an agent an import is
+static linking; "see CONTRIBUTING.md" is a dynamic lookup that may not happen.
+They are also the three documents `git zhi docs health` watches, so a claim in
+any of them that drifts from the code it covers is detectable rather than
+merely wrong.
 
-```
-.claude-plugin/plugin.json   — plugin manifest (name, version, skill/command dirs)
-skills/<name>/<name>.md      — skill definitions (the LLM instructions)
-skills/<name>/*.md           — supporting files (agent prompts, templates, procedures)
-commands/<name>.md            — user-invocable command stubs that delegate to skills
-```
+Nothing from `docs/decisions/` or `docs/postmortems/` is imported. Those are
+archive — true as of their date, read when a question about *why* arises, and
+not worth carrying in every agent's context.
 
-A **skill** is a markdown file with YAML frontmatter (`name`, `description`)
-followed by instructions the LLM follows. A **command** is a thin stub with a
-`description` in frontmatter and a one-line delegation: "Use the crochet:<name>
-skill to handle this request."
+## Working here as an agent
 
-### SDLC Pipeline (strict order)
+- **Read the live layer above before changing a skill.** It is imported, so it
+  is already in context; the conventions and the validation model live there,
+  not here.
+- **All chain interaction goes through the `git zhi` CLI.** Never read or write
+  `refs/zhi/` directly.
+- **Probe for a capability rather than testing for a filename.** A stale
+  symlink can sit on `$PATH` and no longer dispatch, so `git zhi <sub> --help`
+  answers the real question where `test -x` does not.
+- **Observation beats inference.** Where a skill asserts how the CLI behaves,
+  that assertion should come from running the command in a scratch repository,
+  not from another document that says so.
+- **Update a live document before the change it describes**, in the same
+  commit. The reasoning is in
+  `docs/decisions/0001-documentation-architecture.md`.
+- **Every commit implementing a numbered decision carries its trailer** —
+  `Implements: NNNN` — in the final trailer block, where git parses it as a
+  trailer rather than as prose.
+
+## The pipeline
 
 ```
 superpowers:brainstorming → crochet:assess → crochet:refinement → crochet:chain-review → crochet:execute → crochet:postmortem
 ```
 
-Each step is a gate — do not proceed until the current step passes.
-
-### Skill Roles
-
-**Pipeline skills** drive the SDLC sequence. **Infrastructure skills**
-(install, preflight, crochet:verify, onboard) set up the environment. **Support skills**
-(import, report) serve auxiliary workflows.
-
-### crochet:refinement Agent Roles
-
-Refinement dispatches four sequential agent roles, each with its own system
-prompt in `skills/refinement/`:
-
-1. **Architect** (`architect-prompt.md`) — reads spec + codebase, creates milestone
-2. **Decomposer** (`decomposer-prompt.md`) — breaks spec into issues with deps, TDD steps, positive ACs
-3. **SQE** (`sqe-prompt.md`) — adds negative scenarios (never sees implementation code)
-4. **Tech Writer** (`techwriter-prompt.md`) — adds doc update steps and standalone doc issues
-
-### crochet:execute Loop Structure
-
-Execute has two nested loops:
-- **Inner loop:** Ralph Loop (iterative TDD cycle per issue) with `/simplify` as inner gate
-- **Outer loop:** Sanbao gate analysis determines review tier, then PAAD skills (alignment, architecture, review) validate. Up to 3 reopen cycles per issue.
-
-### Superpowers/PAAD Integration
-
-Crochet builds on top of superpowers and paad when they are installed.
-See `docs/plans/2026-03-28-superpowers-paad-integration-design.md` for the
-full design.
-
-**Conditional reference pattern:** Each integration point checks
-"If `<skill>` is available" (via the capabilities manifest at
-`.claude/crochet/capabilities.json`). When available, delegate to the skill.
-Otherwise, use inline fallback behavior. Crochet never reimplements what
-superpowers or paad already provides.
-
-## Conventions
-
-- Every skill file starts with YAML frontmatter: `name` and `description`
-- Every skill's Prerequisites section checks `which git-zhi` and directs to `crochet:install` if missing
-- All chain interaction through `git zhi` CLI — never access `refs/zhi/` directly
-- Skills are idempotent: re-invoking on partial state resumes from current chain state
-- Every skill states its own prerequisite inline. There is no include mechanism in this format, so no shared block exists to reference
-
-## Working in This Repo
-
-There is no build step and no compiled output; the deliverables are markdown
-skill files. There is a product check at `t/git-zhi-subcommands.sh`, which
-asserts that every `git zhi` subcommand the skills name really exists. Changes are validated by reading the skill, checking its
-internal consistency (do the steps reference real `git zhi` subcommands?), and
-verifying the command stub delegates correctly.
-
-When adding a new skill:
-1. Create `skills/<name>/<name>.md` with frontmatter
-2. Create `commands/<name>.md` that delegates to it
-3. Update `README.md` skills table
-4. Update `.claude-plugin/plugin.json` description if the skill changes the plugin's scope
+Each step is a gate. Asking for refinement against a proposed decision is what
+accepts it; see `docs/decisions/0003-acceptance-by-refinement.md`.
