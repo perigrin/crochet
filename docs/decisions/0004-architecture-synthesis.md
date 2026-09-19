@@ -71,15 +71,31 @@ citations sit at the claim so that correspondence is visible where it applies.
 was decided cannot be established by counting citations: a document listing
 every decision's headings at the bottom would satisfy any such count while
 reflecting none of them. That is the vacuous pass this repository keeps finding,
-and building it into the gate that guards against it would be the seventh
-instance.
+and building it into the gate meant to guard against it would be another
+instance of it.
 
-The judgment has a gate already. `crochet:assess` analyses a spec against the
-codebase and reports what is missing, partial, or already true. Run with the
-decision series as the spec and `ARCHITECTURE.md` as the subject, it answers the
-completeness question directly — the table in the problem statement above is
-what its Missing section produces. **Completeness is assess's standing
-obligation, re-run when a decision is accepted, not a one-time migration.**
+Three existing mechanisms carry it instead, and only one of them is a check.
+
+**Doc-first carries completeness, and it is the primary mechanism.** 0001
+requires the live document to be updated in the same pull request as the change
+it describes. Under this decision the synthesis *is* what the live document
+claims, so a decision's implementing pull request updates `ARCHITECTURE.md` too.
+That makes an unreflected decision unreachable rather than detectable, which is
+0001's own argument for the rule: "every other check in this proposal is
+detection after the fact". The ten absences above exist because doc-first never
+applied here — synthesis was not the document's contract, so there was nothing
+for it to bite on.
+
+**Assess carries correctness.** `ARCHITECTURE.md` is a spec file under
+`crochet:assess`'s own criteria: its claims are capabilities, constraints and
+behaviours the system must exhibit, which is what assess reads a spec for. Run
+with `ARCHITECTURE.md` as the spec and the codebase as the subject, it reports
+where the document asserts something the code does not do. That is assess
+operating exactly as specified, in its ordinary direction.
+
+**The citation check is the backstop**, and a weak one: it catches a decision
+ignored wholesale and nothing finer. It is written down as weak so that a pass
+is never read as evidence of a complete synthesis.
 
 ### Sections
 
@@ -153,19 +169,23 @@ is a pointer for a reader who wants why, not a claim on anyone's context.
 
 ## Scope of Change
 
-**git-zhi, first.** `docs health` is bound to `docs/` in two places, and both
-must reach the repository root before this decision can be implemented without
-losing what it depends on:
-
-- it walks `docs/` for documents carrying `covers:`, so a root document is
-  watched by nothing. Observed on 0.6.0: a root file with `covers:` identical to
-  a watched one is absent from the report.
-- it reports a coverage gap for code with no corresponding file in
-  `docs/architecture/`. With that directory removed the gap becomes permanent
-  and false.
+**git-zhi, first, and it is one change rather than two.** `docs health` walks
+`docs/` for documents carrying `covers:`, so a root document is watched by
+nothing. Observed on 0.6.0: a root file whose `covers:` is identical to a
+watched one is absent from the report entirely. Until that reaches the
+repository root, `ARCHITECTURE.md` ships unwatched and this decision loses the
+drift detection it depends on.
 
 Not crochet's to write, named here rather than assumed, and the floor in
 `.claude-plugin/plugin.json` moves once when it ships.
+
+*A second path-binding exists and does not block this.* `docs health` reports a
+coverage gap for code with no corresponding file in `docs/architecture/`, so
+removing that directory would make the gap permanent in a repository that has
+`internal/` packages. Crochet has none, and its health report today names no
+coverage gaps. Worth reporting to git-zhi as a limitation of the same shape;
+not a prerequisite here, and listing it as one would inflate a cross-repo ask
+for a condition this repository cannot reach.
 
 **`ARCHITECTURE.md`.** The synthesis, at the repository root, carrying `covers:`
 and `stability:` as a live document, with the generated decision block.
