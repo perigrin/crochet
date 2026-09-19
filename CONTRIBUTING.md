@@ -9,6 +9,7 @@ that ship.
 - [Architecture](docs/architecture) — what crochet is and how its parts fit
 - [Contributing guides](docs/contributing) — coding conventions and development workflow
 - [Decisions](docs/decisions) — the numbered decision archive, and why things are as they are
+- [Assessments](docs/assessments) — what each decision was assessed against, and by whom
 - [Postmortems](docs/postmortems) — milestone retrospectives
 - [Plans](docs/plans) — pre-series design and implementation documents, frozen and cited by path
 
