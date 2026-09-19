@@ -24,7 +24,7 @@ and beneath it: "Today the second is an event with no record in the document."
 Both lines are wrong, and they are wrong in the way 0001 exists to prevent.
 
 **The event is misidentified.** By the time chain-review runs, a milestone and
-seventeen issues exist. The decision to build was taken before any of that,
+sixteen issues exist. The decision to build was taken before any of that,
 when an independent assessment found the document sound. Placing acceptance at
 execute puts it after the work it authorises.
 
@@ -326,9 +326,15 @@ in a skill file where it would be a mechanism nobody agreed to. It is also the
 entry condition for the pipeline — a policy question is what makes a decision
 document owed in the first place.
 
-**Refinement records the acceptance; it does not make it.** Writing
+**Whichever gate observes the fixed point records it.** Writing
 `state: accepted` into the document is the durable trace of a judgment already
 reached, which is why that write can happen without asking for confirmation.
+Refinement does it in nominal position; review does it when review is the gate
+that backfilled the assessment. Tying the write to refinement alone would leave
+a decision `proposed` forever on the finished-pull-request path, where no chain
+is built and refinement never runs — and `xt/run.sh` would then report its
+`Implements:` commits as a skipped gate, firing on a path this document declares
+legal.
 
 A single terminal checkpoint at milestone completion was considered and
 rejected. Backfilling at each gate surfaces a gap at the point where repair is
@@ -349,8 +355,15 @@ postmortem.
 
 ### The records
 
-**Assess writes the assessment to `docs/assessments/`; refinement moves it into
-the milestone body.** This mirrors the postmortem exactly — written to the
+**Assess writes the assessment to `docs/assessments/`; refinement copies it into
+the milestone body.** Copies, not moves. The archive file is the durable record
+and stays — it holds the census of who looked, what each raised and what each
+released, which is the evidence that acceptance happened at all. The milestone
+body is a convenience for the gates that read the chain, and the document says
+elsewhere that a milestone body exists in one clone; the record of a decision
+cannot live only there. Two copies is the accepted cost, and unlike the case
+0001 rejects for `Implements:`, they are written together by one actor rather
+than declared twice. This mirrors the postmortem exactly — written to the
 archive first, attached to the milestone second — and for the same reason. An
 assessment that exists only in conversation is lost at the first compaction or
 agent handoff, and this protocol instructs the orchestrator to compact between
@@ -438,6 +451,13 @@ SQE's independence coming from never having read the implementation.
 context, so it carries the same reasoning that produced the work and reaches the
 same conclusions through a different process. Independence of actor without
 independence of context buys nothing.
+
+**Assessors persist across rounds and are resumed by name.** Only the agent that
+raised a finding may release it, so a round that replaces its assessors cannot
+reach a fixed point — the previous round's findings would have nobody left to
+release them, and the clerk may not infer a release. Each round therefore
+resumes the assessors already sitting and may add new ones; adding is how the
+meeting grows, substituting is how it forgets.
 
 **And the rule stays checkable as a backstop.** A skill file is an instruction,
 not a constraint — an agent can assess inline instead of dispatching, so the
@@ -646,7 +666,7 @@ rather than empty. The relation is already in use — 0001 carries
 - [ ] review verifies the milestone's acceptance criteria (`grep -q 'acceptance criteria' skills/review/review.md`)
 - [ ] review bounds its fixed-point loop (`grep -q 'fixed point' skills/review/review.md`)
 - [ ] the postmortem audits autonomy-stealing friction (`grep -q 'autonomy' skills/postmortem/postmortem.md`)
-- [ ] the postmortem locates where a human entered the loop (`grep -q 'human:' skills/postmortem/postmortem.md`)
+- [ ] the postmortem asks what would have let the agent proceed (`grep -q 'let the agent proceed' skills/postmortem/postmortem.md`)
 - [ ] nothing in the repository is unreachable or misnumbered (`git zhi docs check`)
 
 ## Open Questions
@@ -657,10 +677,6 @@ rather than empty. The relation is already in use — 0001 carries
   that is the read-alone principle: a fully derived status shows nothing about
   where a decision stands to someone reading it on a web view with no shell.
   Recorded as open; not proposed here.
-- Whether a decision may be accepted while a decision it amends or depends on
-  is still `proposed`. The ordering rule is stated nowhere and was nearly
-  violated with 0004 against this document. It is checkable at the moment
-  `state: accepted` is written.
 - How far backfill can carry a delivery before the result is worthless. Every
   gate backfilled cursorily at the postmortem is legal under this protocol and
   is obviously not the intent. The candidate answer is that no bound is needed
