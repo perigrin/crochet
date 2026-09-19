@@ -56,16 +56,29 @@ document and reports the same green.
 
 ### Why this is not simply a third manifest entry
 
-The detection mechanism does not reach it. Preflight builds its map by comparing
-`superpowers:*` and `paad:*` **skill names** against the manifest, because a
-skill is a nameable thing the runtime advertises. Ponytail is not a skill. It is
-a hook that installs a standing behavioural instruction, and a hook does not
-appear in a skill list.
+Ponytail is two things, and only one of them is out of reach.
 
-Two plugins expose capabilities that can be called; the third changes how
-everything is written. Integrating the third is therefore a different problem
-from the one the conditional pattern was built for, not a wider application of
-it.
+**Its skills are ordinary and detectable.** Ponytail 4.10.0 ships six of them —
+`ponytail`, `ponytail-audit`, `ponytail-debt`, `ponytail-gain`, `ponytail-help`
+and `ponytail-review` — and the runtime advertises them by name, so preflight's
+existing comparison of `superpowers:*` and `paad:*` skill names reaches
+`ponytail:*` unchanged. Nothing new is needed to call one.
+
+An earlier draft of this document said the opposite, and the inference is worth
+recording because it is easy to repeat: ponytail's `plugin.json` declares
+`hooks` and nothing else, so reading the manifest suggests there are no skills.
+Claude Code discovers a plugin's `skills/` directory regardless of whether the
+manifest mentions it. The manifest is not the inventory.
+
+**Its hook is the part that is genuinely different.** The hook installs a
+standing behavioural instruction — it changes how everything is written rather
+than exposing something to call — and no skill list reports whether it is
+active. That is a real detection gap, and it is the one this decision has to
+solve.
+
+So the problem is narrower than it looked. Two plugins expose capabilities that
+can be called; the third does that *and* changes the disposition of the agent
+doing the calling. The conditional pattern covers the first half already.
 
 ## Proposal
 
