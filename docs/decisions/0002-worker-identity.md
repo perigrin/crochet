@@ -64,10 +64,15 @@ enabling `extensions.worktreeConfig`, which makes `core.bare` and
 `core.worktree` per-worktree for every consumer of the repo. That is a large
 blast radius for an identity string.
 
-The value is `type:id`, which `actor.ParseActor` already accepts: `agent:` and
-`human:` are recognised, and a bare string defaults to human. Agents therefore
-state what they are, rather than being inferred from whether an email address
-contains "agent" or "bot".
+The value is `type:id`. `actor.ParseActor` already recognises `agent:` and
+`human:`, and defaults a bare string to human — but git-zhi ADR 0003 refuses a
+bare string at this boundary rather than defaulting it, and that is the right
+call. The leniency is load-bearing for values already stored and for flags; at
+the point a *new* identity enters the system it would record agents as humans,
+silently. That is the fail-open shape of today's four sensors, arriving at a
+trust boundary, which is the one place guessing is expensive. Agents state what
+they are rather than being inferred from whether an email address contains
+"agent" or "bot".
 
 No config key is added. A `zhi.actor` key would cover a persistent worker
 configured once, and every worker this decision describes is minted per run and
@@ -85,11 +90,17 @@ rejected: it attributes the author's work to invented agents permanently, in
 blame, `git log` and contributor statistics. Chain identity and commit identity
 are different facts, and git already keeps them in separate places.
 
-**Identity is fixed for the life of a process.** `AuthorInfo()` returns values
-captured when the Store is created, and `ZHI_ACTOR` is read the same way. A
-worker cannot change who it is mid-run. This is a constraint worth choosing: a
-worker that can rename itself makes the transition log unreliable as a record
-of who did what.
+**Identity is fixed for the life of a worker — by crochet's discipline, not by
+git-zhi's guarantee.** An earlier draft claimed the tool enforced this. It does
+not: ADR 0003 places an explicit `--actor` flag *above* the environment
+variable, so any single invocation can declare a different identity. That flag
+is right, because an ambient environment variable is invisible in the command
+that ran, and an explicit value should always be able to win.
+
+So the constraint moves to this side. `crochet:execute` exports the identity
+once when it creates a worker's worktree and never passes `--actor`. A worker
+that renames itself mid-run makes the transition log unreliable as a record of
+who did what — and nothing in the tool prevents that. The orchestrator does.
 
 ### The execute loop
 
