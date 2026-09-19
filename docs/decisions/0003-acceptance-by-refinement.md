@@ -208,20 +208,34 @@ nothing further is visible.
 sense of the meeting: what remains when the objections are exhausted. Four
 things follow, and they are the rules that make "fixed point" precise.
 
-- **Nothing is counted.** A majority of favourable assessments is not
-  acceptance, and a single participant is not a quorum. Independence is a
-  property of how many separate judgments were made, not of the authority of any
-  one of them.
-- **One unresolved objection prevents acceptance.** An agent that still holds a
-  finding blocks, however many others are satisfied. This is what makes the
-  fixed point meaningful rather than a count of rounds.
-- **An agent may stand aside.** Recording a concern without blocking is a
-  distinct act from blocking, and the difference is stated rather than inferred.
-  A standing-aside concern is written down; it is a known cost, not an
-  unresolved objection.
-- **Silence is assent only after consideration.** An agent that was not asked,
-  or was working on something else, has not agreed. Absence of objection counts
-  only from a participant who actually looked.
+- **Nothing is counted.** "Our decisions do not rely on majority rule, but
+  rather on a unity found through calm attention to the Light Within." A
+  majority of favourable assessments is not acceptance, and a single participant
+  is not a quorum. Independence is a property of how many separate judgments
+  were made, not of the authority of any one of them.
+- **Unity is not unanimity.** "Sense of the meeting is the understanding of
+  where the gathered body is led and does not mean that every individual present
+  is completely satisfied or in total agreement." The fixed point is not every
+  assessor pronouncing itself content.
+- **An agent may stand aside** — record a concern while agreeing the decision
+  should proceed. Standing aside "is an acknowledgement that the action being
+  taken is how the meeting is led at this time". It is written down as a known
+  cost, not carried as an open objection.
+- **An agent may stand in the way, and that is not a veto.** "An individual
+  never has the power to prevent the meeting from acting. A concern, however,
+  may have enough weight to cause the meeting either to hold the matter over for
+  further discernment or to abandon the action entirely." Weight decides, not
+  count — and the weighing belongs to the meeting.
+- **Where Friends are not clear, the outcome is a minute of exercise** — a
+  record that "states the various perceptions in the meeting on a given matter".
+  Irreconcilable assessments produce that rather than a forced unity or a silent
+  deadlock, and it is a legitimate outcome: the decision does not proceed, and
+  the reasons are on the record instead of in someone's memory.
+
+One rule here is not borrowed. **Silence is assent only after consideration** —
+an agent that was not asked, or was working on something else, has not agreed.
+Absence of objection counts only from a participant that actually looked, which
+is why the census records who did not.
 
 **The accepting agent is never the author, structurally.** Assess is dispatched
 to a fresh subagent, so the judgment comes from an actor that did not write the
@@ -258,13 +272,37 @@ What the clerk produces:
 - **Block or standing-aside, as stated.** An assessor still holding a finding
   blocks; one recording a concern and releasing it stands aside. The assessor
   declares which; the clerk writes it down rather than inferring it.
-- **The outcome.** Unity, when nothing new was raised and nothing is
-  outstanding — the fixed point, and the acceptance. Otherwise another round is
-  owed, or the meeting produced a decline. Whichever it is, it is named and
-  recorded rather than left for a reader to infer.
+- **The outcome, as a draft.** Unity, when the assessments have converged — the
+  fixed point, and the acceptance. Otherwise: another round owed, a decline, or
+  a minute of exercise where the perceptions did not reconcile. Whichever it is,
+  it is named and recorded rather than left for a reader to infer.
+
+**But the clerk's naming is not final — the assessors confirm it.** The role is
+borrowed from Quaker practice, and the source is explicit that the clerk does
+not own the outcome:
+
+> The meeting places upon its clerk a responsibility for spiritual discernment
+> so that he or she may watch the growth of the meeting toward unity … the final
+> decision about whether the minute represents the sense of the meeting is the
+> responsibility of the meeting itself, not of the clerk.
+>
+> — Britain Yearly Meeting, *Quaker faith & practice*, 3.07
+
+So the clerk drafts the outcome and the assessors say whether it records what
+happened. That is the same rule as an assessor releasing its own finding,
+applied one level up: the clerk cannot declare unity at a meeting that does not
+recognise itself in the minute.
 
 Nothing here counts heads. The clerk reports that objections are outstanding or
 that none are; it never reports that most assessors were content.
+
+The borrowing is of a governance mechanism, not of a faith. What crochet takes
+is the structure — no voting, unity as the absence of remaining objection, a
+clerk who discerns without deciding, and the distinction between blocking and
+standing aside. *Quaker faith & practice* 3.12 describes clerkship as requiring
+"a spiritual capacity for discernment and sensitivity to the meeting"; an agent
+brings neither, which is why this design gives the clerk a census to take rather
+than a sense to feel.
 
 **The authorship bar does not bind the clerk**, since a role with no view on the
 document cannot self-judge one. A clerk who is not the author is still
@@ -640,3 +678,17 @@ rather than empty. The relation is already in use — 0001 carries
   recorded, and where the mechanism for review's second lens should be settled.
 - `pages/repo-documentation-architecture.md` in perigrin's commonplace book,
   where the ruling was made.
+- New England Yearly Meeting, *Faith and Practice*, "Corporate Discernment in
+  Meetings for Business" — the source of unity-without-unanimity, standing aside
+  against standing in the way, the rule that no individual can prevent the
+  meeting acting, and the minute of exercise.
+  <https://neym.org/faith-and-practice/decision-making>
+- Britain Yearly Meeting, *Quaker faith & practice*, 3.07 "The sense of the
+  meeting" and 3.12 "Clerkship" — the clerk's role in discernment, and the rule
+  that the outcome belongs to the meeting rather than to the clerk.
+  <https://qfp.quaker.org.uk/passage/3-07/> and
+  <https://qfp.quaker.org.uk/passage/3-12/>
+
+Both are unprogrammed bodies. Passage numbering and wording vary between yearly
+meetings, so each quotation names its source rather than being offered as
+Quaker practice in general.
