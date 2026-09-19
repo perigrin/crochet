@@ -19,8 +19,10 @@ clone.
 ## Checks
 
 ```bash
-git zhi docs check     # reachability, dead links, decision numbering, covers paths
-git zhi docs health    # drift between a document's covers: paths and their churn
+sh t/git-zhi-subcommands.sh   # every git zhi subcommand the skills name exists
+sh xt/run.sh                  # the repo does what this document claims of it
+git zhi docs check            # reachability, dead links, decision numbering, covers
+git zhi docs health           # drift between a document's covers: paths and churn
 ```
 
 What each check enforces is written in the check, not restated here.

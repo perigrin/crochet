@@ -44,7 +44,20 @@ order, cheapest first:
    the flags beneath it have moved, and a companion invoked by hyphenated name
    stopped dispatching in v0.5.0 while the stale symlink kept answering.
 
-4. **Check the documentation structure.**
+4. **Run the project checks.**
+
+   ```bash
+   sh xt/run.sh
+   ```
+
+   These ask whether the repo does what this document claims of it: the
+   product check above, `git zhi docs check`, no live document declaring a
+   `covers:` list and naming nothing, and symmetric links between decisions.
+   It ends by running itself against `xt/fixture`, which is broken on purpose
+   — a runner that can no longer fail has failed open, and you would stop
+   watching for what it caught.
+
+5. **Check the documentation structure directly** when you want the detail.
 
    ```bash
    git zhi docs check     # reachability, dead links, decision numbering, covers paths
