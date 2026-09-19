@@ -5,6 +5,7 @@ author: Chris Prather
 date: 2026-09-18
 supersedes: []
 superseded-by: []
+amended-by: [0003]
 ---
 
 # 0001: Documentation architecture

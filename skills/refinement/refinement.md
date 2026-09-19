@@ -60,6 +60,22 @@ Before any agent runs:
 4. Check if `CLAUDE.md` exists. If not, create one that imports the live layer
    rather than referring to it.
 
+### Step 1.5: Record Acceptance
+
+If the spec is a decision under `docs/decisions/` whose frontmatter says
+`state: proposed`, set it to `state: accepted` now, before dispatching the
+architect.
+
+Asking for refinement *is* the acceptance: nobody spends four agent roles on a
+proposal they have not decided to build, so the expenditure is the commitment.
+This step is what leaves a trace of it. Do not ask for confirmation — the
+request to refine was the decision, and asking again would turn a side effect
+back into a ceremony.
+
+Leave any other `state:` value alone. A decision already `accepted` stays so,
+and one that is `declined` or `superseded` should not be refined at all —
+surface that and stop.
+
 ### Step 2: Architect Agent
 
 **System prompt:** `architect-prompt.md`
