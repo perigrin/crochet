@@ -116,6 +116,17 @@ quality, and continues. Work that arrives half-built and undocumented is a
 legal entry point rather than a violation; what is not legal is finishing
 without the artifacts.
 
+**A workflow is improv: you rarely refuse, you "yes, and".** Accept the state
+you are handed and add what the requirements need. This is the rule that
+decides the ambiguous cases — when it is unclear whether to block or to
+backfill, backfill. A protocol that refuses gets worked around, and then there
+is neither the gate nor the record of having skipped it, which is the condition
+this document exists to end.
+
+The one line an agent cannot deliver is the intent axis of a backfilled
+assessment. That is not a refusal but a handoff: the scene continues, and the
+other player has to say that line.
+
 This is what separates a legal skip from an omission. A skipped step whose
 property was established another way and recorded is legal. An unrecorded skip
 is an omission however reasonable the judgment behind it was, because nothing
@@ -395,7 +406,12 @@ document while a content edit cannot.
   `state: accepted` is written.
 - How far backfill can carry a delivery before the result is worthless. Every
   gate backfilled cursorily at the postmortem is legal under this protocol and
-  is obviously not the intent. Nothing here bounds it.
+  is obviously not the intent. The candidate answer is that no bound is needed
+  because none can be a refusal: a delivery built on cursory artifacts gives the
+  closing review more to find, so its fixed point takes more iterations or fails
+  to converge, and non-convergence is already reported. The cost of skipping is
+  paid at review rather than at a gate that says no. Recorded as a candidate
+  rather than settled, because it has not been observed.
 
 ## References
 
