@@ -285,16 +285,46 @@ unused layer and a false claim about it are the same finding wearing two faces.
 
 ## Scope of Change
 
-**git-zhi.** Resolve the transition actor from `ZHI_ACTOR`, falling back to
-`DeriveActor(AuthorInfo())`. This is the dependency this decision cannot
-satisfy alone, named here rather than assumed.
+Two changes in git-zhi, sequenced, then three here. Locations are given
+because a decision that names a symptom without naming where the work lands
+decomposes into a plausible chain that fixes the reported half.
+
+**git-zhi, first: the exclusion defect.** `ReadySet` treats a dangling upstream
+as satisfied — `internal/graph/graph.go:318-321`, the `if !ok { continue }` —
+and `headForActor` feeds it a sub-graph built from filtered input at
+`graph.go:424-434`. Filter the ready set rather than the input, so the graph
+keeps every issue and blockers outside the filter still constrain readiness.
+
+*The part not visible from the symptom:* `headForActor` ends
+`return sub.headGlobal()` (`graph.go:446`). Fixing `ReadySet` leaves that call
+resolving over a graph the exclusion must be threaded through separately, or it
+returns an issue held by another worker. A fix that addresses only the
+reproduction ships half the defect.
+
+git-zhi's own `docs/contributing/coding-conventions.md` already states the rule
+this violates: anything derived from the graph comes back unfiltered, and every
+display filter has to be re-applied to it.
+
+**git-zhi, second: the identity.** Resolve the transition actor from
+`ZHI_ACTOR`, falling back to `DeriveActor(AuthorInfo())`. The two write sites
+are `internal/cli/issue_edit.go:300-301` and `:1534-1535`. Refuse a value
+carrying no `agent:`/`human:` prefix rather than defaulting it, per git-zhi
+ADR 0003. Sequenced second because it is what makes the first defect reachable:
+single-actor use never exercises the filtered sub-graph.
+
+Neither is crochet's to write. Both are named here rather than assumed, and
+the floor in `.claude-plugin/plugin.json` moves once when they ship.
 
 **`skills/execute/execute.md`.** Select with bare `git zhi next`, identity
-supplied by the environment; mint
-`ZHI_ACTOR` when creating each agent's worktree; assign only unassigned issues;
-clear assignments matching the run's own id pattern at start-up; dispatch no
-more workers than `wip_limit` permits; treat `no actionable issues for actor`
-as completion.
+supplied by the environment. Mint `ZHI_ACTOR` **at dispatch**, not at worktree
+creation — `execute.md:109-118` only *prefers* a worktree and offers two
+fallbacks, and a worker taking either would otherwise fall back to
+`DeriveActor`. Assign only unassigned issues; at start-up clear assignments
+bearing an opaque run token that is not this run's; dispatch no more workers
+than `wip_limit` permits, read via `git zhi config --format json`. Treat both
+`no actionable issues for actor <id>` and the plainer `no actionable issues` as
+completion — the tool does not currently distinguish finished from
+all-blocked, and the exclusion fix above is what would restore that.
 
 **`skills/how-to-use-git-zhi/how-to-use-git-zhi.md`.** Document `ZHI_ACTOR` and
 the resolution order, and add the actor-aware row to the intent table.
