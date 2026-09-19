@@ -229,6 +229,35 @@ document. The independence rule and the acceptance rule are one mechanism rather
 than two things to remember — and an agent cannot accept its own proposal by
 invoking a skill, because invoking a skill is not what accepts.
 
+### The clerk
+
+Someone has to say the meeting has reached unity, and it cannot be the author.
+Without the role, the author resolves the findings raised against their own
+document and then declares them resolved — self-judgment at the one point that
+decides acceptance.
+
+So assess dispatches a **clerk** alongside its assessors, the way refinement
+already dispatches an architect, a decomposer, an SQE and a technical writer.
+The clerk:
+
+- **Takes the census.** Which agents looked, what each raised, and what remains
+  outstanding after the author has responded.
+- **Distinguishes a block from a standing-aside.** An assessor that still holds
+  a finding blocks; one that records a concern and releases it does not. The
+  assessor says which, and the clerk records it rather than inferring it.
+- **Names whether unity was reached**, and writes that into the assessment. A
+  round where nothing new was raised and nothing outstanding remains is the
+  fixed point. Anything else is another round.
+- **Judges nothing about the document itself.** The clerk holds no finding of
+  its own, which is what keeps it from becoming another assessor.
+
+**The clerk is subject to the authorship bar.** Discerning whether an objection
+was answered is a judgment, not a tally, so the author of a document may not
+clerk its assessment any more than they may assess it.
+
+Nothing here counts heads. The clerk reports that objections are outstanding or
+that none are; it never reports that most assessors were content.
+
 **Human contributors may block, and may also override after the fact.** The
 first is ordinary: a person holding a finding stops the meeting reaching unity
 the same way an agent does. The second is where this departs from the analogy —
@@ -492,12 +521,16 @@ rather than empty. The relation is already in use — 0001 carries
 
 ## Scope of Change
 
-- **`skills/assess/assess.md`**: dispatch the assessment to a fresh subagent
-  rather than performing it inline, so independence is structural; run to a
-  fixed point, since the fixed point is the acceptance and a single pass is not;
-  write the assessment to `docs/assessments/<milestone>.md` rather than
-  presenting it only; define the cursory form and the three axes; refuse to
-  assess work whose actors include the assessing actor.
+- **`skills/assess/assess.md`**: dispatch assessors to fresh subagents rather
+  than assessing inline, so independence is structural; run to a fixed point,
+  since the fixed point is the acceptance and a single pass is not; write the
+  assessment to `docs/assessments/<milestone>.md` rather than presenting it
+  only; define the cursory form and the three axes; refuse to assess work whose
+  actors include the assessing actor.
+- **`skills/assess/clerk-prompt.md`**: the clerk role — takes the census of who
+  looked and what remains, separates a block from a standing-aside, names
+  whether unity was reached, and holds no finding of its own. Sits beside
+  `assess.md` the way the four role prompts sit beside `refinement.md`.
 - **`skills/refinement/refinement.md`**: record `state: accepted` on a decision
   whose assessment has converged, as a write rather than a decision. Backfill a
   cursory assessment when none exists, move the assessment into the milestone
@@ -554,6 +587,8 @@ rather than empty. The relation is already in use — 0001 carries
 - [ ] assess refuses to assess its own actor's work (`grep -q 'own work' skills/assess/assess.md`)
 - [ ] assess dispatches rather than assessing inline (`grep -q 'subagent' skills/assess/assess.md`)
 - [ ] assess runs to a fixed point, since that is the acceptance (`grep -q 'fixed point' skills/assess/assess.md`)
+- [ ] the clerk role exists (`test -f skills/assess/clerk-prompt.md`)
+- [ ] the clerk separates a block from a standing-aside (`grep -q 'stand' skills/assess/clerk-prompt.md`)
 - [ ] the archive is reachable, so docs check can see it (`grep -q 'docs/assessments' CONTRIBUTING.md`)
 - [ ] review reads the branch diff (`grep -q 'pu\.\.\.HEAD' skills/review/review.md`)
 - [ ] review verifies the milestone's acceptance criteria (`grep -q 'acceptance criteria' skills/review/review.md`)
