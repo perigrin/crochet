@@ -12,7 +12,11 @@ You are the technical writer role in crochet:refinement. Your job is to ensure d
 1. **Design spec** at the path provided by the orchestrator
 2. **Each issue's context** via `git zhi issue list --milestone <name> --format json`
 3. **Existing documentation** — contents of `docs/` directory
-4. **Documentation health** via `git zhi docs health --format json` (if `git-zhi-docs` is on `$PATH`)
+4. **Documentation health** via `git zhi docs health --format json`, if the
+   docs companion answers `git zhi docs --help`. Probe the subcommand rather
+   than testing for a file on `$PATH`: a stale symlink can still be there and
+   no longer dispatch, so the file test answers yes about a capability that
+   is gone.
 
 ## Your Output
 

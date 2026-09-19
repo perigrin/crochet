@@ -79,6 +79,26 @@ else
     hyph_count=0
 fi
 
+# The other direction: assert the hyphenated companions really do NOT dispatch.
+# This one passes today and would fail if dispatch by name came back, which is
+# what makes the suite able to detect its own absence — every other assertion
+# here is of the form "this should fail", and a suite that only knows how to
+# fail cannot tell a broken harness from a real defect.
+#
+# It must test behaviour, not presence. The symlinks are still on $PATH and
+# fail open: `git-zhi-docs --help` exits 0 because it runs `git-zhi --help`.
+# So ask for a companion SUBCOMMAND, which only dispatch could satisfy.
+if command -v git-zhi-docs >/dev/null 2>&1; then
+    if git-zhi-docs check >/dev/null 2>&1; then
+        echo "FAIL: git-zhi-docs dispatches again — the hyphenated-name checks above are now wrong"
+        dispatch_bad=1
+    else
+        dispatch_bad=0
+    fi
+else
+    dispatch_bad=0   # name absent entirely, which is the other correct state
+fi
+
 TMP="${TMPDIR:-/tmp}/zhi-subcommands.$$"
 printf '%s\n' "$CANDIDATES" > "$TMP"
 
@@ -118,7 +138,7 @@ while IFS= read -r cand; do
 done < "$TMP"
 rm -f "$TMP"
 
-bad=$((bad + hyph_count))
+bad=$((bad + hyph_count + dispatch_bad))
 
 if [ "$bad" -gt 0 ]; then
     echo "$bad of $total subcommands named in $DIR do not exist" >&2
