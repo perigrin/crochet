@@ -126,16 +126,11 @@ quality, and continues. Work that arrives half-built and undocumented is a
 legal entry point rather than a violation; what is not legal is finishing
 without the artifacts.
 
-**A workflow is improv: you rarely refuse, you "yes, and".** Accept the state
-you are handed and add what the requirements need. This is the rule that
-decides the ambiguous cases — when it is unclear whether to block or to
-backfill, backfill. A protocol that refuses gets worked around, and then there
-is neither the gate nor the record of having skipped it, which is the condition
-this document exists to end.
-
-The one thing an agent cannot deliver alone is an assessment of its own work.
-That is not a refusal but a handoff: the scene continues, and another player has
-to be in it.
+**When it is unclear whether to block or to backfill, backfill.** A protocol
+that refuses gets worked around, and then there is neither the gate nor a record
+of having skipped it — the condition this document exists to end. The one thing
+an agent cannot do alone is assess its own work, and that is a handoff rather
+than a refusal.
 
 This is what separates a legal skip from an omission. A skipped step whose
 property was established another way and recorded is legal. An unrecorded skip
@@ -187,139 +182,89 @@ accepted with no chain, because acceptance is the decision that the work should
 be done, and refinement is how that decision is normally expressed rather than
 what makes it true.
 
-### Assess is a threshing session
+### How a decision is accepted
 
-0001 leaves who accepts open — "Who accepts a proposal. Currently perigrin" —
-and this document cannot, because the mechanism would otherwise decide the
-policy by accident.
+0001 leaves this open — "Who accepts a proposal. Currently perigrin" — and this
+document cannot, because the mechanism would otherwise decide the policy by
+accident.
 
-Assessment airs views; it does not decide. That is the Quaker form it takes:
+Assessment runs in rounds, and a round airs what the participants find rather
+than deciding. **The first round is a threshing session:** views are put openly,
+including views that do not reconcile, with no pressure to converge. That is
+what makes it useful, and it is why acceptance cannot be a single pass's verdict.
 
-> This term currently denotes a meeting at which a variety of different, and
-> sometimes controversial, opinions can be openly, and sometimes forcefully,
-> expressed, often in order to defuse a situation before a later meeting for
-> worship for business.
->
-> — Britain Yearly Meeting, *Quaker faith & practice*, 12.26, on threshing
-> meetings
+**Who sits.** Participants are dispatched to fresh subagents, never forks — a
+fork inherits the context that produced the work and reaches the same
+conclusions by another route. They persist across rounds and are resumed by
+name, because only the participant that raised a finding may release it; a round
+that replaced its participants would have nobody left to release the last
+round's findings. New participants are added, never substituted.
 
-So a threshing session is free to surface irreconcilable views without pressure
-to converge, which is what makes it useful. The decision happens afterwards.
-
-**The session may include the agent that wrote the document, but must not be
-exclusively it.** The author has views about their own proposal worth airing,
-and excluding them loses what they know. What cannot happen is the author being
-the only voice.
-
-So the composition rule, which replaces any head-count: **at least one
-participant who is neither the author nor the clerk.** The clerk cannot supply
-that independence, because it holds no opinion by construction — a session of
-author plus clerk would satisfy a looser rule while containing no assessment at
+The author may sit, and may not be the only voice. **At least one participant is
+neither the author nor a role that holds no view** — a session of the author
+plus a note-taker would satisfy a looser rule while containing no assessment at
 all. Independence is a property of who is present, not of how many.
 
-**Its output is a minute of the session carrying a recommendation** from each
-participant — reject, modify, or accept — with the findings behind it. A
-recommendation is a positive statement, which is stronger evidence than running
-out of objections.
+**What a round produces.** Each participant ends with a recommendation — reject,
+modify or accept — and the findings behind it. A recommendation is a positive
+statement, which is better evidence than having run out of objections. A
+participant may stand aside instead of blocking: the concern is recorded with
+its grounds and the decision proceeds. One held objection means not yet. Nothing
+is counted, and a majority is not an outcome.
 
-### The meeting for business decides
+**The outcome** is unity, another round owed, a decline, or a minute recording
+irreconcilable views. Whoever drafts it does not decide it:
 
-The clerk convenes it on the threshing minute, and it produces the acceptance.
-
-- **Nothing is counted.** "Our decisions do not rely on majority rule, but
-  rather on a unity found through calm attention to the Light Within."
-- **Unity is not unanimity.** "Sense of the meeting is the understanding of
-  where the gathered body is led and does not mean that every individual present
-  is completely satisfied or in total agreement."
-- **A participant may stand aside** — record a concern while agreeing the
-  decision should proceed — and asks "that their names and the grounds of their
-  objections be recorded in the minutes as the decision goes forward". A known
-  cost on the record, not an open objection.
-- **A participant may stand in the way**, and the clerk may then "indicate that
-  the sense of the meeting is not clear and that no decision can be made nor
-  action taken until unity in the Spirit is reached". A held objection means not
-  yet. Weighing how serious a concern is would need a judgment the clerk is
-  forbidden to have, so an unreleased objection simply blocks.
-- **Where perceptions do not reconcile the outcome is a minute of exercise** —
-  a record that "states the various perceptions in the meeting on a given
-  matter". A legitimate outcome: the decision does not proceed and the reasons
-  are on the record rather than in someone's memory.
-- **No action is taken in anticipation of approval.** "No action is taken on an
-  issue on the meeting's behalf in anticipation of the minute's approval." This
-  repository's rule against implementing an unaccepted decision, stated as
-  practice rather than as a check.
-
-One rule is not borrowed. **Silence is assent only after consideration** — an
-agent that was not asked, or was working on something else, has not agreed,
-which is why the census records who did not look.
-
-### The clerk
-
-Someone has to say the meeting reached unity. Without the role the author
-resolves findings raised against their own document and then declares them
-resolved — self-judgment at the point that decides acceptance.
-
-So assess dispatches a **clerk** alongside its participants, the way refinement
-dispatches an architect, a decomposer, an SQE and a technical writer.
-
-**The clerk holds no opinion of its own.** It forms no view on whether the
-document is right and raises no finding. Its whole job is to establish when the
-meeting has produced an outcome the decision can move forward on.
-
-**It does not decide whether an objection was answered — the participant who
-raised it does.** The clerk asks; the participant says whether it still holds.
-Judging a resolution sufficient would be a view on the document in everything
-but name, and a concern is released by the one holding it rather than resolved
-at them.
-
-What the clerk produces: the census of who looked, what each raised and what each
-says remains; block or standing-aside as the participant declares it, never
-inferred; and the outcome as a draft — unity, another round owed, a decline, or
-a minute of exercise.
-
-**The draft is not final; the meeting confirms it.**
-
-> The meeting places upon its clerk a responsibility for spiritual discernment
-> so that he or she may watch the growth of the meeting toward unity … the final
-> decision about whether the minute represents the sense of the meeting is the
-> responsibility of the meeting itself, not of the clerk.
+> the final decision about whether the minute represents the sense of the
+> meeting is the responsibility of the meeting itself, not of the clerk.
 >
 > — Britain Yearly Meeting, *Quaker faith & practice*, 3.07
 
-The clerk cannot declare unity at a meeting that does not recognise itself in
-the minute. The authorship bar does not bind the clerk, since a role with no
-view cannot self-judge one, though a clerk who is not the author is preferable.
+So the participants confirm the draft. Judging whether an objection was answered
+is not the drafter's either: it asks, and the participant says, because a
+concern is released by the one holding it rather than resolved at them.
 
-**What is borrowed is the governance mechanism, not the faith.** PYM
-distinguishes the two explicitly, and the distinction is against us: "Consensus
-is a widely used and valuable secular process characterized by a search for
-general agreement largely through rational discussion and compromise. A sense of
-the meeting is the outcome of a spiritual process." What this protocol runs is
-the former. The forms are taken because they are well-designed for holding
-disagreement without voting, not because an agent participates in what gives
-them their meaning.
+**Humans may block like any participant, and may also reopen an accepted
+decision** — needing no justification and no turn to arrive. That is where the
+human sits: not a gate every acceptance waits on, but a participant who can also
+reverse. An override that declines is written down, because `declined` is the one
+state with no other trace.
 
-**Human contributors may block, and may also override after the fact.** The
-first is ordinary — a person holding a finding stops the meeting the same way an
-agent does. The second is where this departs from the analogy, since a Quaker
-meeting has no authority above it and this does. A human may reopen an accepted
-decision, needing no justification and no turn to arrive. That is where the
-human sits: not as a gate every acceptance waits on, but as a participant who
-can also reverse. An override that declines is written down, because `declined`
-is already the one state with no other trace.
+**Whichever gate observes unity records it.** Writing `state: accepted` is the
+durable trace of a judgment already reached. Refinement does it in nominal
+position; review does it when review is the gate that backfilled the assessment.
+Tying the write to refinement alone would leave a decision `proposed` forever on
+the finished-pull-request path, where no chain is built and refinement never
+runs — and `xt/run.sh` would then report its `Implements:` commits as a skipped
+gate, firing on a path this document calls legal.
 
-**Policy decisions are recorded in a decision document**, this one included.
-That is also the entry condition for the pipeline: a policy question is what
-makes a decision document owed.
+**Policy decisions are recorded in a decision document**, this one included, and
+that is also the pipeline's entry condition: a policy question is what makes a
+decision document owed.
 
-**Whichever gate observes the outcome records it.** Writing `state: accepted`
-is the durable trace of a judgment already reached, which is why it needs no
-confirmation. Refinement does it in nominal position; review does it when review
-is the gate that backfilled the assessment. Tying the write to refinement alone
-would leave a decision `proposed` forever on the finished-pull-request path,
-where no chain is built and refinement never runs — and `xt/run.sh` would then
-report its `Implements:` commits as a skipped gate, firing on a path this
-document calls legal.
+### crochet:discernment
+
+The convergence above is not peculiar to assess. `crochet:chain-review` already
+dispatches two lenses and collects both result sets; `crochet:review` runs lenses
+to a bounded fixed point over a diff. Those are one mechanism described three
+times, so it is built once and parameterised by its subject and its participants.
+
+The skill owns the procedure: dispatching participants, running rounds,
+collecting recommendations, bounding the iteration, and drafting the minute.
+Whether a note-taking role is a separate agent or a step of the skill is its
+choice to make, the way refinement chooses to dispatch four roles. What this
+decision settles is the policy above — who may sit, what blocks, who releases,
+and who records the outcome.
+
+Nothing tracks who failed to participate. Participants are dispatched, so one
+that does not report is a failed dispatch rather than a silent abstention, and
+there is no absence to interpret.
+
+The forms here — threshing, standing aside, a drafter who does not decide,
+refusing to vote — are borrowed from unprogrammed Quaker practice because they
+are well designed for holding disagreement without counting heads. What runs
+here is consensus in the secular sense those books are careful to distinguish
+from their own, and the borrowing is of the mechanism only.
 
 ### Each gate backfills the artifacts before it
 
@@ -464,7 +409,7 @@ lenses over the diff after it finishes.
 | | before execute | after execute |
 |---|---|---|
 | coverage | `crochet:alignment` — does the chain cover the spec? | does the diff cover the decision? |
-| quality | `paad:pushback` — is the plan sound? | agentic code review and ponytail review |
+| quality | `crochet:pushback` — is the plan sound? | `paad:agentic-review` and `ponytail:ponytail-review` |
 
 **The diff is the branch — `pu...HEAD`.** A milestone is a unit of delivery, a
 unit of delivery is a pull request, and a pull request's diff is its branch
@@ -497,12 +442,12 @@ reopen cycles before reporting an issue as stuck. Review takes the same shape:
 a bounded number of iterations, then non-convergence is reported rather than
 spun on. A review that will not converge is a finding about the delivery.
 
-**The ponytail lens cannot be capability-detected the usual way.** Preflight
-builds its capabilities map by matching skill names, and ponytail is a hook.
-The conditional pattern every other integration uses — delegate if available,
-fall back otherwise — structurally cannot see it. Review either probes
-differently or declares the dependency and fails loudly when it is absent.
-Decision 0005 covers this ground and should settle the mechanism.
+**Both lenses are ordinary skills.** `paad:agentic-review` and
+`ponytail:ponytail-review` are advertised by name, so preflight's existing
+comparison reaches them and the conditional pattern applies unchanged. An
+earlier draft claimed ponytail was a hook and therefore invisible; ponytail
+ships both, and its manifest declares only the hook while the runtime discovers
+the skills anyway. 0005 carries the correction.
 
 ### The postmortem is an autonomy audit
 
@@ -572,17 +517,16 @@ rather than empty. The relation is already in use — 0001 carries
 
 ## Scope of Change
 
-- **`skills/assess/assess.md`**: dispatch assessors to fresh subagents rather
-  than assessing inline, so independence is structural; run to a fixed point,
-  since the fixed point is the acceptance and a single pass is not; write the
-  assessment to `docs/assessments/<milestone>.md` rather than presenting it
-  only; define the cursory form and the three axes; refuse to assess work whose
-  actors include the assessing actor.
-- **`skills/assess/clerk-prompt.md`**: the clerk role — takes the census of who
-  looked and what each says remains, records block or standing-aside as the
-  assessor declares it, names the outcome, and holds no opinion on the document.
-  Sits beside `assess.md` the way the four role prompts sit beside
-  `refinement.md`.
+- **`skills/assess/assess.md`**: delegate the session to `crochet:discernment`
+  rather than assessing inline; write the assessment to
+  `docs/assessments/<milestone>.md` rather than presenting it only; define the
+  cursory form and the three axes; require each participant to end with a
+  recommendation of reject, modify or accept.
+- **`skills/discernment/discernment.md`**: the convergence mechanism, built
+  once and parameterised by subject and participants — dispatch, rounds,
+  collecting recommendations, bounding the iteration, drafting the minute.
+  `assess`, `chain-review` and `review` all delegate to it rather than each
+  describing it. Internal, so no command stub.
 - **`skills/refinement/refinement.md`**: record `state: accepted` on a decision
   whose assessment has converged, as a write rather than a decision. Backfill a
   cursory assessment when none exists, move the assessment into the milestone
@@ -604,12 +548,22 @@ rather than empty. The relation is already in use — 0001 carries
   alongside the four it already asks, which measure difficulty rather than
   interruption. Not the actor query: that signal does not work yet.
 - **`skills/preflight/preflight.md`**: the inference table becomes the
-  seven-gate state machine. Its "all issues closed" row reports the postmortem
-  as the next gate, which would advise skipping review at the point review
-  should run, and it gains the state "milestone exists, zero issues", presently
-  merged into the pre-chain row.
+  seven-gate state machine, and its row ordering is wrong in a way the table
+  hides. Observed here with three completed milestones and twenty closed issues,
+  `status` returns no `milestone` field and `issue list` returns empty, because
+  completed milestones list nothing without `--all` — so **row 1 matches first**
+  and reports "No chain yet". Row 3, which would name the postmortem and skip
+  review, is never reached. Fixing row 3 alone fixes nothing. The table also
+  gains the state "milestone exists, zero issues", presently merged into the
+  pre-chain row.
 - **`CONTRIBUTING.md`**: link `docs/assessments/`, or the documentation
   structure check reports everything in it unreachable.
+- **`CLAUDE.md`**: its pipeline block still says "Asking for refinement against
+  a proposed decision is what accepts it", citing this document — which no longer
+  says that. `CLAUDE.md` is imported into every agent's context, so the
+  superseded rule loads every session on the authority of the decision that
+  replaced it. `skills/refinement/refinement.md` carries the same rationale in
+  its Record Acceptance step. Both must lose it in the commit that lands this.
 - **`CLAUDE.md`** and **`README.md`**: the pipeline ordering and the skills
   table. `docs/architecture/plugin-structure.md` states the ordering too, but
   0004 proposes absorbing it into `docs/ARCHITECTURE.md`; whichever lands second
@@ -639,8 +593,15 @@ rather than empty. The relation is already in use — 0001 carries
 - [ ] assess refuses to assess its own actor's work (`grep -q 'own work' skills/assess/assess.md`)
 - [ ] assess dispatches rather than assessing inline (`grep -q 'subagent' skills/assess/assess.md`)
 - [ ] assess runs to a fixed point, since that is the acceptance (`grep -q 'fixed point' skills/assess/assess.md`)
-- [ ] the clerk role exists (`test -f skills/assess/clerk-prompt.md`)
-- [ ] the clerk separates a block from a standing-aside (`grep -q 'stand' skills/assess/clerk-prompt.md`)
+- [ ] the discernment skill exists (`test -f skills/discernment/discernment.md`)
+- [ ] assess delegates its session to it (`grep -q 'crochet:discernment' skills/assess/assess.md`)
+- [ ] participants end with a recommendation (`grep -q 'reject, modify or accept' skills/discernment/discernment.md`)
+- [ ] the live layer no longer says refinement is what accepts (`! grep -q 'Asking for refinement against a proposed decision' CLAUDE.md`)
+- [ ] refinement no longer carries that rationale either (`! grep -q 'Asking for refinement \*is\* the acceptance' skills/refinement/refinement.md`)
+- [ ] preflight distinguishes a finished chain from no chain (`grep -q 'all --format json\|--all' skills/preflight/preflight.md`)
+- [ ] the runner refuses accepting a decision whose amends target is proposed (`grep -q 'it amends' xt/run.sh`)
+- [ ] chain-review records its checklist entry (`grep -q 'checklist' skills/chain-review/chain-review.md`)
+- [ ] execute records its checklist entry (`grep -q 'checklist' skills/execute/execute.md`)
 - [ ] the archive is reachable, so docs check can see it (`grep -q 'docs/assessments' CONTRIBUTING.md`)
 - [ ] review reads the branch diff (`grep -q 'pu\.\.\.HEAD' skills/review/review.md`)
 - [ ] review verifies the milestone's acceptance criteria (`grep -q 'acceptance criteria' skills/review/review.md`)
