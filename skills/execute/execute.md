@@ -38,6 +38,40 @@ Count open issues. If zero, skip to Step 5 (completion).
 
 ### Step 2: Pick Next Issue
 
+#### Loop control — decide this here, every time
+
+This is where the loop re-enters, so the rule lives here rather than in Key
+Constraints where it is too far away to be read at the moment it applies.
+
+- **Without `--auto`:** stop and confirm before starting the next issue.
+- **With `--auto`:** do not stop. Pick the next ready issue and keep going in
+  the same turn.
+
+**Ending your turn is a pause.** Reporting progress, summarising a finding or
+narrating what just happened all end the turn, and under `--auto` that is
+exactly what the flag forbids. There is no difference between stopping to ask
+a question and stopping to talk — the user has to prompt you again either way.
+
+The urge to report is not a reason to stop. Progress is already visible in the
+chain: `git zhi list --milestone <name>` and `git zhi milestone show <name>`
+show it without you in the loop. Anything worth saying keeps until the end.
+
+Under `--auto`, stop only when one of these is true:
+
+- the ready set is empty;
+- every remaining issue is blocked by an unfinished one;
+- a permission was denied, or a tool refused the action;
+- an acceptance criterion fails and you cannot make it pass;
+- a decision is genuinely the user's — a deletion they have not approved, or
+  work that belongs to another repo or another session.
+
+Then report once, covering everything.
+
+No check enforces this. It is a rule about what an agent chose to do, and
+nothing recovers that from the repository afterwards — so it is placed where
+the decision is made, which is the honest ceiling for a rule of this kind.
+
+
 **If `superpowers:dispatching-parallel-agents` is available** (check preflight capabilities):
   Identify all ready issues (all dependencies satisfied, state = pending) and dispatch
   parallel agents for each, one agent per issue. Follow the dispatching-parallel-agents
@@ -213,7 +247,8 @@ Run PAAD based on the tier determined by the gate analyst.
   git zhi issue add "<finding title>" --milestone <milestone>
   ```
 
-If no findings, proceed to next issue (back to Step 2).
+If no findings, proceed to the next issue — back to Step 2, whose Loop
+control section decides whether that happens now or after confirmation.
 
 ### Step 5: Milestone Completion
 
@@ -279,8 +314,9 @@ Postmortem: see output above
 - Max 3 PAAD-reopen cycles per issue — prevents infinite cycling
 - The skill is idempotent: re-invoking it on a partially-executed milestone
   resumes from the current chain state (already-closed issues are skipped)
-- Human-in-the-loop: by default, pause between issues for confirmation.
-  Pass `--auto` to run without pauses.
+- Human-in-the-loop: by default, pause between issues for confirmation;
+  `--auto` runs without pauses. The rule is stated at the loop boundary
+  in Step 2 and not repeated here, so there is one place to read it.
 - Commit frequently, never squash — iteration history is valuable
 
 ## Integration
