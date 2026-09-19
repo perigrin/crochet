@@ -368,9 +368,11 @@ restates it. The same isolation, applied to assessment.
 **And the rule stays checkable as a backstop.** A skill file is an instruction,
 not a constraint — an agent can assess inline instead of dispatching, so the
 dispatch is rung 3 with better ergonomics rather than rung 1. Worker identity
-from 0002 supplies the rung 2: each issue carries `assigned` and each transition
-an `actor`, so an assessment records its own actor, and one whose actor appears
-among the actors on the work it assesses is self-assessment and invalid.
+from 0002 is what rung 2 would be built on: each issue carries `assigned` and
+each transition an `actor`, so an assessment that recorded its own actor could
+be rejected when that actor appears among the actors on the work. Nothing
+implements it, and an assessing subagent outside execute's dispatch has no
+`ZHI_ACTOR` to record, so today the rule is honoured rather than enforced.
 
 ### Units of delivery and units of work
 
@@ -509,11 +511,10 @@ rather than empty. The relation is already in use — 0001 carries
   describing it. Internal, so no command stub.
 
   The drafter diffs rather than summarises. A round is put to participants with
-  a description of what changed, and a description written from memory reports
-  edits that did not land — which happened twice while this decision was being
-  assessed, and cost a round each time. The subject must also hold still for the
-  duration of a round; changing it under a participant invalidates the answer
-  being asked for.
+  a description of what changed, because a description written from memory
+  reports edits that did not land. The subject holds still for the duration of a
+  round; changing it under a participant invalidates the answer being asked
+  for.
 - **`skills/refinement/refinement.md`**: record `state: accepted` on a decision
   whose assessment has converged, as a write rather than a decision. Backfill a
   cursory assessment when none exists, copy the assessment into the milestone
@@ -607,6 +608,21 @@ rather than empty. The relation is already in use — 0001 carries
 - [ ] the postmortem audits autonomy-stealing friction (`grep -q 'autonomy' skills/postmortem/postmortem.md`)
 - [ ] the postmortem asks what would have let the agent proceed (`grep -q 'let the agent proceed' skills/postmortem/postmortem.md`)
 - [ ] nothing in the repository is unreachable or misnumbered (`git zhi docs check`)
+
+## Minute of exercise
+
+Assessment reached unity with one view unreconciled, recorded here rather than
+resolved.
+
+**Whether `What the protocol is for` earns its place.** One participant held
+that it is a mission statement and a forward reference to a section defined much
+later, and asked twice for it to be cut. The other held that three sections
+derive their premise from it — the backfill rule's justification, the
+self-versus-other constraint, and the postmortem-as-autonomy-audit — and that
+cutting it leaves those asserting rather than deriving.
+
+Both stood aside rather than blocking, and both asked that the tie not be broken
+by the author. The section stands, and this records why that is not agreement.
 
 ## Open Questions
 
