@@ -209,9 +209,13 @@ to converge, which is what makes it useful. The decision happens afterwards.
 **The session may include the agent that wrote the document, but must not be
 exclusively it.** The author has views about their own proposal worth airing,
 and excluding them loses what they know. What cannot happen is the author being
-the only voice. This is the composition rule, and it replaces any head-count: at
-least one participant who did not write the document. Independence is a property
-of who is present, not of how many.
+the only voice.
+
+So the composition rule, which replaces any head-count: **at least one
+participant who is neither the author nor the clerk.** The clerk cannot supply
+that independence, because it holds no opinion by construction — a session of
+author plus clerk would satisfy a looser rule while containing no assessment at
+all. Independence is a property of who is present, not of how many.
 
 **Its output is a minute of the session carrying a recommendation** from each
 participant — reject, modify, or accept — with the findings behind it. A
