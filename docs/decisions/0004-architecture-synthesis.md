@@ -141,6 +141,13 @@ Code loads it. That is a *how*, it is already in
 citation form and its field test. Two rules inside it change; the rest holds, so
 this amends rather than supersedes.
 
+`amends`/`amended-by` are not among the six fields 0001 requires. They come from
+0003, which added them for this case — a decision revising one rule inside
+another that otherwise stays in force. 0003 is `proposed`, and this decision
+uses the relation anyway: an unaccepted decision is a draft, and work is built
+on drafts routinely. What it is not is a claim that 0003's own scope was
+implemented.
+
 **Where the live architecture document lives.** 0001 places it in
 `docs/architecture/`. It moves to `docs/ARCHITECTURE.md` — inside `docs/`, where
 `docs check` and `docs health` both reach it, and under the name the external
@@ -207,6 +214,8 @@ The fixture is how this runner demonstrates it can still fail.
   field test this amends two rules of.
 - `0002-worker-identity.md`. The source of the Data Stores and Security
   sections.
+- `0003-acceptance-by-refinement.md`. Where `amends`/`amended-by` come from, and
+  the gate that accepts this decision.
 - <https://architecture.md>. The section specification adopted here, in part.
 - `skills/assess/assess.md`. The gate that judges the synthesis against the code.
 - `docs/contributing/development-workflow.md`. The cheapest-first validation
