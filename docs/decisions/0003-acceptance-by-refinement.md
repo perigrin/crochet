@@ -33,12 +33,12 @@ that a claim with nothing connecting it to the world is the failure mode; it
 then records a transition it admits leaves no trace. A go-ahead is spoken and
 gone.
 
-**Acceptance is the fixed point of assessment, and the durable record is the
-commit in which refinement writes `state: accepted` into the document.** Not
-the chain: 0001 says the chain "is ephemeral and nothing cites it", and a trace
-that evaporates when the milestone is cleaned up is not a trace. The chain is
-the occasion for that write, not the evidence of it, and refinement is recording
-a judgment rather than making one.
+**Acceptance is the outcome of the meeting the assessment feeds, and the durable
+record is the commit writing `state: accepted` into the document.** Not the
+chain: 0001 says the chain "is ephemeral and nothing cites it", and a trace that
+evaporates when the milestone is cleaned up is not a trace. The chain is the
+occasion for that write, not the evidence of it, and the gate that makes it is
+recording a judgment rather than making one.
 
 The ordering alone does not settle where acceptance sits — assess is step two,
 refinement step three, chain-review step four, and a reader can infer any of
@@ -108,8 +108,8 @@ document's alignment to.
 
 It decides the questions the rest of this document would otherwise leave open.
 A gate backfills rather than refuses, because a refusal needs a human to clear
-it and every such gate is a stop in an autonomous run. An assessment requires a
-different actor rather than a human one, because the property that matters is
+it and every such gate is a stop in an autonomous run. An assessment requires
+another actor rather than a human one, because the property that matters is
 independence and an agent supplies it. The human is a collaborator in the loop,
 not a semaphore in it — and where this document does put a person in the path,
 that is a cost to be justified rather than a default.
@@ -133,9 +133,9 @@ backfill, backfill. A protocol that refuses gets worked around, and then there
 is neither the gate nor the record of having skipped it, which is the condition
 this document exists to end.
 
-The one thing an agent cannot deliver is an assessment of its own work. That is
-not a refusal but a handoff: the scene continues, and another player has to say
-that line.
+The one thing an agent cannot deliver alone is an assessment of its own work.
+That is not a refusal but a handoff: the scene continues, and another player has
+to be in it.
 
 This is what separates a legal skip from an omission. A skipped step whose
 property was established another way and recorded is legal. An unrecorded skip
@@ -154,7 +154,7 @@ produces it.
 | Gate | Kind | Mandatory | What must exist | Record |
 |---|---|---|---|---|
 | brainstorming | method | no | the spec | the spec document |
-| assess | judgment | **yes** | the spec aligns to the codebase, the architecture, and the intended direction of the repository — and its fixed point is the acceptance | `docs/assessments/<milestone>.md` |
+| assess | judgment | **yes** | the spec aligns to the codebase, the architecture, and the intended direction of the repository — and the meeting it feeds produces the acceptance | `docs/assessments/<milestone>.md` |
 | refinement | method | no | the chain | `state: accepted` recorded in the document; the issues |
 | chain-review | judgment | when a chain exists | the units of work are ready to be iterated on | a checklist entry in the milestone body |
 | execute | method | no | the code | commits carrying `Implements: NNNN` |
@@ -187,99 +187,93 @@ accepted with no chain, because acceptance is the decision that the work should
 be done, and refinement is how that decision is normally expressed rather than
 what makes it true.
 
-### Acceptance is a fixed point
+### Assess is a threshing session
 
 0001 leaves who accepts open — "Who accepts a proposal. Currently perigrin" —
-and this document cannot leave it open, because the mechanism would otherwise
-decide the policy by accident.
+and this document cannot, because the mechanism would otherwise decide the
+policy by accident.
 
-**A decision is accepted when assessment reaches a fixed point: assess, resolve
-what it raises, assess again, until a round raises nothing new.** Not a single
-positive verdict. A verdict is one agent's read of one version, and the version
-usually changes in response to it — an assessment that found problems and a
-document that then changed is not agreement, it is one round.
+Assessment airs views; it does not decide. That is the Quaker form it takes:
 
-This is the shape `crochet:review` already uses on the far side of execute.
-Both judgment gates converge rather than pronounce, and for the same reason: a
-single pass reports what one look caught, where a fixed point reports that
-nothing further is visible.
+> This term currently denotes a meeting at which a variety of different, and
+> sometimes controversial, opinions can be openly, and sometimes forcefully,
+> expressed, often in order to defuse a situation before a later meeting for
+> worship for business.
+>
+> — Britain Yearly Meeting, *Quaker faith & practice*, 12.26, on threshing
+> meetings
 
-**The model is a Quaker meeting for business, not a vote.** Acceptance is the
-sense of the meeting: what remains when the objections are exhausted. Four
-things follow, and they are the rules that make "fixed point" precise.
+So a threshing session is free to surface irreconcilable views without pressure
+to converge, which is what makes it useful. The decision happens afterwards.
+
+**The session may include the agent that wrote the document, but must not be
+exclusively it.** The author has views about their own proposal worth airing,
+and excluding them loses what they know. What cannot happen is the author being
+the only voice. This is the composition rule, and it replaces any head-count: at
+least one participant who did not write the document. Independence is a property
+of who is present, not of how many.
+
+**Its output is a minute of the session carrying a recommendation** from each
+participant — reject, modify, or accept — with the findings behind it. A
+recommendation is a positive statement, which is stronger evidence than running
+out of objections.
+
+### The meeting for business decides
+
+The clerk convenes it on the threshing minute, and it produces the acceptance.
 
 - **Nothing is counted.** "Our decisions do not rely on majority rule, but
-  rather on a unity found through calm attention to the Light Within." A
-  majority of favourable assessments is not acceptance, and a single participant
-  is not a quorum. Independence is a property of how many separate judgments
-  were made, not of the authority of any one of them.
+  rather on a unity found through calm attention to the Light Within."
 - **Unity is not unanimity.** "Sense of the meeting is the understanding of
   where the gathered body is led and does not mean that every individual present
-  is completely satisfied or in total agreement." The fixed point is not every
-  assessor pronouncing itself content.
-- **An agent may stand aside** — record a concern while agreeing the decision
-  should proceed. Standing aside "is an acknowledgement that the action being
-  taken is how the meeting is led at this time". It is written down as a known
-  cost, not carried as an open objection.
-- **An agent may stand in the way, and that is not a veto.** "An individual
-  never has the power to prevent the meeting from acting. A concern, however,
-  may have enough weight to cause the meeting either to hold the matter over for
-  further discernment or to abandon the action entirely." Weight decides, not
-  count — and the weighing belongs to the meeting.
-- **Where Friends are not clear, the outcome is a minute of exercise** — a
-  record that "states the various perceptions in the meeting on a given matter".
-  Irreconcilable assessments produce that rather than a forced unity or a silent
-  deadlock, and it is a legitimate outcome: the decision does not proceed, and
-  the reasons are on the record instead of in someone's memory.
+  is completely satisfied or in total agreement."
+- **A participant may stand aside** — record a concern while agreeing the
+  decision should proceed — and asks "that their names and the grounds of their
+  objections be recorded in the minutes as the decision goes forward". A known
+  cost on the record, not an open objection.
+- **A participant may stand in the way**, and the clerk may then "indicate that
+  the sense of the meeting is not clear and that no decision can be made nor
+  action taken until unity in the Spirit is reached". A held objection means not
+  yet. Weighing how serious a concern is would need a judgment the clerk is
+  forbidden to have, so an unreleased objection simply blocks.
+- **Where perceptions do not reconcile the outcome is a minute of exercise** —
+  a record that "states the various perceptions in the meeting on a given
+  matter". A legitimate outcome: the decision does not proceed and the reasons
+  are on the record rather than in someone's memory.
+- **No action is taken in anticipation of approval.** "No action is taken on an
+  issue on the meeting's behalf in anticipation of the minute's approval." This
+  repository's rule against implementing an unaccepted decision, stated as
+  practice rather than as a check.
 
-One rule here is not borrowed. **Silence is assent only after consideration** —
-an agent that was not asked, or was working on something else, has not agreed.
-Absence of objection counts only from a participant that actually looked, which
-is why the census records who did not.
-
-**The accepting agent is never the author, structurally.** Assess is dispatched
-to a fresh subagent, so the judgment comes from an actor that did not write the
-document. The independence rule and the acceptance rule are one mechanism rather
-than two things to remember — and an agent cannot accept its own proposal by
-invoking a skill, because invoking a skill is not what accepts.
+One rule is not borrowed. **Silence is assent only after consideration** — an
+agent that was not asked, or was working on something else, has not agreed,
+which is why the census records who did not look.
 
 ### The clerk
 
-Someone has to say the meeting has reached unity, and it cannot be the author.
-Without the role, the author resolves the findings raised against their own
-document and then declares them resolved — self-judgment at the one point that
-decides acceptance.
+Someone has to say the meeting reached unity. Without the role the author
+resolves findings raised against their own document and then declares them
+resolved — self-judgment at the point that decides acceptance.
 
-So assess dispatches a **clerk** alongside its assessors, the way refinement
-already dispatches an architect, a decomposer, an SQE and a technical writer.
+So assess dispatches a **clerk** alongside its participants, the way refinement
+dispatches an architect, a decomposer, an SQE and a technical writer.
 
 **The clerk holds no opinion of its own.** It forms no view on whether the
-document is right, raises no finding, and never becomes another assessor. Its
-whole job is to establish when the meeting has produced an outcome the decision
-can move forward on.
+document is right and raises no finding. Its whole job is to establish when the
+meeting has produced an outcome the decision can move forward on.
 
-**And it does not decide whether an objection was answered — the assessor who
-raised it does.** The clerk asks; the assessor says whether it still holds. This
-is what keeps the role free of opinion, because judging a resolution sufficient
-would be a view on the document in everything but name. It is also the honest
-mechanic: a concern is released by the one holding it, not resolved at them.
+**It does not decide whether an objection was answered — the participant who
+raised it does.** The clerk asks; the participant says whether it still holds.
+Judging a resolution sufficient would be a view on the document in everything
+but name, and a concern is released by the one holding it rather than resolved
+at them.
 
-What the clerk produces:
+What the clerk produces: the census of who looked, what each raised and what each
+says remains; block or standing-aside as the participant declares it, never
+inferred; and the outcome as a draft — unity, another round owed, a decline, or
+a minute of exercise.
 
-- **The census.** Which agents looked, what each raised, and what each says
-  remains after the author has responded. An agent that did not look is recorded
-  as not having looked, because silence from a non-participant is not assent.
-- **Block or standing-aside, as stated.** An assessor still holding a finding
-  blocks; one recording a concern and releasing it stands aside. The assessor
-  declares which; the clerk writes it down rather than inferring it.
-- **The outcome, as a draft.** Unity, when the assessments have converged — the
-  fixed point, and the acceptance. Otherwise: another round owed, a decline, or
-  a minute of exercise where the perceptions did not reconcile. Whichever it is,
-  it is named and recorded rather than left for a reader to infer.
-
-**But the clerk's naming is not final — the assessors confirm it.** The role is
-borrowed from Quaker practice, and the source is explicit that the clerk does
-not own the outcome:
+**The draft is not final; the meeting confirms it.**
 
 > The meeting places upon its clerk a responsibility for spiritual discernment
 > so that he or she may watch the growth of the meeting toward unity … the final
@@ -288,58 +282,40 @@ not own the outcome:
 >
 > — Britain Yearly Meeting, *Quaker faith & practice*, 3.07
 
-So the clerk drafts the outcome and the assessors say whether it records what
-happened. That is the same rule as an assessor releasing its own finding,
-applied one level up: the clerk cannot declare unity at a meeting that does not
-recognise itself in the minute.
+The clerk cannot declare unity at a meeting that does not recognise itself in
+the minute. The authorship bar does not bind the clerk, since a role with no
+view cannot self-judge one, though a clerk who is not the author is preferable.
 
-Nothing here counts heads. The clerk reports that objections are outstanding or
-that none are; it never reports that most assessors were content.
-
-The borrowing is of a governance mechanism, not of a faith. What crochet takes
-is the structure — no voting, unity as the absence of remaining objection, a
-clerk who discerns without deciding, and the distinction between blocking and
-standing aside. *Quaker faith & practice* 3.12 describes clerkship as requiring
-"a spiritual capacity for discernment and sensitivity to the meeting"; an agent
-brings neither, which is why this design gives the clerk a census to take rather
-than a sense to feel.
-
-**The authorship bar does not bind the clerk**, since a role with no view on the
-document cannot self-judge one. A clerk who is not the author is still
-preferable — running the meeting on your own proposal shapes it even without a
-vote — but it is a preference, not the rule that governs assessors.
+**What is borrowed is the governance mechanism, not the faith.** PYM
+distinguishes the two explicitly, and the distinction is against us: "Consensus
+is a widely used and valuable secular process characterized by a search for
+general agreement largely through rational discussion and compromise. A sense of
+the meeting is the outcome of a spiritual process." What this protocol runs is
+the former. The forms are taken because they are well-designed for holding
+disagreement without voting, not because an agent participates in what gives
+them their meaning.
 
 **Human contributors may block, and may also override after the fact.** The
-first is ordinary: a person holding a finding stops the meeting reaching unity
-the same way an agent does. The second is where this departs from the analogy —
-a Quaker meeting has no authority above it, and this does. A human may reopen a
-decision already accepted, needing no justification and no turn to arrive.
+first is ordinary — a person holding a finding stops the meeting the same way an
+agent does. The second is where this departs from the analogy, since a Quaker
+meeting has no authority above it and this does. A human may reopen an accepted
+decision, needing no justification and no turn to arrive. That is where the
+human sits: not as a gate every acceptance waits on, but as a participant who
+can also reverse. An override that declines is written down, because `declined`
+is already the one state with no other trace.
 
-That is where the human sits in the loop: not as a gate every acceptance waits
-on, which would cost the autonomy this exists to protect, but as a participant
-who can also reverse. An override that declines a decision is written down,
-because `declined` is already the one state with no other trace.
+**Policy decisions are recorded in a decision document**, this one included.
+That is also the entry condition for the pipeline: a policy question is what
+makes a decision document owed.
 
-**Policy decisions are recorded in a decision document.** This one included:
-the rule that policy needs an RFC is why this section exists rather than living
-in a skill file where it would be a mechanism nobody agreed to. It is also the
-entry condition for the pipeline — a policy question is what makes a decision
-document owed in the first place.
-
-**Whichever gate observes the fixed point records it.** Writing
-`state: accepted` into the document is the durable trace of a judgment already
-reached, which is why that write can happen without asking for confirmation.
-Refinement does it in nominal position; review does it when review is the gate
-that backfilled the assessment. Tying the write to refinement alone would leave
-a decision `proposed` forever on the finished-pull-request path, where no chain
-is built and refinement never runs — and `xt/run.sh` would then report its
-`Implements:` commits as a skipped gate, firing on a path this document declares
-legal.
-
-A single terminal checkpoint at milestone completion was considered and
-rejected. Backfilling at each gate surfaces a gap at the point where repair is
-cheapest; a terminal check would let a decision be refined, executed and
-reviewed before anything noticed that assess never ran.
+**Whichever gate observes the outcome records it.** Writing `state: accepted`
+is the durable trace of a judgment already reached, which is why it needs no
+confirmation. Refinement does it in nominal position; review does it when review
+is the gate that backfilled the assessment. Tying the write to refinement alone
+would leave a decision `proposed` forever on the finished-pull-request path,
+where no chain is built and refinement never runs — and `xt/run.sh` would then
+report its `Implements:` commits as a skipped gate, firing on a path this
+document calls legal.
 
 ### Each gate backfills the artifacts before it
 
