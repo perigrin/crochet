@@ -31,6 +31,23 @@ git zhi docs init
 
 Creates `docs/` directory structure and living documents. Preserves existing `CONTRIBUTING.md` content.
 
+**Fit the scaffold to your repo before verifying.** What `docs init` writes is
+a template, not a description of your project:
+
+```bash
+# 1. The contributing docs describe git-zhi's Go build. Rewrite or remove them,
+#    and give each a non-empty covers: naming the paths it describes.
+$EDITOR docs/contributing/coding-conventions.md docs/contributing/development-workflow.md
+
+# 2. Prune Short Links whose directories hold no files. Git does not track
+#    empty directories, so those links are dead on the first clone.
+$EDITOR CONTRIBUTING.md
+
+# 3. Commit before verifying. The check reads the working tree, so a clean
+#    result over uncommitted files says nothing about what a collaborator gets.
+git add docs/ CONTRIBUTING.md && git commit -m "Scaffold and fit docs/"
+```
+
 **Verify:**
 ```bash
 git zhi docs check
