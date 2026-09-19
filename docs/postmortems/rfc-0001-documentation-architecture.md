@@ -116,12 +116,23 @@ had been looking. The checks built this milestone are the first instruments
 pointed at these particular claims, so the measured defect rate says more about
 the absence of prior measurement than about any change in quality.
 
-**The `--milestone` filter is a prefix match.** Found while closing this
-milestone: `git zhi list --milestone rfc-0001` returns an issue whose milestone
-field reads `rfc-0001-followups`. This is a live hazard for `crochet:execute`,
-whose ready-set query is exactly that command — a milestone named as a prefix
-of another silently absorbs its issues. Filed with the git-zhi session for
-0.5.2, along with a question about whether `--label` shares the filter helper.
+**`git zhi list --milestone` ignored the filter entirely.** Found while closing
+this milestone: `git zhi list --milestone rfc-0001` returned an issue whose
+milestone field read `rfc-0001-followups`.
+
+*Corrected 2026-09-19, after the fix.* This section originally called it a
+prefix match. It was not: `list` computed a filtered set and then rendered the
+graph's topological sort instead, so the filter was never applied — `--milestone
+nosuchmilestone` returned everything. `--ready` narrowed by label only.
+`--label` escaped because it was re-applied after the sort. The symptom reads
+as prefix matching from outside, because the only wrongly-included milestone
+you notice is the sibling whose name you recognise. Fixed in 0.5.2.
+
+The finding that survives: an inference drawn from one correct observation was
+wrong in a way the observation could not reveal. The repro was sound and the
+diagnosis built on it was not, which is the same shape as reading exit 127 as
+the expected failure — a signal consistent with more than one cause, resolved
+in favour of the first explanation that fit.
 
 **Whether the pipeline's gates paid for themselves here.** assess found 9 of 9
 requirements covered and chain-review found no blocking defects, which could
@@ -147,8 +158,19 @@ also an indictment.
    whether an agent chose to stop is not recoverable from the repository, so
    placement is the honest ceiling and the document says so rather than
    implying a check exists.
-5. **File the `--milestone` prefix-match defect against git-zhi**, since
-   `crochet:execute` depends on that query. Done.
+5. **File the `--milestone` defect against git-zhi**, since `crochet:execute`
+   depends on that query. Done; fixed in 0.5.2.
+
+   *Correction, 2026-09-19.* The verify gate's regression at 121/122 was
+   reported here as a version-format change in git-zhi. It was not. The `v`
+   prefix never moved: `release.yml` has always stripped it with
+   `VERSION=${TAG#v}`, while the `Makefile` takes `git describe --tags`, which
+   keeps it. Two build paths, two formats, both long-standing. The criterion
+   met a release binary for the first time because a locally built 0.4 was
+   replaced with a release asset mid-session. The criterion was still wrong to
+   encode the prefix, and the correction to assert a three-part version is
+   right for both paths — but nothing regressed, and this postmortem said it
+   had.
 6. **Do not treat a single correction as a fix for the stopping behaviour.**
    It recurred across months and projects after being corrected once. The skill
    edit raises the odds; it does not settle the matter, and the next milestone
