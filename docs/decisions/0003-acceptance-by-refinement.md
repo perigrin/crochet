@@ -238,25 +238,38 @@ decides acceptance.
 
 So assess dispatches a **clerk** alongside its assessors, the way refinement
 already dispatches an architect, a decomposer, an SQE and a technical writer.
-The clerk:
 
-- **Takes the census.** Which agents looked, what each raised, and what remains
-  outstanding after the author has responded.
-- **Distinguishes a block from a standing-aside.** An assessor that still holds
-  a finding blocks; one that records a concern and releases it does not. The
-  assessor says which, and the clerk records it rather than inferring it.
-- **Names whether unity was reached**, and writes that into the assessment. A
-  round where nothing new was raised and nothing outstanding remains is the
-  fixed point. Anything else is another round.
-- **Judges nothing about the document itself.** The clerk holds no finding of
-  its own, which is what keeps it from becoming another assessor.
+**The clerk holds no opinion of its own.** It forms no view on whether the
+document is right, raises no finding, and never becomes another assessor. Its
+whole job is to establish when the meeting has produced an outcome the decision
+can move forward on.
 
-**The clerk is subject to the authorship bar.** Discerning whether an objection
-was answered is a judgment, not a tally, so the author of a document may not
-clerk its assessment any more than they may assess it.
+**And it does not decide whether an objection was answered — the assessor who
+raised it does.** The clerk asks; the assessor says whether it still holds. This
+is what keeps the role free of opinion, because judging a resolution sufficient
+would be a view on the document in everything but name. It is also the honest
+mechanic: a concern is released by the one holding it, not resolved at them.
+
+What the clerk produces:
+
+- **The census.** Which agents looked, what each raised, and what each says
+  remains after the author has responded. An agent that did not look is recorded
+  as not having looked, because silence from a non-participant is not assent.
+- **Block or standing-aside, as stated.** An assessor still holding a finding
+  blocks; one recording a concern and releasing it stands aside. The assessor
+  declares which; the clerk writes it down rather than inferring it.
+- **The outcome.** Unity, when nothing new was raised and nothing is
+  outstanding — the fixed point, and the acceptance. Otherwise another round is
+  owed, or the meeting produced a decline. Whichever it is, it is named and
+  recorded rather than left for a reader to infer.
 
 Nothing here counts heads. The clerk reports that objections are outstanding or
 that none are; it never reports that most assessors were content.
+
+**The authorship bar does not bind the clerk**, since a role with no view on the
+document cannot self-judge one. A clerk who is not the author is still
+preferable — running the meeting on your own proposal shapes it even without a
+vote — but it is a preference, not the rule that governs assessors.
 
 **Human contributors may block, and may also override after the fact.** The
 first is ordinary: a person holding a finding stops the meeting reaching unity
@@ -528,9 +541,10 @@ rather than empty. The relation is already in use — 0001 carries
   only; define the cursory form and the three axes; refuse to assess work whose
   actors include the assessing actor.
 - **`skills/assess/clerk-prompt.md`**: the clerk role — takes the census of who
-  looked and what remains, separates a block from a standing-aside, names
-  whether unity was reached, and holds no finding of its own. Sits beside
-  `assess.md` the way the four role prompts sit beside `refinement.md`.
+  looked and what each says remains, records block or standing-aside as the
+  assessor declares it, names the outcome, and holds no opinion on the document.
+  Sits beside `assess.md` the way the four role prompts sit beside
+  `refinement.md`.
 - **`skills/refinement/refinement.md`**: record `state: accepted` on a decision
   whose assessment has converged, as a write rather than a decision. Backfill a
   cursory assessment when none exists, move the assessment into the milestone
