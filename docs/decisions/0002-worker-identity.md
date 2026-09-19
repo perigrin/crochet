@@ -102,6 +102,16 @@ once when it creates a worker's worktree and never passes `--actor`. A worker
 that renames itself mid-run makes the transition log unreliable as a record of
 who did what — and nothing in the tool prevents that. The orchestrator does.
 
+**Breaking it costs a stranded issue, not bad data.** Worth stating, because
+the failure is survivable and that is not obvious from the rule. A worker that
+renames itself mid-run fails `headForActor` step 1 against its own in-progress
+issue, since the last transition names the identity it abandoned. Step 2 then
+places that issue in the set held by *other* workers, so it is excluded from
+the new identity and from everyone else — only the abandoned identity can
+resume it. The transitions stay a truthful record of what each declared
+identity did; the cost is one issue nobody can pick up. Verified against
+`graph.go:402-418`.
+
 ### The execute loop
 
 `crochet:execute` selects work with `git zhi next --actor <id>`. The absent
@@ -170,6 +180,17 @@ mode needs a claiming protocol. Nothing today needs one: execute is an
 orchestrator, and an orchestrator is a single serialisation point with no race
 to solve. If independent execution becomes real, the failure becomes
 observable and can be designed against then.
+
+**Identity is for coordination, never authorization.** A declared identity is
+unverified: `ZHI_ACTOR=agent:someone-else` is accepted as given, and it should
+be — the field exists so workers can avoid each other's work, not so anything
+can decide what a worker may do. If a crochet skill ever reads an actor to gate
+a capability, that is a bug in crochet.
+
+git-zhi's ADR 0003 records the same rule on its side of the seam. Stating it in
+both places is deliberate: a field that looks like identity attracts the
+assumption, and two independent statements are what make it a convention rather
+than a coincidence.
 
 **Cross-repo assignment** is out of scope, but not for the reason an earlier
 draft of this document gave. That draft implied the machinery did not exist. It
