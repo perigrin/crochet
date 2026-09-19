@@ -67,6 +67,26 @@ order, cheapest first:
    Read `docs health` carefully: its summary reports three zeros both when
    nothing has drifted and when it is observing no documents at all.
 
+### Writing a check that can be trusted
+
+Two rules, both learned by getting them wrong more than once:
+
+**Write one check that passes today for every check that fails today.** A suite
+that only knows how to fail cannot detect its own absence. If every assertion is
+of the form "this should error", then a harness that never ran, a binary that is
+missing, and a genuine defect are indistinguishable — they all produce a
+non-zero exit. Pair every red assertion with one that must be green, so a
+silently broken harness shows up as the green one failing.
+
+**Read the failure text, not the exit code.** A check that exits non-zero for
+the wrong reason has told you nothing. `127` from a missing file and the
+specific error you were expecting both satisfy `! command`. Where the logic is
+subtle, revert the fix and confirm the test goes red for the reason you
+intended — that proves the test can fail, rather than assuming it.
+
+Both exist because the same defect appeared four times in one day, in four
+different tools, including in the checks written to catch it.
+
 Observation beats inference throughout. Where a skill asserts how the CLI
 behaves, that assertion should have been produced by running the command, not
 by reading another document that says so.
