@@ -25,23 +25,24 @@ Both lines are wrong, and they are wrong in the way 0001 exists to prevent.
 
 **The event is misidentified.** By the time chain-review runs, a milestone and
 seventeen issues exist. The decision to build was taken before any of that,
-when someone asked for the spec to be decomposed. Placing acceptance at execute
-puts it after the work it authorises.
+when an independent assessment found the document sound. Placing acceptance at
+execute puts it after the work it authorises.
 
 **And the second line concedes a recordless event.** 0001 argues throughout
 that a claim with nothing connecting it to the world is the failure mode; it
 then records a transition it admits leaves no trace. A go-ahead is spoken and
 gone.
 
-**The durable record is the commit in which refinement writes `state: accepted`
-into the document.** Not the chain: 0001 says the chain "is ephemeral and
-nothing cites it", and a trace that evaporates when the milestone is cleaned up
-is not a trace. The chain is the occasion for that write, not the evidence of
-it.
+**Acceptance is the fixed point of assessment, and the durable record is the
+commit in which refinement writes `state: accepted` into the document.** Not
+the chain: 0001 says the chain "is ephemeral and nothing cites it", and a trace
+that evaporates when the milestone is cleaned up is not a trace. The chain is
+the occasion for that write, not the evidence of it, and refinement is recording
+a judgment rather than making one.
 
-The ordering alone does not settle where acceptance sits — refinement is step
-three and chain-review step four, and a reader can infer either. That is the
-argument for stating it outright.
+The ordering alone does not settle where acceptance sits — assess is step two,
+refinement step three, chain-review step four, and a reader can infer any of
+them. That is the argument for stating it outright.
 
 ### The larger problem underneath
 
@@ -153,8 +154,8 @@ produces it.
 | Gate | Kind | Mandatory | What must exist | Record |
 |---|---|---|---|---|
 | brainstorming | method | no | the spec | the spec document |
-| assess | judgment | **yes** | the spec aligns to the codebase, the architecture, and the intended direction of the repository | `docs/assessments/<milestone>.md` |
-| refinement | method | no | acceptance — the decision that the work should be done | `state: accepted` in the document; the issues |
+| assess | judgment | **yes** | the spec aligns to the codebase, the architecture, and the intended direction of the repository — and its fixed point is the acceptance | `docs/assessments/<milestone>.md` |
+| refinement | method | no | the chain | `state: accepted` recorded in the document; the issues |
 | chain-review | judgment | when a chain exists | the units of work are ready to be iterated on | a checklist entry in the milestone body |
 | execute | method | no | the code | commits carrying `Implements: NNNN` |
 | review | judgment | **yes** | the delivery matches the decision and the code is sound | a checklist entry in the milestone body |
@@ -186,45 +187,68 @@ accepted with no chain, because acceptance is the decision that the work should
 be done, and refinement is how that decision is normally expressed rather than
 what makes it true.
 
-### Who may accept
+### Acceptance is a fixed point
 
-0001 leaves this open — "Who accepts a proposal. Currently perigrin" — and this
-document cannot, because under it asking for refinement *is* accepting. A rule
-about acceptance with no rule about who may ask is a mechanism deciding a policy
-by accident.
+0001 leaves who accepts open — "Who accepts a proposal. Currently perigrin" —
+and this document cannot leave it open, because the mechanism would otherwise
+decide the policy by accident.
 
-**An agent may accept a decision it did not author.** The bar is authorship, not
-species — the same self-versus-other rule the assessment already uses, applied
-to the other judgment an agent makes about a document. An agent accepting its
-own proposal is self-acceptance, and it is the failure this document forbids one
-paragraph earlier for assessment.
+**A decision is accepted when assessment reaches a fixed point: assess, resolve
+what it raises, assess again, until a round raises nothing new.** Not a single
+positive verdict. A verdict is one agent's read of one version, and the version
+usually changes in response to it — an assessment that found problems and a
+document that then changed is not agreement, it is one round.
 
-**Today the bar is honoured, not enforced.** Agent authorship is recorded
-nowhere: `author:` reads `Chris Prather` on every decision in the series, and so
-does every commit author on `docs/decisions/`. An actor cannot look up whether it
-wrote the document it is about to accept. This is rung 3, and it stays there
-until agent authorship is recorded somewhere a check can read — the same
-limitation that keeps the autonomy audit's actor query out of reach, and the same
-one 0002 addressed for chain transitions and nothing else.
+This is the shape `crochet:review` already uses on the far side of execute.
+Both judgment gates converge rather than pronounce, and for the same reason: a
+single pass reports what one look caught, where a fixed point reports that
+nothing further is visible.
 
-**Consensus between several agents is better than one agent accepting.** Not
-required, but preferred, and for the same reason the assessment is dispatched:
-independence is a property of the number of separate judgments, not of the
-authority of any one of them. It is also the practical answer while the
-authorship bar is unenforceable — a second agent agreeing is a check that does
-not depend on knowing who wrote the thing.
+**The model is a Quaker meeting for business, not a vote.** Acceptance is the
+sense of the meeting: what remains when the objections are exhausted. Four
+things follow, and they are the rules that make "fixed point" precise.
 
-**Human contributors may override an agent decision.** This is where the human
-sits in the loop — not as a gate every acceptance waits on, which would cost the
-autonomy this exists to protect, but as a veto that needs no justification and
-no turn to arrive. An override that declines a decision is written down, because
-`declined` is already the one state with no other trace.
+- **Nothing is counted.** A majority of favourable assessments is not
+  acceptance, and a single participant is not a quorum. Independence is a
+  property of how many separate judgments were made, not of the authority of any
+  one of them.
+- **One unresolved objection prevents acceptance.** An agent that still holds a
+  finding blocks, however many others are satisfied. This is what makes the
+  fixed point meaningful rather than a count of rounds.
+- **An agent may stand aside.** Recording a concern without blocking is a
+  distinct act from blocking, and the difference is stated rather than inferred.
+  A standing-aside concern is written down; it is a known cost, not an
+  unresolved objection.
+- **Silence is assent only after consideration.** An agent that was not asked,
+  or was working on something else, has not agreed. Absence of objection counts
+  only from a participant who actually looked.
+
+**The accepting agent is never the author, structurally.** Assess is dispatched
+to a fresh subagent, so the judgment comes from an actor that did not write the
+document. The independence rule and the acceptance rule are one mechanism rather
+than two things to remember — and an agent cannot accept its own proposal by
+invoking a skill, because invoking a skill is not what accepts.
+
+**Human contributors may block, and may also override after the fact.** The
+first is ordinary: a person holding a finding stops the meeting reaching unity
+the same way an agent does. The second is where this departs from the analogy —
+a Quaker meeting has no authority above it, and this does. A human may reopen a
+decision already accepted, needing no justification and no turn to arrive.
+
+That is where the human sits in the loop: not as a gate every acceptance waits
+on, which would cost the autonomy this exists to protect, but as a participant
+who can also reverse. An override that declines a decision is written down,
+because `declined` is already the one state with no other trace.
 
 **Policy decisions are recorded in a decision document.** This one included:
-the rule that policy needs an RFC is the reason this section exists rather than
-living in a skill file where it would be a mechanism nobody voted on. It is also
-the entry condition for the pipeline — a policy question is what makes a decision
+the rule that policy needs an RFC is why this section exists rather than living
+in a skill file where it would be a mechanism nobody agreed to. It is also the
+entry condition for the pipeline — a policy question is what makes a decision
 document owed in the first place.
+
+**Refinement records the acceptance; it does not make it.** Writing
+`state: accepted` into the document is the durable trace of a judgment already
+reached, which is why that write can happen without asking for confirmation.
 
 A single terminal checkpoint at milestone completion was considered and
 rejected. Backfilling at each gate surfaces a gap at the point where repair is
@@ -469,12 +493,13 @@ rather than empty. The relation is already in use — 0001 carries
 ## Scope of Change
 
 - **`skills/assess/assess.md`**: dispatch the assessment to a fresh subagent
-  rather than performing it inline, so independence is structural; write the
-  assessment to `docs/assessments/<milestone>.md` rather than presenting it
-  only; define the cursory form and the three axes; refuse to assess work whose
-  actors include the assessing actor.
-- **`skills/refinement/refinement.md`**: write `state: accepted` when refining a
-  `proposed` decision, and refuse when this actor authored it. Backfill a
+  rather than performing it inline, so independence is structural; run to a
+  fixed point, since the fixed point is the acceptance and a single pass is not;
+  write the assessment to `docs/assessments/<milestone>.md` rather than
+  presenting it only; define the cursory form and the three axes; refuse to
+  assess work whose actors include the assessing actor.
+- **`skills/refinement/refinement.md`**: record `state: accepted` on a decision
+  whose assessment has converged, as a write rather than a decision. Backfill a
   cursory assessment when none exists, move the assessment into the milestone
   body, and carry the decision's acceptance criteria onto the milestone.
 - **`skills/refinement/architect-prompt.md`** and
@@ -528,7 +553,7 @@ rather than empty. The relation is already in use — 0001 carries
 - [ ] assess writes the assessment to the archive (`grep -q 'docs/assessments' skills/assess/assess.md`)
 - [ ] assess refuses to assess its own actor's work (`grep -q 'own work' skills/assess/assess.md`)
 - [ ] assess dispatches rather than assessing inline (`grep -q 'subagent' skills/assess/assess.md`)
-- [ ] refinement refuses to accept a decision this actor authored (`grep -q 'author' skills/refinement/refinement.md`)
+- [ ] assess runs to a fixed point, since that is the acceptance (`grep -q 'fixed point' skills/assess/assess.md`)
 - [ ] the archive is reachable, so docs check can see it (`grep -q 'docs/assessments' CONTRIBUTING.md`)
 - [ ] review reads the branch diff (`grep -q 'pu\.\.\.HEAD' skills/review/review.md`)
 - [ ] review verifies the milestone's acceptance criteria (`grep -q 'acceptance criteria' skills/review/review.md`)
