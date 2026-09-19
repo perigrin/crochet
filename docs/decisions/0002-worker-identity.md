@@ -145,14 +145,31 @@ then lands in the set held by *other* workers, excluded from the new identity
 and from everyone else. The transitions stay a truthful record of what each
 declared identity did.
 
-Recovery is narrower than an earlier draft claimed. That draft said any caller
-could `--state resume` it. Observed on 0.6.0, no foreign identity can: `resume`
-is refused with `a measurement session is already open`, `start` with
-`issue is in-progress, expected pending or reopened`. What works is
-re-exporting the abandoned identity, which then matches step 1 and gets the
-issue back — and since the orchestrator minted that token, it is the one party
-that can. Failing that, a foreign caller can `--state cancel` it. The cost is
-one issue the *scheduler* will not surface until someone does either.
+Recovery splits in two, and an earlier draft of this paragraph collapsed them.
+**Selection is identity-gated; transitions are not.**
+
+Only the abandoned identity gets the issue back from `next` — it matches step 1,
+and every other worker is told `no actionable issues for actor`. Since the
+orchestrator minted that token, it is the one party that can re-surface the
+issue to the scheduler.
+
+Any caller can transition it, though, because transitions carry no actor check.
+Observed on 0.6.0, with work committed: `--state done` succeeds from a foreign
+identity, as does `--state cancel`, and `--state done --force` covers the case
+where the session recorded no commits. What does *not* work for anyone is
+`--state resume`, refused with `a measurement session is already open` — an
+in-progress issue has an open session by definition, so this was never the
+recovery verb, on this version or any earlier one.
+
+Note what the commit guard is not. `cannot mark done: session has 0 commits`
+looks like a stranding symptom and is not: a healthy worker completing its own
+issue with nothing committed gets the same refusal. It measures work, not
+identity, and reading it as an identity failure is a confound worth naming
+because this document already made the opposite error once.
+
+So the cost is one issue the *scheduler* will not surface to anyone but its
+original worker — not one that is stuck, since any caller can still close or
+cancel it.
 
 ### The execute loop
 
