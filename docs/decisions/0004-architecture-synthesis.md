@@ -200,11 +200,6 @@ The fixture is how this runner demonstrates it can still fail.
   `plugin-structure.md` declared. It currently covers `skills/`, `commands/` and
   the manifest; a synthesis of decisions arguably also covers `t/` and `xt/`,
   since it states what they are for. Neither has been run.
-- Whether `CONTRIBUTING.md` should also live in `docs/`. GitHub honours the
-  root, `.github/` and `docs/` equally; `git zhi docs check` hardcodes its
-  reachability walk to the root and reports every document unreachable if it is
-  moved. That is a git-zhi request rather than a question for this decision, and
-  moving the file afterwards is two lines here.
 
 ## References
 
