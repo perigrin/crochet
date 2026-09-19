@@ -59,7 +59,8 @@ Note: the `--state` flag's own `--help` string lists only `start, pause, resume,
 
 | Intent | Command | Input mode | Output |
 |---|---|---|---|
-| Find next work | `git zhi next [--actor <id>] [--label <l>]` | flag | the HEAD issue |
+| Find next work | `git zhi next [--label <l>]` — bare, with `ZHI_ACTOR` set | env | the HEAD issue for this worker |
+| Find next work across repos | `git zhi project next <file.yaml>` — needs an identity | env or flag | cross-repo recommendation |
 | Inspect the chain | `git zhi list [--ready] [--milestone <m>] [--label <l>] [--all] [--critical]` | flag | issue list |
 | View an issue | `git zhi issue show [<ref>]` | arg | issue detail |
 | Check work state | `git zhi status` | none | HEAD + ready_count |
@@ -73,6 +74,45 @@ Note: the `--state` flag's own `--help` string lists only `start, pause, resume,
 Input mode is one of `arg` (positional), `flag`, `stdin` (piped), or `none`.
 Note the asymmetry from the stdin section: `issue add` is `arg + flag` (no stdin);
 `issue edit --body`/`--batch`/`--split` are `stdin`.
+
+## Worker identity: `ZHI_ACTOR`
+
+Every transition records who made it. A process declares itself by exporting:
+
+```bash
+export ZHI_ACTOR=agent:worker-3
+```
+
+The actor resolves in order: an explicit `--actor` flag where a command has one,
+then `ZHI_ACTOR`, then a derivation from git's `user.name` and `user.email`.
+
+**Only `next` and `project next` take `--actor`, and both are read-side.** No
+write command has the flag (git-zhi ADR 0004), so on the write path `ZHI_ACTOR`
+is the only way to declare an identity. Use bare `git zhi next` with the
+variable exported rather than `next --actor`: passing it on the read side while
+the write side reads the environment is how one worker ends up with two
+identities.
+
+The value must name its type — `agent:` or `human:`. A bare string is refused
+at this boundary rather than defaulted, because defaulting would silently record
+agents as humans. To override for a single command, prefix the assignment:
+
+```bash
+ZHI_ACTOR=human:chris git zhi issue edit <ref> --state done
+```
+
+With nothing exported, behaviour is exactly what it was before this existed:
+the git-author derivation, one actor, no migration.
+
+**Why this matters.** Every agent in one repository shares the git author
+config, so without a declared identity they all resolve to the same actor —
+`next` hands each of them whatever another started, and the exclusion that
+keeps two workers off one issue excludes nothing. Identity is for coordination,
+never authorization: a declared value is unverified and is not a basis for
+deciding what a worker may do.
+
+Requires git-zhi 0.6.0. `sh xt/zhi-actor-probe.sh` asserts the installed binary
+honours it.
 
 ## JSON output (field inventory)
 

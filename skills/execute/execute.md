@@ -93,9 +93,47 @@ nothing recovers that from the repository afterwards — so it is placed where
 the decision is made, which is the honest ceiling for a rule of this kind.
 
 
+#### Worker identity — once per run, before any dispatch
+
+Every agent in one repository inherits the same git author config, so without
+this they all resolve to the same actor: each "resumes" whatever another
+started, and mutual exclusion excludes nothing. Mint an opaque token for this
+run — `<run-id>`, a few random characters — and give worker *n*:
+
+```bash
+export ZHI_ACTOR=agent:<run-id>-<n>
+```
+
+**Export it at dispatch, not at worktree creation.** A worktree is only
+preferred below, and a worker taking either fallback has no worktree step to
+mint an identity in — it would fall back to the git author and the collapse
+above would recur for exactly that worker.
+
+Do not derive `<run-id>` from the milestone name. Milestones share prefixes
+(`rfc-0001` and `rfc-0001-followups`), and the reclamation rule below would
+match across them and clear another run's assignments.
+
+Then reclaim what a dead run left behind:
+
+- **Clear assignments bearing an `agent:` token that is not this run's.** An
+  issue still assigned to a worker that no longer exists is outside the pool,
+  because the rule below only assigns unassigned issues. A `human:` value, or
+  an `agent:` name that is not a run token, is never touched.
+- **Assign only issues that are currently unassigned**, and never dispatch for
+  an issue assigned outside this run's workers. Assigning an issue to yourself
+  therefore removes it from the orchestrator's pool, which is what a reader
+  would expect.
+
+Assignment is a hint, not a lock: it attracts its own worker and repels nobody.
+Ownership is the actor on the in-progress transition.
+
 **If `superpowers:dispatching-parallel-agents` is available** (check preflight capabilities):
-  Identify all ready issues (all dependencies satisfied, state = pending) and dispatch
-  parallel agents for each, one agent per issue. Follow the dispatching-parallel-agents
+  Dispatch one agent per issue, each with its own `ZHI_ACTOR`, and let each
+  select its own work with bare `git zhi next` (below). Dispatch no more workers
+  than `config.wip_limit` permits — read it with `git zhi config --format json`.
+  `wip_limit` caps issues in progress across the chain and git-zhi enforces
+  per-worker WIP of one independently, so the two compose into a parallelism
+  throttle without anything being added. Follow the dispatching-parallel-agents
   skill for agent coordination and result collection.
 
   **Give each parallel agent its own git worktree.** Parallel agents that commit
@@ -119,18 +157,35 @@ the decision is made, which is the honest ceiling for a rule of this kind.
   Disjoint file scope is necessary but NOT sufficient for concurrent commits —
   index isolation is what makes parallel execution actually parallel.
 
-**Otherwise:**
-  ```bash
-  git zhi list --milestone <milestone> --ready --format json
-  ```
+**Otherwise:** one worker, still with an identity exported.
 
-  Select the first ready issue (all dependencies satisfied, state = pending).
-  If no issues are ready but open issues exist, report the blocker and stop.
+Each worker selects its own work:
+
+```bash
+git zhi next
+```
+
+Bare, with **no actor flag**. The identity is already in the environment, and
+passing it on the read side while the write side reads the environment is the
+split-identity failure this exists to prevent. `next` resumes this worker's own
+in-progress issue if it has one, and otherwise returns a ready issue that no
+other worker holds — which a ready-set query cannot do, because it has no
+assignee filter and no notion of who is asking.
+
+When it reports `no actionable issues for actor <id>` — or the plainer
+`no actionable issues` — **this worker has nothing to do.** That is not the
+same as the chain being finished: it also covers every remaining issue being
+held or blocked by another worker. The tool does not distinguish them, so match
+both strings, stop this worker, and let the run end when every worker has
+stopped.
 
 Start each issue before executing:
 ```bash
 git zhi issue edit <id> --state start
 ```
+
+This records a transition under `ZHI_ACTOR`, which is what makes the selection
+above work for everyone else.
 
 ### Step 3: Inner Loop (Execute Issue)
 
@@ -326,7 +381,7 @@ Postmortem: see output above
 ## Key Constraints
 
 - All chain interaction through `git zhi` CLI — never access refs directly
-- Use `git zhi list --milestone <ms> --ready` for ready-set queries
+- Each worker selects with bare `git zhi next`, identity in `ZHI_ACTOR`
 - Reopen requires two state transitions: `--state reopen` then `--state start`
 - Sanbao gate analyst determines review depth — measured complexity, not heuristics
 - Sanbao runs at milestone scope; gate analyst extracts single-issue metrics

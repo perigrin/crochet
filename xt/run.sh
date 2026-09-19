@@ -42,6 +42,15 @@ if [ "$SELFTEST" = yes ] && [ -f t/git-zhi-subcommands.sh ]; then
     fi
 fi
 
+# ------------------------------------------------------------- actor floor
+# The subcommand check asks whether a command exists. This asks whether it
+# behaves the way execute.md selects against, which a --help exit cannot say.
+if [ "$SELFTEST" = yes ] && [ -f xt/zhi-actor-probe.sh ]; then
+    if ! sh xt/zhi-actor-probe.sh >/dev/null 2>&1; then
+        note "xt/zhi-actor-probe.sh — installed git-zhi is below the 0.6.0 floor execute.md needs"
+    fi
+fi
+
 # ---------------------------------------------------------- doc structure
 if ! ( cd "$ROOT" && git zhi docs check >/dev/null 2>&1 ); then
     note "git zhi docs check — unreachable files, dead links, decision gaps or bad covers paths"
