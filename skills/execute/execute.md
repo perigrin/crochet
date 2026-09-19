@@ -5,11 +5,10 @@ description: Drive the full SDLC execution loop — pick issues from the DAG, ru
 
 ## Prerequisites
 
-**If `crochet:preflight` is available** (check preflight capabilities):
-  Invoke `crochet:preflight` and use the returned capabilities map for all conditional references below.
-
-**Otherwise:**
-  Verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up. Proceed without a capabilities map; treat all conditionals below as "not available."
+Invoke `crochet:preflight` as the first action. It ships in this plugin, so it
+is always present — it is not one of the optional integrations below. It checks
+git-zhi availability and returns the capabilities map used for every
+conditional reference in this skill.
 
 # crochet:execute
 
@@ -218,34 +217,33 @@ If no findings, proceed to next issue (back to Step 2).
 
 ### Step 5: Milestone Completion
 
-When all issues are closed:
+When all issues are closed, the order matters: verify, then write the
+postmortem, then complete. Completing first would gate the postmortem behind
+the thing it is meant to explain, and completing the milestone runs the
+verify gate over every done issue's acceptance criteria.
+
+**If `superpowers:verification-before-completion` is available** (check preflight capabilities):
+  Invoke it now, before anything is marked complete.
+
+**Otherwise:**
+  Run the project's own checks manually and confirm they pass before proceeding.
+
+Then run the postmortem, which writes to `docs/postmortems/` whether or not the
+installed binary can attach it to the milestone:
+
+```
+/postmortem <milestone>
+```
+
+Then complete the milestone:
 
 ```bash
 git zhi milestone edit <milestone> --state complete
 ```
 
-**If `superpowers:verification-before-completion` is available** (check preflight capabilities):
-  Invoke `superpowers:verification-before-completion` before marking the milestone
-  complete and before rebuilding.
-
-**Otherwise:**
-  Run the project test suite and build manually to confirm everything passes
-  before proceeding.
-
-**Rebuild and install the binary** so subsequent milestones use the latest code:
-```bash
-make install
-```
-
-This runs `go build` with correct ldflags, installs to `~/.local/bin`, runs
-`git-zhi setup` for companion symlinks, and prints the version string for
-verification. Skipping this step causes the stale-binary problem where CLI
-behavior and sanbao output do not reflect recent code changes.
-
-Then run the postmortem:
-```
-/postmortem <milestone>
-```
+If this repository builds an artefact, build and install it here so later
+milestones run against current code. Crochet does not: it is markdown, and its
+checks are `t/` and `xt/`.
 
 ### Step 6: Report
 
