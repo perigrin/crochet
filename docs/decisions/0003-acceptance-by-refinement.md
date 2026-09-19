@@ -151,6 +151,17 @@ document while a content edit cannot.
   a half-implemented decision superseded, but a series with one amendment in it
   is not yet evidence that the relation is load-bearing.
 
+- **Is recording a skip enough to make it legal?** Parked mid-brainstorm on
+  0004, to be settled when this document expands to cover the whole protocol.
+  The rule proposed was that a skip is legal when the judgment is recorded, and
+  that an unrecorded skip is an omission however reasonable it was. The case
+  that tests it is 0002: had "skipping refinement, accepting the loss of the
+  milestone, verify gate, metrics and postmortem" been written down before the
+  work started, would that have made it legal, or is refinement mandatory
+  regardless of what anyone records? `rfc-0001-followups` is the same question
+  from the other side — its postmortem was skipped, probably rightly, and
+  nothing says so, which is why it reads identically to having forgotten.
+
 ## References
 
 - `0001-documentation-architecture.md`. The decision this one amends, and the
