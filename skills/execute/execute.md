@@ -64,6 +64,18 @@ The urge to report is not a reason to stop. Progress is already visible in the
 chain: `git zhi list --milestone <name>` and `git zhi milestone show <name>`
 show it without you in the loop. Anything worth saying keeps until the end.
 
+**Escalating is also pausing, and it will not feel like it.** The other way
+this rule gets broken is not narration but a judgment call that seems to belong
+to the user — a design choice, a naming decision, a question about intent. From
+the inside that feels like escalating rather than stopping, so a rule about
+pausing does not seem to apply, and you can quote this paragraph while doing it.
+
+The test is not how important the question feels. It is: **can I settle this
+myself?** Usually yes, and usually faster than writing the paragraph explaining
+why you could not. Measure it, read the code, run the command. Escalate when
+the answer genuinely is not in the repository — a preference only the user
+holds, or an action they have not authorised.
+
 **Default does not mean never stop.** It means no routine pause between
 issues. Stop when one of these is true:
 
