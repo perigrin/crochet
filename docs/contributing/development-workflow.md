@@ -108,6 +108,42 @@ protected: never push to it directly, and never merge or force-push it.
 The README and `commands/` are checked against each other, in both directions,
 so a skill added to one and not the other is caught rather than noticed.
 
+## Releasing
+
+**Publishing crochet is two repositories.** The plugin's own version lives in
+`.claude-plugin/plugin.json`; the marketplace advertises a version of its own in
+`perigrin/claude-plugins-marketplace`. Merging here changes what the repository
+holds. It does not change what a fresh `/plugin install crochet` resolves to —
+that is the marketplace's copy, and it is a separate pull request in a separate
+repository.
+
+Nothing enforces that the two agree. `claude plugin tag` validates it when run,
+and is the only thing that does.
+
+1. **Bump `version` in `.claude-plugin/plugin.json`.** Minor for a user-visible
+   behaviour change — a default that flips, a flag that changes meaning. Patch
+   for corrections that leave behaviour alone.
+2. **Raise `git_zhi_min_version` if any skill now depends on git-zhi behaviour
+   that did not exist below it.** This is the part with teeth: `crochet:preflight`
+   compares the installed binary against it, so leaving it low lets preflight
+   report a healthy environment to an agent whose skills cannot work in it.
+3. **Open a pull request against `pu` and merge it.**
+4. **Bump the same version in the marketplace repository's
+   `.claude-plugin/marketplace.json`**, as its own pull request. Until this
+   merges, a fresh install gets the previous release.
+5. **Update locally and confirm what you got:**
+
+   ```bash
+   claude plugin marketplace update perigrin-marketplace
+   claude plugin update crochet
+   ```
+
+   Then restart, and check that the installed copy carries the change you just
+   shipped rather than trusting the version number. A cached plugin is a third
+   place the version is recorded, and an agent editing skill files in a checkout
+   while running skills from an older cache is not writing the thing it is
+   running.
+
 ## Changing a live document
 
 Update the document first, then build to match, in the same pull request. The
