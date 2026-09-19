@@ -70,9 +70,9 @@ citations sit at the claim so that correspondence is visible where it applies.
 **Completeness is a judgment, not a check.** Whether the synthesis reflects what
 was decided cannot be established by counting citations: a document listing
 every decision's headings at the bottom would satisfy any such count while
-reflecting none of them. That is the vacuous pass this repository keeps finding,
-and building it into the gate meant to guard against it would be another
-instance of it.
+reflecting none of them. A check whose subject is nearly empty would report what
+it reports when the subject is complete, which is the failure the check exists
+to prevent.
 
 Three existing mechanisms carry it instead, and only one of them is a check.
 
