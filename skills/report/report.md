@@ -28,8 +28,8 @@ Search in order:
 ---
 name: recurring-status
 data:
-  - git zhi project report auth-overhaul --format json
-  - git zhi sanbao report HEAD --format json
+  - git zhi project show projects/auth-overhaul.yaml --format json
+  - git zhi sanbao HEAD --format json
   - git zhi verify HEAD --format json
   - git zhi docs health --format json
 schedule: recurring

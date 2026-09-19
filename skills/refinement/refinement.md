@@ -36,17 +36,45 @@ Before decomposition begins, run pipeline-readiness checks against the spec and 
 3. **Scope check** — read the codebase structure and compare it against the spec. Flag any areas where the spec appears to contradict existing architecture or naming conventions. Do not block on this — surface findings and continue unless the user asks to stop.
 4. **Feasibility assessment** — check whether the spec is feasible given the codebase maturity, existing dependencies, and available infrastructure. Flag any aspects that appear infeasible and ask the user to confirm before proceeding.
 
-If all three checks pass cleanly, proceed to Step 1. If issues are found, surface them as a numbered list and ask the user: "Proceed anyway, or stop to address these first?"
+If all four checks pass cleanly, proceed to Step 1. If issues are found, surface them as a numbered list and ask the user: "Proceed anyway, or stop to address these first?"
 
 ### Step 1: Lazy Initialization
 
 Before any agent runs:
 
-1. Check if `CONTRIBUTING.md` exists. If not, check if `git-zhi-docs` is on `$PATH`:
+1. Check if `CONTRIBUTING.md` exists. If not, probe for the docs companion by
+   running `git zhi docs --help` rather than testing whether a file is on
+   `$PATH` — a stale symlink can exist and still not dispatch.
    - If available: run `git zhi docs init` to scaffold the canonical structure
-   - If not: create a minimal CONTRIBUTING.md with tech stack, build/test commands
-2. Check if `CLAUDE.md` exists. If not, create one pointing to CONTRIBUTING.md with agent directives.
-3. If both exist, check CLAUDE.md references CONTRIBUTING.md. Propose update if not.
+   - If not: create a minimal CONTRIBUTING.md naming the tech stack and the
+     commands that check it
+2. **Fit what the scaffold wrote before trusting it.** `docs init` writes a
+   template: contributing docs describing git-zhi's own Go build, and six
+   Short Links, some pointing at directories nothing was written into. Rewrite
+   or remove the contributing docs, give each a non-empty `covers:`, and prune
+   links whose directories hold no files — git does not track empty
+   directories, so those links are dead on the first clone.
+3. **Commit before verifying** — run `git commit` on the scaffold, then run
+   `git zhi docs check`. The check reads the working tree, so a clean result
+   over uncommitted files says nothing about what a collaborator will get.
+4. Check if `CLAUDE.md` exists. If not, create one that imports the live layer
+   rather than referring to it.
+
+### Step 1.5: Record Acceptance
+
+If the spec is a decision under `docs/decisions/` whose frontmatter says
+`state: proposed`, set it to `state: accepted` now, before dispatching the
+architect.
+
+Asking for refinement *is* the acceptance: nobody spends four agent roles on a
+proposal they have not decided to build, so the expenditure is the commitment.
+This step is what leaves a trace of it. Do not ask for confirmation — the
+request to refine was the decision, and asking again would turn a side effect
+back into a ceremony.
+
+Leave any other `state:` value alone. A decision already `accepted` stays so,
+and one that is `declined` or `superseded` should not be refined at all —
+surface that and stop.
 
 ### Step 2: Architect Agent
 

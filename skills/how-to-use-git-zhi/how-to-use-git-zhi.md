@@ -40,7 +40,7 @@ This asymmetry is verified against the binary and matches the repo's own
 ## State model: verbs vs nouns
 
 `git zhi issue edit <ref> --state` takes a transition **verb**:
-`start`, `pause`, `resume`, `done`, `cancel`.
+`start`, `pause`, `resume`, `done`, `cancel`, `reopen`.
 `git zhi status` / `git zhi list --format json` **report** a state **noun**.
 The two vocabularies are different — an agent reading a noun must map back to the verb.
 
@@ -48,9 +48,12 @@ The two vocabularies are different — an agent reading a noun must map back to 
 |---|---|---|
 | `pending` | (initial state on `issue add`) | `start` → `in-progress` |
 | `in-progress` | `start` (also where `pause`/`resume` land — no distinct `paused` noun) | `done` → `done` |
-| `done` | `done` | (terminal) |
+| `done` | `done` | `reopen` → `reopened` |
+| `reopened` | `reopen`, and only from `done` | `start` → `in-progress` |
 
 Note: the reported noun is `in-progress` with a **hyphen**, not `in_progress`.
+
+Note: the `--state` flag's own `--help` string lists only `start, pause, resume, done, cancel` — it omits `reopen`, which the state machine accepts. This is the one place the "`--help` wins" rule below is known to be wrong, and it matters because `crochet:execute` depends on `reopen` for its PAAD review cycle. Observed on the installed binary rather than read from the help text.
 
 ## Intent → command
 

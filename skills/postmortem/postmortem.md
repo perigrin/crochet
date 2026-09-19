@@ -42,7 +42,7 @@ git zhi verify <name> --format json
 git zhi docs health --format json
 
 # Engineering metrics (if sanbao available)
-git zhi sanbao report <name> --format json
+git zhi sanbao <name> --format json
 
 # Commit messages for sentiment context
 git log <session-sha-ranges>
@@ -94,10 +94,12 @@ Each recommendation should be specific enough that a future `crochet:refinement`
 
 ## Output
 
-Generate the postmortem as markdown and attach to the milestone:
+Write the postmortem to the archive first. That write is unconditional and is
+what makes the retrospective durable:
 
 ```bash
-git zhi milestone edit <name> --postmortem <<'EOF'
+mkdir -p docs/postmortems
+cat > docs/postmortems/<milestone>.md <<'EOF'
 # Milestone <name> Postmortem
 
 ## What Worked Well
@@ -118,9 +120,23 @@ Data sources: issue list, milestone telemetry, verify results, docs health, sanb
 EOF
 ```
 
-## Feedback Loop
+`mkdir -p` is not redundant: `git zhi docs init` creates `docs/postmortems/`
+but git does not track empty directories, so the first clone of a scaffolded
+repo has no such directory.
 
-Future `crochet:refinement` runs read past postmortems via `git zhi milestone show --format json` to avoid repeating process mistakes. The system accumulates institutional knowledge about *how to work*, not just what was built.
+Then attach it to the milestone, but only if the installed binary supports it.
+The flag exists at git-zhi HEAD and not in every released build, so probe
+rather than assume:
+
+```bash
+if git zhi milestone edit --help 2>&1 | grep -q -- '--postmortem'; then
+  git zhi milestone edit <name> --postmortem - < docs/postmortems/<milestone>.md
+fi
+```
+
+Note the sentinel. `--postmortem` takes a value, and `-` is what makes it read
+stdin; a bare `--postmortem` before a heredoc consumes the next argument
+instead, which is how every postmortem written by this skill was silently lost.
 
 ## Constraints
 

@@ -5,11 +5,10 @@ description: Drive the full SDLC execution loop — pick issues from the DAG, ru
 
 ## Prerequisites
 
-**If `crochet:preflight` is available** (check preflight capabilities):
-  Invoke `crochet:preflight` and use the returned capabilities map for all conditional references below.
-
-**Otherwise:**
-  Verify that `git-zhi` is available by running `which git-zhi`. If not found, run `crochet:install` to set it up. Proceed without a capabilities map; treat all conditionals below as "not available."
+Invoke `crochet:preflight` as the first action. It ships in this plugin, so it
+is always present — it is not one of the optional integrations below. It checks
+git-zhi availability and returns the capabilities map used for every
+conditional reference in this skill.
 
 # crochet:execute
 
@@ -26,6 +25,9 @@ or "start working."
 A milestone name (e.g., `v0.3.4`). If omitted, use `git zhi milestone list --format json`
 to find the active milestone (state != completed).
 
+`--step` is the only flag: it asks for confirmation before each issue.
+Without it, execution runs straight through — see Loop control in Step 2.
+
 ## Process
 
 ### Step 1: Load Chain State
@@ -38,6 +40,58 @@ git zhi list --milestone <milestone> --format json
 Count open issues. If zero, skip to Step 5 (completion).
 
 ### Step 2: Pick Next Issue
+
+#### Loop control — decide this here, every time
+
+This is where the loop re-enters, so the rule lives here rather than in Key
+Constraints where it is too far away to be read at the moment it applies.
+
+**Continuing is the default.** Pick the next ready issue and keep going in the
+same turn. Only `--step` changes this, and then you confirm before each issue.
+
+Running through is the default because the pause was never what made this
+safe. The gates are the acceptance criteria, the dependency graph and the
+review at Step 4. A human approving each issue in turn is not review, and
+asking again re-litigates a decision already made: invoking this skill was the
+go-ahead, the same way asking for refinement is what accepts a proposal.
+
+**Ending your turn is a pause.** Reporting progress, summarising a finding or
+narrating what just happened all end the turn, and that is exactly what the
+default forbids. There is no difference between stopping to ask a question and
+stopping to talk — the user has to prompt you again either way.
+
+The urge to report is not a reason to stop. Progress is already visible in the
+chain: `git zhi list --milestone <name>` and `git zhi milestone show <name>`
+show it without you in the loop. Anything worth saying keeps until the end.
+
+**Escalating is also pausing, and it will not feel like it.** The other way
+this rule gets broken is not narration but a judgment call that seems to belong
+to the user — a design choice, a naming decision, a question about intent. From
+the inside that feels like escalating rather than stopping, so a rule about
+pausing does not seem to apply, and you can quote this paragraph while doing it.
+
+The test is not how important the question feels. It is: **can I settle this
+myself?** Usually yes, and usually faster than writing the paragraph explaining
+why you could not. Measure it, read the code, run the command. Escalate when
+the answer genuinely is not in the repository — a preference only the user
+holds, or an action they have not authorised.
+
+**Default does not mean never stop.** It means no routine pause between
+issues. Stop when one of these is true:
+
+- the ready set is empty;
+- every remaining issue is blocked by an unfinished one;
+- a permission was denied, or a tool refused the action;
+- an acceptance criterion fails and you cannot make it pass;
+- a decision is genuinely the user's — a deletion they have not approved, or
+  work that belongs to another repo or another session.
+
+Then report once, covering everything.
+
+No check enforces this. It is a rule about what an agent chose to do, and
+nothing recovers that from the repository afterwards — so it is placed where
+the decision is made, which is the honest ceiling for a rule of this kind.
+
 
 **If `superpowers:dispatching-parallel-agents` is available** (check preflight capabilities):
   Identify all ready issues (all dependencies satisfied, state = pending) and dispatch
@@ -139,7 +193,7 @@ to determine review tier.
 
 ```bash
 git zhi issue edit <id> --state done
-git-zhi-sanbao <milestone> --format json
+git zhi sanbao <milestone> --format json
 ```
 
 Sanbao operates at milestone scope. Extract the target issue's metrics from
@@ -214,38 +268,38 @@ Run PAAD based on the tier determined by the gate analyst.
   git zhi issue add "<finding title>" --milestone <milestone>
   ```
 
-If no findings, proceed to next issue (back to Step 2).
+If no findings, proceed to the next issue — back to Step 2, whose Loop
+control section decides whether that happens now or after confirmation.
 
 ### Step 5: Milestone Completion
 
-When all issues are closed:
+When all issues are closed, the order matters: verify, then write the
+postmortem, then complete. Completing first would gate the postmortem behind
+the thing it is meant to explain, and completing the milestone runs the
+verify gate over every done issue's acceptance criteria.
+
+**If `superpowers:verification-before-completion` is available** (check preflight capabilities):
+  Invoke it now, before anything is marked complete.
+
+**Otherwise:**
+  Run the project's own checks manually and confirm they pass before proceeding.
+
+Then run the postmortem, which writes to `docs/postmortems/` whether or not the
+installed binary can attach it to the milestone:
+
+```
+/postmortem <milestone>
+```
+
+Then complete the milestone:
 
 ```bash
 git zhi milestone edit <milestone> --state complete
 ```
 
-**If `superpowers:verification-before-completion` is available** (check preflight capabilities):
-  Invoke `superpowers:verification-before-completion` before marking the milestone
-  complete and before rebuilding.
-
-**Otherwise:**
-  Run the project test suite and build manually to confirm everything passes
-  before proceeding.
-
-**Rebuild and install the binary** so subsequent milestones use the latest code:
-```bash
-make install
-```
-
-This runs `go build` with correct ldflags, installs to `~/.local/bin`, runs
-`git-zhi setup` for companion symlinks, and prints the version string for
-verification. Skipping this step causes the stale-binary problem where CLI
-behavior and sanbao output do not reflect recent code changes.
-
-Then run the postmortem:
-```
-/postmortem <milestone>
-```
+If this repository builds an artefact, build and install it here so later
+milestones run against current code. Crochet does not: it is markdown, and its
+checks are `t/` and `xt/`.
 
 ### Step 6: Report
 
@@ -281,8 +335,9 @@ Postmortem: see output above
 - Max 3 PAAD-reopen cycles per issue — prevents infinite cycling
 - The skill is idempotent: re-invoking it on a partially-executed milestone
   resumes from the current chain state (already-closed issues are skipped)
-- Human-in-the-loop: by default, pause between issues for confirmation.
-  Pass `--auto` to run without pauses.
+- Execution runs through by default; `--step` confirms before each issue. The
+  rule is stated at the loop boundary in Step 2 and not repeated here, so
+  there is one place to read it.
 - Commit frequently, never squash — iteration history is valuable
 
 ## Integration

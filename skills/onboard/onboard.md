@@ -34,7 +34,24 @@ Report findings and ask: "Ready to proceed with scaffolding?"
 
 Run `git zhi docs init` to create the canonical `docs/` directory structure and living documents.
 
-**Verify:** `git zhi docs check` passes.
+Then fit the scaffold to this repo before verifying it. The scaffold is a
+template, and shipping it unread is how a repo ends up asserting things about
+itself that were never true of it:
+
+1. **Fit the contributing docs.** `docs/contributing/coding-conventions.md` and
+   `development-workflow.md` arrive describing git-zhi's own Go build. Rewrite
+   them for this repo, or delete them. Give each a non-empty `covers:` naming
+   the paths it describes, or `git zhi docs health` cannot see it drift.
+2. **Prune the Short Links.** `docs init` writes six links into
+   `CONTRIBUTING.md`, but git does not track empty directories, so a link to a
+   directory nothing was written into is dead on the first clone. Remove the
+   links whose directories hold no files, and restore them when something
+   lives there.
+3. **Commit before verifying** — run `git commit` on the scaffold first. The
+   check reads the working tree, so a clean result over uncommitted files says
+   nothing about what a collaborator will get.
+
+**Verify:** `git zhi docs check` passes, from a fresh clone rather than only here.
 **Rollback:** `git checkout -- docs/ CONTRIBUTING.md` to revert.
 
 ### Step 3: Bootstrap History
@@ -74,7 +91,7 @@ If the team uses an external tracker:
 
 ### Step 6: Verify Baseline
 
-Run `git zhi sanbao report <milestone>` (if sanbao is installed) to check that telemetry produces sensible numbers.
+Run `git zhi sanbao <milestone>` (if sanbao is installed) to check that telemetry produces sensible numbers.
 
 Check: Does speed make sense? Is MPG reasonable? Does the fever chart reflect reality?
 
