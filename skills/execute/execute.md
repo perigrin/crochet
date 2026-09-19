@@ -138,7 +138,7 @@ to determine review tier.
 
 ```bash
 git zhi issue edit <id> --state done
-git-zhi-sanbao <milestone> --format json
+git zhi sanbao <milestone> --format json
 ```
 
 Sanbao operates at milestone scope. Extract the target issue's metrics from

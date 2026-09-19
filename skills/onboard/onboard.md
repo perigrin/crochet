@@ -91,7 +91,7 @@ If the team uses an external tracker:
 
 ### Step 6: Verify Baseline
 
-Run `git zhi sanbao report <milestone>` (if sanbao is installed) to check that telemetry produces sensible numbers.
+Run `git zhi sanbao <milestone>` (if sanbao is installed) to check that telemetry produces sensible numbers.
 
 Check: Does speed make sense? Is MPG reasonable? Does the fever chart reflect reality?
 

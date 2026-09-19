@@ -165,7 +165,7 @@ git zhi milestone show
 # Review: speed, MPG, fever chart
 
 # If sanbao is installed:
-git zhi sanbao report <milestone>
+git zhi sanbao <milestone>
 # Review: DORA metrics, sentiment, complexity
 ```
 

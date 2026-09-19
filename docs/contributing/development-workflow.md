@@ -32,7 +32,19 @@ order, cheapest first:
    actually happens. This is the step that catches version skew: a skill can be
    internally consistent and still describe a flag the installed binary does not
    have, or an input mode it no longer accepts.
-3. **Check the documentation structure.**
+3. **Run the product check.**
+
+   ```bash
+   sh t/git-zhi-subcommands.sh
+   ```
+
+   Every `git zhi` subcommand named in a fenced block or backtick span under
+   `skills/` must really exist. This is the check that catches version skew at
+   the level it actually happens: a subcommand's `--help` exits 0 long after
+   the flags beneath it have moved, and a companion invoked by hyphenated name
+   stopped dispatching in v0.5.0 while the stale symlink kept answering.
+
+4. **Check the documentation structure.**
 
    ```bash
    git zhi docs check     # reachability, dead links, decision numbering, covers paths

@@ -83,8 +83,9 @@ superpowers or paad already provides.
 
 ## Working in This Repo
 
-There is no build step, test suite, or compiled output. The deliverables are
-markdown skill files. Changes are validated by reading the skill, checking its
+There is no build step and no compiled output; the deliverables are markdown
+skill files. There is a product check at `t/git-zhi-subcommands.sh`, which
+asserts that every `git zhi` subcommand the skills name really exists. Changes are validated by reading the skill, checking its
 internal consistency (do the steps reference real `git zhi` subcommands?), and
 verifying the command stub delegates correctly.
 

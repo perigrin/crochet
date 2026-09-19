@@ -42,7 +42,7 @@ git zhi verify <name> --format json
 git zhi docs health --format json
 
 # Engineering metrics (if sanbao available)
-git zhi sanbao report <name> --format json
+git zhi sanbao <name> --format json
 
 # Commit messages for sentiment context
 git log <session-sha-ranges>

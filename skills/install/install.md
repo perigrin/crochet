@@ -51,7 +51,6 @@ If `~/.local/bin` is not on `$PATH`, tell the user how to add it.
 
 ```bash
 git zhi version
-git zhi setup  # ensure all companion symlinks exist
 ```
 
 Report success and the installed version.
@@ -61,7 +60,7 @@ Report success and the installed version.
 - Always ask before downloading and executing anything.
 - Always use the binary download via `install.sh` first. It is faster and does
   not require a Go toolchain.
-- Only fall back to `go install github.com/perigrin/git-zhi@latest && git zhi setup`
+- Only fall back to `go install github.com/perigrin/git-zhi@latest`
   if the binary download fails (network error, unsupported platform, curl not
   available) or if the user explicitly asks to build from source.
 - Do NOT offer `go build` as an alternative just because `go` is on `$PATH`.
