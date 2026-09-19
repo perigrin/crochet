@@ -79,7 +79,7 @@ else
     hyph_count=0
 fi
 
-# The other direction: assert the hyphenated companions really do NOT dispatch.
+# The other direction: assert that a hyphenated companion does not dispatch.
 # This one passes today and would fail if dispatch by name came back, which is
 # what makes the suite able to detect its own absence — every other assertion
 # here is of the form "this should fail", and a suite that only knows how to
