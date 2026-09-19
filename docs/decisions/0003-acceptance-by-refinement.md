@@ -507,6 +507,13 @@ rather than empty. The relation is already in use — 0001 carries
   collecting recommendations, bounding the iteration, drafting the minute.
   `assess`, `chain-review` and `review` all delegate to it rather than each
   describing it. Internal, so no command stub.
+
+  The drafter diffs rather than summarises. A round is put to participants with
+  a description of what changed, and a description written from memory reports
+  edits that did not land — which happened twice while this decision was being
+  assessed, and cost a round each time. The subject must also hold still for the
+  duration of a round; changing it under a participant invalidates the answer
+  being asked for.
 - **`skills/refinement/refinement.md`**: record `state: accepted` on a decision
   whose assessment has converged, as a write rather than a decision. Backfill a
   cursory assessment when none exists, copy the assessment into the milestone
