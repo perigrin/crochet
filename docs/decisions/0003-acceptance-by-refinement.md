@@ -33,18 +33,15 @@ that a claim with nothing connecting it to the world is the failure mode; it
 then records a transition it admits leaves no trace. A go-ahead is spoken and
 gone.
 
-A refinement request leaves a trace, but an earlier draft named the wrong one.
-It said the trace is the chain, "which either exists or does not" — and 0001
-says the chain "is ephemeral and nothing cites it". A trace that evaporates
-when the milestone is cleaned up is not a trace. **The durable record is the
-commit in which refinement writes `state: accepted` into the document.** The
-chain is the occasion for that write, not the evidence of it.
+**The durable record is the commit in which refinement writes `state: accepted`
+into the document.** Not the chain: 0001 says the chain "is ephemeral and
+nothing cites it", and a trace that evaporates when the milestone is cleaned up
+is not a trace. The chain is the occasion for that write, not the evidence of
+it.
 
-This was not a disagreement about intent. perigrin believed crochet already
-worked this way; 0001 said the opposite; both readings were drawn from the same
-pipeline ordering, where refinement sits at step three and chain-review at
-step four. Two readers inferring different acceptance points from one ordering
-is the argument for stating it outright rather than leaving it to inference.
+The ordering alone does not settle where acceptance sits — refinement is step
+three and chain-review step four, and a reader can infer either. That is the
+argument for stating it outright.
 
 ### The larger problem underneath
 
@@ -64,17 +61,14 @@ blocks a skill" and both it and the version check "fail open". Every other
 skill begins work on whatever state it finds.
 
 That places the whole protocol on rung 4 of 0001's enforcement ladder: human
-prose, believed or not. And prose does not bind the thing reading it. In a
-single session an agent holding this document in context skipped refinement and
-chain-review on 0002, proposed going straight from a written RFC to refinement
-three times, and was about to refine 0004 while the decision it depends on was
-still `proposed`. Each was caught by perigrin, none by a check.
+prose, believed or not. Prose does not bind the thing reading it — agents
+holding this document in context skip gates it declares, and the skips are
+caught by people rather than by checks.
 
-**The gates that got skipped are the gates that leave nothing behind.**
-Refinement was also skipped on 0002 — and refinement writes `state: accepted`,
-so `xt/run.sh` now detects that skip and reports it. The difference between a
-skip that is visible and a skip that is invisible is not the agent's diligence.
-It is whether the gate wrote something down.
+**A skip is visible exactly when the gate wrote something down.** Refinement
+writes `state: accepted`, so `xt/run.sh` can report commits implementing a
+decision that was never accepted. Assess and chain-review write nothing, so
+nothing can report their absence. The difference is not the agent's diligence.
 
 ### What is missing entirely
 
@@ -156,15 +150,18 @@ the artifact arrives some other way, the method is skipped and nothing is owed
 for it. A gate that **produces a judgment** is mandatory, because nothing else
 produces it.
 
-| Gate | Kind | Mandatory | What must exist |
-|---|---|---|---|
-| brainstorming | method | no | the spec |
-| assess | judgment | **yes** | the spec aligns to the codebase, to the architecture, and to the intended direction of the repository |
-| refinement | method | no | acceptance — the decision that the work should be done |
-| chain-review | judgment | when a chain exists | the units of work are ready to be iterated on |
-| execute | method | no | the code |
-| review | judgment | **yes** | the delivery matches the decision and the code is sound |
-| postmortem | judgment | **yes** | autonomy-stealing friction is identified, with proposals for removing it |
+| Gate | Kind | Mandatory | What must exist | Record |
+|---|---|---|---|---|
+| brainstorming | method | no | the spec | the spec document |
+| assess | judgment | **yes** | the spec aligns to the codebase, the architecture, and the intended direction of the repository | `docs/assessments/<milestone>.md` |
+| refinement | method | no | acceptance — the decision that the work should be done | `state: accepted` in the document; the issues |
+| chain-review | judgment | when a chain exists | the units of work are ready to be iterated on | a checklist entry in the milestone body |
+| execute | method | no | the code | commits carrying `Implements: NNNN` |
+| review | judgment | **yes** | the delivery matches the decision and the code is sound | a checklist entry in the milestone body |
+| postmortem | judgment | **yes** | autonomy-stealing friction is identified, with proposals for removing it | `docs/postmortems/<milestone>.md`, attached with `--postmortem` |
+
+A gate that leaves no trace cannot be a precondition for anything, because
+nothing can tell whether it happened. That is why every row has a record.
 
 Three gates are mandatory outright. The rest are the ordinary way of producing
 something that must exist, and a document, an acceptance or a body of code that
@@ -236,18 +233,9 @@ reviewed before anything noticed that assess never ran.
 
 ### Each gate backfills the artifacts before it
 
-Backfill is transitive, not pairwise. Each gate confirms that a cursory
-artifact exists for every mandatory gate before it, and creates what is
+Backfill is transitive, not pairwise: each gate confirms that a cursory artifact
+exists for every mandatory gate above it in the table, and creates what is
 missing.
-
-| Gate | Confirms or creates an artifact for |
-|---|---|
-| assess | the spec |
-| refinement | spec, assessment |
-| chain-review | spec, assessment, chain |
-| execute | spec, assessment, chain, chain-review |
-| review | all of the above, and the diff |
-| postmortem | all of the above, and the review |
 
 The consequence is that a late gate backstops every earlier one. Running review
 establishes that an assessment exists, and by extension that a spec exists for
@@ -255,20 +243,7 @@ the code being reviewed. Review is the last gate that can repair a missing
 upstream artifact while the work is still open, which is why it precedes the
 postmortem.
 
-### What each gate leaves behind
-
-A gate that leaves no trace cannot be backfilled, because nothing can tell
-whether it happened.
-
-| Gate | Record |
-|---|---|
-| brainstorming | the spec document |
-| assess | `docs/assessments/<milestone>.md`, moved into the milestone body by refinement |
-| refinement | `state: accepted` written into the document; the issues |
-| chain-review | a checklist entry in the milestone body |
-| execute | commits carrying `Implements: NNNN` |
-| review | a checklist entry in the milestone body |
-| postmortem | `docs/postmortems/<milestone>.md`, attached with `milestone edit --postmortem` |
+### The records
 
 **Assess writes the assessment to `docs/assessments/`; refinement moves it into
 the milestone body.** This mirrors the postmortem exactly — written to the
@@ -481,103 +456,60 @@ because it reads the diff rather than the claims made about it.
 
 ## Amending rather than superseding
 
-0001 is `accepted` and being implemented. Its own rule freezes an accepted
-entry: immutable in content, append-only in status, changed only by
-supersession. That rule is right and this document does not edit 0001's body.
+This amends 0001 rather than superseding it: one row of one table is wrong and
+the rest is in force, half-built, with commits citing it now. Supersession would
+tell a reader none of it holds.
 
-But supersession is the wrong instrument here, and discovering that is part of
-this decision. Supersession says a document stopped being right. 0001 has not:
-one row of one table is wrong, and the rest is in force and half-built, with
-implementing commits citing it right now. Marking it `superseded` would tell a
-reader that none of it holds.
+`amends`/`amended-by` are written in one commit and checked by the same symmetry
+rule as `supersedes`/`superseded-by`, and written only when the relation exists
+rather than empty. The relation is already in use — 0001 carries
+`amended-by: [0003, 0004]` and `xt/run.sh` enforces the pairing.
 
-So this introduces a second relation:
-
-- **`amends:`** — this document revises a rule inside a decision that otherwise
-  remains in force.
-- **`amended-by:`** — its mirror, written into the amended document.
-
-Both are written in one commit, like `supersedes`/`superseded-by`, and checked
-by the same symmetry rule. They pass 0001's field test:
-each answers where a document stands and what it connects to, not what kind of
-thing it is.
-
-**Presence differs from the pair it mirrors, deliberately.** `supersedes` and
-`superseded-by` are required by 0001 and written empty when unused, because
-they are the series' core vocabulary and a reader should see the concept on
-every entry. `amends` and `amended-by` are written only when the relation
-exists; an entry that amends nothing omits the key rather than carrying
-`amends: []`.
-
-That is not the `covers: []` mistake in another costume, and the distinction is
-worth stating because it is easy to over-apply. An empty `covers:` was a
-problem because something *read* it: the drift sensor consumed the list and
-went blind on an empty one, so the emptiness was load-bearing and silent. An
-empty `supersedes:` is inert — nothing computes from it, and the symmetry check
-skips it. The test is not whether a field can be empty. It is whether anything
-depends on it being non-empty.
-
-The distinction is observable rather than stylistic. After supersession the old
-document is not in force. After amendment it is, minus the amended rule — which
-is exactly 0001's situation, and why `amended-by` can be appended to a frozen
-document while a content edit cannot.
 
 ## Scope of Change
 
-- **`docs/decisions/0001-documentation-architecture.md`**: gains
-  `amended-by: [0003]` in its frontmatter. A status append, permitted by its own
-  mutability rule. Its body is not touched, including the transition table this
-  document corrects — a reader follows the link.
-- **`skills/refinement/refinement.md`**: when the spec it is refining is a
-  decision under `docs/decisions/` whose `state:` is `proposed`, refinement
-  writes `state: accepted` before dispatching the architect. It backfills a
-  cursory assessment when none exists, and writes the assessment into the
-  milestone body.
-- **`skills/refinement/architect-prompt.md`** and
-  **`skills/refinement/refinement.md`**: both carry the false claims that a
-  milestone cannot hold a body and that the CLI has no resolution setter, and
-  both must lose them. On 0.6.0 `milestone add` itself accepts `--body` and
-  `--resolution`, so the resolution command is stored at creation rather than
-  routed through the final issue's acceptance criterion, and no second command
-  is needed.
 - **`skills/assess/assess.md`**: dispatch the assessment to a fresh subagent
   rather than performing it inline, so independence is structural; write the
   assessment to `docs/assessments/<milestone>.md` rather than presenting it
   only; define the cursory form and the three axes; refuse to assess work whose
   actors include the assessing actor.
-- **`skills/review/review.md`** and **`commands/review.md`**: the new gate —
+- **`skills/refinement/refinement.md`**: write `state: accepted` when refining a
+  `proposed` decision, and refuse when this actor authored it. Backfill a
+  cursory assessment when none exists, move the assessment into the milestone
+  body, and carry the decision's acceptance criteria onto the milestone.
+- **`skills/refinement/architect-prompt.md`** and
+  **`skills/refinement/refinement.md`**: both carry the false claims that a
+  milestone cannot hold a body and that the CLI has no resolution setter. On
+  0.6.0 `milestone add` accepts `--body` and `--resolution`, so the resolution
+  command is stored at creation rather than routed through the final issue's
+  acceptance criterion.
+- **`skills/review/review.md`** and **`commands/review.md`**: the new gate --
   two lenses over `pu...HEAD`, run to a bounded fixed point, verifying the
   milestone's acceptance criteria and recording the result.
-- **`CONTRIBUTING.md`**: link `docs/assessments/`, or `git zhi docs check`
-  reports everything in it unreachable.
-- **`skills/chain-review/chain-review.md`**, **`skills/execute/execute.md`**:
+- **`skills/chain-review/chain-review.md`** and **`skills/execute/execute.md`**:
   record their checklist entries, and backfill the upstream artifacts their
   position requires.
-- **`skills/postmortem/postmortem.md`**: add the autonomy-friction audit —
-  gather the `human:`-prefixed actors from the milestone's issue transitions
-  alongside the existing telemetry, and ask of each interruption what would have
-  let the agent proceed. Its four questions measure difficulty, not
-  interruption, and nothing in it currently looks for a human in the loop.
+- **`skills/postmortem/postmortem.md`**: add the autonomy-friction question --
+  where did a human have to act, and what would have let the agent proceed --
+  alongside the four it already asks, which measure difficulty rather than
+  interruption. Not the actor query: that signal does not work yet.
 - **`skills/preflight/preflight.md`**: the inference table becomes the
-  seven-gate state machine rather than a patched row. Its "all issues closed"
-  row currently reports the postmortem as the next gate, which would advise
-  skipping review at exactly the point review should run. The table also gains
-  the state "milestone exists, zero issues", which is refinement pending and is
-  presently merged into the pre-chain row.
-- **`skills/refinement/refinement.md`**: move the assessment from
-  `docs/assessments/` into the milestone body when creating the milestone, and
-  carry the decision's acceptance criteria onto the milestone. Its Record
-  Acceptance step gains the authorship bar — refuse to accept a decision this
-  actor authored, and say that another agent may.
-- **`docs/decisions/0001-documentation-architecture.md`**: its open question
-  "Who accepts a proposal" is answered here. The answer lives in this document;
-  0001's body is not edited, and the existing `amended-by` link carries a reader
-  across.
+  seven-gate state machine. Its "all issues closed" row reports the postmortem
+  as the next gate, which would advise skipping review at the point review
+  should run, and it gains the state "milestone exists, zero issues", presently
+  merged into the pre-chain row.
+- **`CONTRIBUTING.md`**: link `docs/assessments/`, or the documentation
+  structure check reports everything in it unreachable.
 - **`CLAUDE.md`** and **`README.md`**: the pipeline ordering and the skills
   table. `docs/architecture/plugin-structure.md` states the ordering too, but
-  0004 proposes absorbing that file into `docs/ARCHITECTURE.md`; whichever
-  lands second inherits the edit, so no criterion here names it.
-- **`xt/run.sh`**: whatever of this is checkable from the repository.
+  0004 proposes absorbing it into `docs/ARCHITECTURE.md`; whichever lands second
+  inherits the edit, so no criterion here names it.
+- **`docs/decisions/0001-documentation-architecture.md`**: its open question
+  "Who accepts a proposal" is answered here. Its body is not edited; the
+  `amended-by` link it already carries takes a reader across.
+- **`xt/run.sh`**: refuse a decision marked `accepted` while anything in its
+  `amends:` is still `proposed`. That is the one rule here the repository can
+  check unaided, and it is the one this document came close to breaking.
 
 ## Acceptance Criteria
 
