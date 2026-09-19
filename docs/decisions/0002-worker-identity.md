@@ -55,11 +55,10 @@ actor-aware path returns the same answer as the global one.
 A transition's actor is resolved in order:
 
 1. the `ZHI_ACTOR` environment variable
-2. the `zhi.actor` git config key
-3. `DeriveActor(AuthorInfo())`, as today
+2. `DeriveActor(AuthorInfo())`, as today
 
 A worker is a process, and a process already has a per-instance identity
-mechanism. `ZHI_ACTOR=agent:rfc-0001-3` isolates exactly, mutates no repository
+mechanism. `ZHI_ACTOR=agent:k7f2-3` isolates exactly, mutates no repository
 state, and needs no git extension — `git config --worktree` would require
 enabling `extensions.worktreeConfig`, which makes `core.bare` and
 `core.worktree` per-worktree for every consumer of the repo. That is a large
@@ -70,9 +69,12 @@ The value is `type:id`, which `actor.ParseActor` already accepts: `agent:` and
 state what they are, rather than being inferred from whether an email address
 contains "agent" or "bot".
 
-The `zhi.actor` key covers what an environment variable serves badly: a
-persistent worker configured once. It sits in the `zhi.*` namespace already
-established by `zhi.sync.jira.actor.<name>`.
+No config key is added. A `zhi.actor` key would cover a persistent worker
+configured once, and every worker this decision describes is minted per run and
+dies with its worktree. A third source is a precedence rule to document and a
+"which one won?" question in every later debugging session, added before anyone
+needs the second one. The `zhi.*` namespace is the natural home if a persistent
+worker ever appears.
 
 The fallback preserves current behaviour exactly. With nothing set, single
 worker use is unchanged and no existing chain changes meaning.
@@ -95,9 +97,19 @@ of who did what.
 assignee filter on `git zhi list` stops mattering rather than being added;
 `next --actor` was always the correct query.
 
-Identity is minted where the worktree is created — `agent:<milestone>-<n>`,
-exported into that agent's environment. The id is derived, so there is nothing
-to keep in sync and it dies with the worktree.
+Identity is minted where the worktree is created — `agent:<run-id>-<n>`,
+where `<run-id>` is a short opaque token generated per execute invocation.
+There is nothing to keep in sync and it dies with the worktree.
+
+**The run id must not be derived from the milestone name.** An earlier draft
+used `agent:<milestone>-<n>`, which the reclamation rule below would have
+matched as a prefix. This repository holds milestones `rfc-0001` and `rfc-0001-followups`,
+so a run for the first would match `agent:rfc-0001-followups-2` and clear
+another run's assignments. That is the same defect as `git zhi list
+--milestone` matching by prefix, found and fixed in git-zhi 0.5.2 on the day
+this was written. An opaque token also gives two sequential runs on one
+milestone distinct id spaces, so the second clears the first's stale
+assignments instead of adopting them.
 
 Fan-out is not specified here. `crochet:execute` already delegates agent
 coordination and result collection to `superpowers:dispatching-parallel-agents`,
@@ -123,9 +135,9 @@ reader would expect.
 A run that dies leaves issues assigned to workers that no longer exist. They
 are not blocked, but every later run deprioritises them, so other available
 work can starve them indefinitely — a failure that looks like nothing wrong.
-The derived id closes this without a registry, a heartbeat or a lease: worker
-ids match `agent:<milestone>-<n>`, so **execute clears assignments matching its
-own id pattern at start-up**. A human's `human:perigrin`, or an
+The opaque token closes this without a registry, a heartbeat or a lease: worker
+ids carry the run's own opaque token, so **execute clears assignments bearing
+a token that is not its own at start-up**. A human's `human:perigrin`, or an
 `agent:git-zhi`, never matches and is never touched.
 
 ### `wip_limit` is already correct
@@ -174,8 +186,8 @@ unused layer and a false claim about it are the same finding wearing two faces.
 
 ## Scope of Change
 
-**git-zhi.** Resolve the transition actor from `ZHI_ACTOR`, then `zhi.actor`,
-then `DeriveActor(AuthorInfo())`. This is the dependency this decision cannot
+**git-zhi.** Resolve the transition actor from `ZHI_ACTOR`, falling back to
+`DeriveActor(AuthorInfo())`. This is the dependency this decision cannot
 satisfy alone, named here rather than assumed.
 
 **`skills/execute/execute.md`.** Select with `git zhi next --actor <id>`; mint
@@ -202,10 +214,6 @@ belongs in a script rather than an acceptance criterion.
 
 ## Open Questions
 
-- Whether `zhi.actor` earns its place. `ZHI_ACTOR` alone covers every worker
-  this decision describes, and the config key exists for a persistent worker
-  nobody has asked for yet. It is the part of this proposal most likely to be
-  unnecessary.
 - Whether clearing own-pattern assignments at start-up is the right recovery,
   or whether the orchestrator should unassign as each issue completes. The
   first survives a crash and the second does not, which is why it is proposed;
