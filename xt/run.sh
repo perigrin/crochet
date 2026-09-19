@@ -134,6 +134,27 @@ if [ -d "$DEC" ]; then
     done
 fi
 
+# --------------------------------------------- implementing an accepted one
+# A gate that was skipped and a gate that passed leave the same trace: none.
+# This is the one place a skip is recoverable afterwards, because the claim to
+# have implemented a decision is written into the commit, and the decision says
+# whether it had been accepted yet. Per 0003, acceptance is what refinement
+# writes; implementing before that is the pipeline running out of order.
+if [ "$SELFTEST" = yes ] && [ -d "$DEC" ]; then
+    for n in $(git log --format='%(trailers:key=Implements,valueonly)' | tr -d ' ' | grep . | sort -u); do
+        target=$(ls "$DEC/$n"-*.md 2>/dev/null | head -1)
+        if [ -z "$target" ]; then
+            note "a commit claims Implements: $n, which is not a decision in the series"
+            continue
+        fi
+        state=$(sed -n '2,/^---$/p' "$target" | sed -n 's/^state:[[:space:]]*//p')
+        case "$state" in
+            accepted|superseded) : ;;
+            *) note "commits implement $n while it is '$state' — the refinement gate was skipped" ;;
+        esac
+    done
+fi
+
 # -------------------------------------------------------------- self-test
 # The runner must be able to fail. A guardrail that silently stopped firing
 # has failed open, and you stopped watching for what it caught.
