@@ -164,7 +164,7 @@ produces it.
 | chain-review | judgment | when a chain exists | the units of work are ready to be iterated on |
 | execute | method | no | the code |
 | review | judgment | **yes** | the delivery matches the decision and the code is sound |
-| postmortem | judgment | **yes** | friction and process decisions are captured |
+| postmortem | judgment | **yes** | autonomy-stealing friction is identified, with proposals for removing it |
 
 Three gates are mandatory outright. The rest are the ordinary way of producing
 something that must exist, and a document, an acceptance or a body of code that
@@ -370,6 +370,36 @@ fall back otherwise — structurally cannot see it. Review either probes
 differently or declares the dependency and fails loudly when it is absent.
 Decision 0005 covers this ground and should settle the mechanism.
 
+### The postmortem is an autonomy audit
+
+The postmortem evaluates the milestone's development session for
+autonomy-stealing friction and proposes how to remove it. Every point where the
+loop stopped for a human is a defect to be engineered away, not a fact to be
+recorded.
+
+This is what makes the protocol self-improving toward its own goal. Without it
+the pipeline runs the same way each milestone and friction persists because
+nothing is charged with finding it.
+
+`skills/postmortem/postmortem.md` asks four questions — what worked, what did
+not, what puzzles us, what will we change — and none of them asks where a human
+had to intervene. Its nearest items, worker struggles and session abandonment,
+measure difficulty rather than interruption. A hard issue an agent finished
+alone is a success by this standard; an easy one that required a human is not.
+
+**The friction is measurable rather than remembered.** Worker identity carries a
+`human:` or `agent:` prefix, so the `human:`-prefixed actors in a milestone's
+issue transitions locate every point a person entered the work. Reopen cycles,
+issues reported stuck, and the readiness checks that stop and ask are the rest.
+The audit starts from that data and asks, for each interruption, what would have
+let the agent proceed.
+
+Not every interruption is a defect. Collaboration is the point, and a human
+making a judgment the protocol reserves for them — the direction of the
+repository, a decision to decline — is the system working. The audit
+distinguishes friction from collaboration rather than treating every human
+touch as waste.
+
 ### What this does not claim
 
 This protocol is rung 2 on *an artifact existing* and rung 3 on *that artifact
@@ -453,9 +483,14 @@ document while a content edit cannot.
   milestone's acceptance criteria and recording the result.
 - **`CONTRIBUTING.md`**: link `docs/assessments/`, or `git zhi docs check`
   reports everything in it unreachable.
-- **`skills/chain-review/chain-review.md`**, **`skills/execute/execute.md`**,
-  **`skills/postmortem/postmortem.md`**: record their checklist entries, and
-  backfill the upstream artifacts their position requires.
+- **`skills/chain-review/chain-review.md`**, **`skills/execute/execute.md`**:
+  record their checklist entries, and backfill the upstream artifacts their
+  position requires.
+- **`skills/postmortem/postmortem.md`**: add the autonomy-friction audit —
+  gather the `human:`-prefixed actors from the milestone's issue transitions
+  alongside the existing telemetry, and ask of each interruption what would have
+  let the agent proceed. Its four questions measure difficulty, not
+  interruption, and nothing in it currently looks for a human in the loop.
 - **`skills/preflight/preflight.md`**: the inference table becomes the
   seven-gate state machine rather than a patched row. Its "all issues closed"
   row currently reports the postmortem as the next gate, which would advise
@@ -488,6 +523,8 @@ document while a content edit cannot.
 - [ ] review reads the branch diff (`grep -q 'pu\.\.\.HEAD' skills/review/review.md`)
 - [ ] review verifies the milestone's acceptance criteria (`grep -q 'acceptance criteria' skills/review/review.md`)
 - [ ] review bounds its fixed-point loop (`grep -q 'fixed point' skills/review/review.md`)
+- [ ] the postmortem audits autonomy-stealing friction (`grep -q 'autonomy' skills/postmortem/postmortem.md`)
+- [ ] the postmortem locates where a human entered the loop (`grep -q 'human:' skills/postmortem/postmortem.md`)
 - [ ] nothing in the repository is unreachable or misnumbered (`git zhi docs check`)
 
 ## Open Questions
