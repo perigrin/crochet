@@ -349,13 +349,16 @@ lenses over the diff after it finishes.
 
 **The diff is the branch — `pu...HEAD`.** A milestone is a unit of delivery, a
 unit of delivery is a pull request, and a pull request's diff is its branch
-diff. git-zhi exposes no issue-to-commit linkage: neither `milestone show
---format json` nor `issue show --format json` carries a commit or sha key, and
-reading `refs/zhi/` directly is forbidden. The alternatives are worse rather
-than merely unavailable — collecting commits by `Implements:` trailer inherits
-the trailer's soft spot and would miss exactly the untrailered commits most
-worth catching. The branch diff needs no new capability and is what a human
-reviewer looks at.
+diff. It is what a reviewer looks at, and it includes every commit on the
+branch whether or not anything recorded it.
+
+git-zhi does carry a narrower signal: each issue's `sessions[]` records
+`start_sha`, `end_sha` and a commit count. That is a range per execution
+session, not a diff per delivery, and it attributes only what ran through
+execute's dispatch. Collecting commits by `Implements:` trailer is worse still,
+because it inherits the trailer's soft spot and would miss exactly the
+untrailered commits most worth catching. The branch is chosen for what it
+catches, not for want of an alternative.
 
 **A milestone carries acceptance criteria, and review records them.** Criteria
 exist today on issues, which are units of work, and nowhere on the milestone,
@@ -399,12 +402,20 @@ had to intervene. Its nearest items, worker struggles and session abandonment,
 measure difficulty rather than interruption. A hard issue an agent finished
 alone is a success by this standard; an easy one that required a human is not.
 
-**The friction is measurable rather than remembered.** Worker identity carries a
-`human:` or `agent:` prefix, so the `human:`-prefixed actors in a milestone's
-issue transitions locate every point a person entered the work. Reopen cycles,
-issues reported stuck, and the readiness checks that stop and ask are the rest.
-The audit starts from that data and asks, for each interruption, what would have
-let the agent proceed.
+**The friction is asked about, not yet measured.** The audit adds one question
+to the postmortem — where did a human have to act, and what would have let the
+agent proceed — alongside the reopen cycles, stuck issues and readiness checks
+that already stop and ask.
+
+Worker identity looks like the right telemetry and is not, yet. Every
+transition actor recorded in this repository reads `human:git-zhi` — forty of
+them across two milestones that agents executed — because the prefix reflects
+whether `ZHI_ACTOR` was exported, not who acted. `ZHI_ACTOR` is minted in
+execute's dispatch, so refinement, chain-review and a backfilling review all
+write transitions outside it. An audit keyed on that signal today would report
+every agent action as a human interruption. The query becomes worth having once
+identity discipline reaches every skill that writes a transition, which this
+decision does not scope.
 
 Not every interruption is a defect. Collaboration is the point, and a human
 making a judgment the protocol reserves for them — the direction of the
@@ -482,10 +493,13 @@ document while a content edit cannot.
   writes `state: accepted` before dispatching the architect. It backfills a
   cursory assessment when none exists, and writes the assessment into the
   milestone body.
-- **`skills/refinement/architect-prompt.md`**: drop the false claims that a
-  milestone cannot carry a body and that the CLI cannot store a resolution
-  command. Store the resolution command with `milestone edit --resolution`
-  rather than routing it through the final issue's acceptance criterion.
+- **`skills/refinement/architect-prompt.md`** and
+  **`skills/refinement/refinement.md`**: both carry the false claims that a
+  milestone cannot hold a body and that the CLI has no resolution setter, and
+  both must lose them. On 0.6.0 `milestone add` itself accepts `--body` and
+  `--resolution`, so the resolution command is stored at creation rather than
+  routed through the final issue's acceptance criterion, and no second command
+  is needed.
 - **`skills/assess/assess.md`**: dispatch the assessment to a fresh subagent
   rather than performing it inline, so independence is structural; write the
   assessment to `docs/assessments/<milestone>.md` rather than presenting it
@@ -513,21 +527,24 @@ document while a content edit cannot.
 - **`skills/refinement/refinement.md`**: move the assessment from
   `docs/assessments/` into the milestone body when creating the milestone, and
   carry the decision's acceptance criteria onto the milestone.
-- **`CLAUDE.md`**, **`docs/architecture/plugin-structure.md`**,
-  **`README.md`**: the pipeline ordering and the skills table.
+- **`CLAUDE.md`** and **`README.md`**: the pipeline ordering and the skills
+  table. `docs/architecture/plugin-structure.md` states the ordering too, but
+  0004 proposes absorbing that file into `docs/ARCHITECTURE.md`; whichever
+  lands second inherits the edit, so no criterion here names it.
 - **`xt/run.sh`**: whatever of this is checkable from the repository.
 
 ## Acceptance Criteria
 
 - [ ] this decision records what it amends (`grep -q '^amends: \[0001\]' docs/decisions/0003-acceptance-by-refinement.md`)
-- [ ] the amended decision records it back (`grep -q '^amended-by: \[0003\]' docs/decisions/0001-documentation-architecture.md`)
+- [ ] the amended decision records it back (`grep -qE '^amended-by: \[.*0003' docs/decisions/0001-documentation-architecture.md`)
 - [ ] 0001 is not marked superseded, because it is still in force (`grep -q '^state: accepted' docs/decisions/0001-documentation-architecture.md`)
-- [ ] the assessment is written into the milestone body (`grep -q 'milestone edit .*--body' skills/refinement/architect-prompt.md`)
+- [ ] the assessment is written into the milestone body (`grep -q 'milestone add .*--body\|milestone edit .*--body' skills/refinement/architect-prompt.md`)
 - [ ] the review gate exists as a skill (`test -f skills/review/review.md`)
 - [ ] the review gate is user-invocable (`test -f commands/review.md`)
-- [ ] the pipeline names seven gates everywhere it is stated (`test $(grep -rl 'crochet:review' CLAUDE.md docs/architecture/plugin-structure.md skills/preflight/preflight.md | wc -l) -eq 3`)
+- [ ] the pipeline names seven gates where this decision owns the statement (`test $(grep -rl 'crochet:review' CLAUDE.md skills/preflight/preflight.md | wc -l) -eq 2`)
 - [ ] the architect no longer denies that a milestone carries a body (`! grep -q 'no flag, stdin, or' skills/refinement/architect-prompt.md`)
-- [ ] the architect stores the resolution command on the milestone (`grep -q 'milestone edit .*--resolution' skills/refinement/architect-prompt.md`)
+- [ ] refinement no longer denies it either (`! grep -q 'no milestone-body/resolution setter' skills/refinement/refinement.md`)
+- [ ] the architect stores the resolution command on the milestone (`grep -q 'milestone add .*--resolution\|milestone edit .*--resolution' skills/refinement/architect-prompt.md`)
 - [ ] refinement backfills an assessment when none exists (`grep -q 'cursory assessment' skills/refinement/refinement.md`)
 - [ ] assess defines the cursory form (`grep -q 'cursory' skills/assess/assess.md`)
 - [ ] assess writes the assessment to the archive (`grep -q 'docs/assessments' skills/assess/assess.md`)
@@ -549,14 +566,6 @@ document while a content edit cannot.
   that is the read-alone principle: a fully derived status shows nothing about
   where a decision stands to someone reading it on a web view with no shell.
   Recorded as open; not proposed here.
-- Whether `amends:` earns its place, or whether a second relation is one more
-  than this series needs. It was introduced because the alternative was marking
-  a half-implemented decision superseded, but a series with one amendment in it
-  is not yet evidence that the relation is load-bearing.
-- Whether this document's filename should change. It is titled for the whole
-  protocol and named `0003-acceptance-by-refinement.md`, which is the scope it
-  had before this expansion. Renaming costs one citation in 0004 and the link
-  symmetry check; leaving it costs a filename that misdescribes its contents.
 - Whether a decision may be accepted while a decision it amends or depends on
   is still `proposed`. The ordering rule is stated nowhere and was nearly
   violated with 0004 against this document. It is checkable at the moment
