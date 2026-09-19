@@ -129,9 +129,16 @@ Ownership is the actor on the in-progress transition.
 
 **If `superpowers:dispatching-parallel-agents` is available** (check preflight capabilities):
   Dispatch one agent per issue, each with its own `ZHI_ACTOR`, and let each
-  select its own work with bare `git zhi next` (below). Dispatch no more workers
-  than `config.wip_limit` permits — read it with `git zhi config --format json`.
-  `wip_limit` caps issues in progress across the chain and git-zhi enforces
+  select its own work with bare `git zhi next` (below).
+
+  Read the cap with `git zhi config --format json`:
+
+  - **`wip_limit` above zero** — dispatch no more workers than it permits.
+  - **`wip_limit` of zero means *no limit*, not *no workers***. It is the
+    default in any repo that has not set one, so this is the common case.
+    Dispatch by what the work and the machine can take.
+
+  `wip_limit` caps issues in progress across the chain, and git-zhi enforces
   per-worker WIP of one independently, so the two compose into a parallelism
   throttle without anything being added. Follow the dispatching-parallel-agents
   skill for agent coordination and result collection.
