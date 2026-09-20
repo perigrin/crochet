@@ -28,6 +28,8 @@ procedure.
 
 ## Inputs
 
+*Caller-facing.*
+
 | | |
 |---|---|
 | **subject** | what is being judged — a decision, a chain, a diff |
@@ -54,6 +56,8 @@ its code-review lenses.
 
 ## Who sits
 
+*Caller-facing — this is dispatch policy, not something a participant acts on.*
+
 **Participants are dispatched to fresh subagents, never forks.** A fork inherits
 the orchestrator's context, so it carries the reasoning that produced the work
 and reaches the same conclusions by a different route. Independence of actor
@@ -74,6 +78,8 @@ that does not report is a failed dispatch rather than a silent abstention.
 
 ## What a round produces
 
+*Participant-facing. If you were dispatched into a session, this section and the release rule in The loop are what is being asked of you; the rest describes the caller's job.*
+
 Each participant ends with a **recommendation — reject, modify or accept** — and
 the findings behind it. A recommendation is a positive statement, which is
 better evidence than having run out of objections.
@@ -83,6 +89,8 @@ with its grounds and the decision proceeds. **One held objection means not yet.*
 Nothing is counted, and a majority is not an outcome.
 
 ## The dispatch brief
+
+*Caller-facing — the caller writes it, a participant receives it.*
 
 **Name the author's likely blind spot.** A participant told only what to review
 finds what is wrong; a participant told where the author is likely blind finds
@@ -103,6 +111,8 @@ threshing session: views put openly, including views that do not reconcile, with
 no pressure to converge.
 
 ## The loop
+
+*Caller-facing, except step 3's release rule, which is the participant's.*
 
 1. Dispatch the participants with the brief above.
 2. Collect findings and recommendations.
@@ -132,6 +142,8 @@ which is far more expensive than a reopen and far cheaper than being wrong.
 
 ## The minute
 
+*Drafter-facing.*
+
 The drafter records, for the round:
 
 - each participant, what it raised, and what it says remains;
@@ -149,6 +161,8 @@ subject does not proceed and the reasons are on the record instead of in
 someone's memory.
 
 ## Constraints
+
+*Caller- and drafter-facing.*
 
 - **Judge nothing as the drafter.** The moment the drafting role forms a view on
   the subject it has become a participant, and the count of independent
