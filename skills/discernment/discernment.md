@@ -150,10 +150,21 @@ no pressure to converge.
    - **Carry definitions forward, never conclusions.** Your notes are for what
      you found and the bar you set. Every claim about the current revision comes
      from this round.
-   - **An exit code you did not bracket is one you have not earned.** A check
-     failing today may be failing for the reason you think, or because it is
-     malformed. Construct the case that makes it pass and the case that makes it
-     fail; without both, a red is just a red.
+   - **A result you did not bracket is one you have not earned**, and this
+     holds in both directions. A check failing today may be failing for the
+     reason you think, or because it is malformed. A check passing today may be
+     passing for the reason you think, or because what it examined was not
+     there. Construct the case that makes it pass and the case that makes it
+     fail; without both, a red is just a red and a green is worth less.
+
+     **The input that fools you is the one nobody enumerated.** Three observed
+     in a single day, none of them the check's own logic: `grep` case
+     sensitivity turned a criterion red over working code; a stale binary on
+     `$PATH` kept a test suite green for years over a rule it could not
+     enforce; and a `2>&1` in the observer's own command turned clean output
+     into a defect report against the tool that produced it. Before trusting a
+     result, say what besides the subject could have produced it — the
+     redirection, the environment, the version, the empty set.
    - **What landed near your bar is not your bar.** A change sitting where you
      asked for something is not the thing you asked for. Score it against what
      you wrote, then say separately whether what arrived is better.
