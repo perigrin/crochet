@@ -1,5 +1,5 @@
 ---
-title: Respawning subagents rather than resuming them
+title: Subagent coordination
 state: proposed
 author: Chris Prather
 date: 2026-09-19
@@ -8,14 +8,27 @@ superseded-by: []
 amends: [0003]
 ---
 
-# 0006: Respawning subagents rather than resuming them
+# 0006: Subagent coordination
 
-**This entry is a placeholder. Its Problem Statement is written; its Proposal
-awaits the protocol 0003 itself specifies.** The evidence was gathered while
-walking `crochet:discernment` across three rounds, and evidence that lives only
-in a conversation is evidence that has to be found again.
+**This entry is a placeholder.** One question has enough evidence to state
+fully; the rest of the area is named and left open. Like 0003, this is expected
+to expand past the scope it opens with — the first draft covering subagent
+coordination as a whole awaits brainstorming.
+
+What is recorded now is recorded because the evidence was gathered in a session,
+and evidence that lives only in a conversation is evidence that has to be found
+again.
 
 ## Problem Statement
+
+Crochet dispatches subagents in five skills and has no single account of how it
+does so. The rules exist, but each was settled where it was first needed:
+`crochet:discernment` owns who may sit and how rounds resume, `crochet:review`
+owns the difference between delegating and dispatching, `crochet:execute` owns
+the review-tier dispatch and the orchestration session. A rule that is right in
+one skill and absent from the other four is a convention, not a decision.
+
+### Resumption, which has the evidence
 
 Crochet reuses agents in two places, for the same stated reason: continuity is
 cheaper than re-establishing context.
@@ -64,10 +77,46 @@ third round I have raised this", and carries no standing-aside forward. Whether
 the minute carries enough of that is the open question, and the equivalent
 question for execute is whether the chain carries enough of it between issues.
 
+### The rest of the area
+
+Each of these has an observation behind it and no settled rule. They are listed
+so the expansion starts from evidence rather than from a blank page.
+
+**How many is too many, and the tension with respawning.** A session running
+eleven concurrent subagents was flagged as too many by the human watching it, and
+one of the eleven was a genuine overspawn — a review that should have continued
+an existing participant rather than starting beside it. **This pulls against
+resumption in the opposite direction from everything above:** respawning rather
+than resuming raises the spawn count by construction, so a rule that favours
+fresh agents needs a companion rule about how many are live at once, or it
+optimises one failure into the other.
+
+**Fresh subagents, never forks.** 0003 settles this for discernment: a fork
+inherits the orchestrator's context and so reaches the same conclusions by
+another route, which buys independence of actor without independence of context.
+Nothing states it for the other four dispatch sites.
+
+**Delegating is not dispatching.** `skills/review/review.md` draws the line —
+invoking a lens through the Skill tool loads its instructions into the caller's
+context, so the lens becomes the caller wearing its taxonomy, where dispatching
+sends the subject to an agent that has not read the caller's reasoning. The
+distinction is general and is written down in one skill.
+
+**A silent agent is a failed dispatch, not an abstention.**
+`skills/discernment/discernment.md` says so for participants. It is a claim about
+dispatch mechanics rather than about discernment.
+
+**The relay is a failure mode of its own.** Several reports in the discernment
+walkthrough arrived truncated, twice at the exact point a finding was released;
+the participant confirmed its text had left complete and declined to invent a
+continuation. Nothing in any skill tells a caller how to recognise a truncated
+report or what to do about one, and asking for a remainder that does not exist
+costs a round.
+
 ## Proposal
 
-Awaiting the protocol. This is an amendment to an accepted decision, so 0003's
-own gates apply to it: an assessment reaching a fixed point, with at least one
+Awaiting brainstorming. This is also an amendment to an accepted decision, so
+0003's own gates apply: an assessment reaching a fixed point, with at least one
 participant who is neither the author nor a role that holds no view.
 
 Note the recursion before starting. **Under the rule as written, that assessment
@@ -77,6 +126,8 @@ subject, and the minute should say which rule it ran under.
 
 ## Scope of Change
 
-Unknown until the Proposal exists. The rule appears in at least
-`docs/decisions/0003-acceptance-by-refinement.md`, `skills/discernment/discernment.md`,
-and the session handling in `skills/execute/execute.md`.
+Unknown until the Proposal exists. The dispatch sites are
+`skills/discernment/discernment.md`, `skills/review/review.md`,
+`skills/chain-review/chain-review.md`, `skills/execute/execute.md` and
+`skills/refinement/refinement.md`; the rules being amended are in
+`docs/decisions/0003-acceptance-by-refinement.md`.
