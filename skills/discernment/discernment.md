@@ -8,8 +8,9 @@ description: Internal convergence mechanism — dispatches independent participa
 
 ## Prerequisites
 
-Before proceeding, verify that `git-zhi` is available by running `which git-zhi`.
-If not found, run `crochet:install` to set it up.
+None. This skill dispatches agents and collects what they return; it invokes no
+`git zhi` command, so it has no binary to check for. Its callers do, and check
+it themselves.
 
 # crochet:discernment
 
@@ -32,6 +33,20 @@ procedure.
 | **subject** | what is being judged — a decision, a chain, a diff |
 | **participants** | the lenses or roles to dispatch |
 | **prior rounds** | the findings already raised, and who raised them |
+| **where the minute goes** | the caller's record — a path, or a milestone body |
+
+**The caller supplies the destination, because each has a different one.**
+`crochet:assess` writes to `docs/assessments/<milestone>.md`;
+`crochet:chain-review` and `crochet:review` write a checklist entry into the
+milestone body. A gate that leaves no trace cannot be a precondition for
+anything, so a session with nowhere to put its minute has not finished.
+
+**The caller also says who drafts.** The invoking agent is frequently the
+author — for `crochet:assess` it is usually the author's own session — and a
+drafter that holds a view has become a participant, which makes the count of
+independent judgments wrong. Either dispatch the drafter as its own subagent, or
+name an existing participant as drafter and accept that it stops being counted
+as independent. Do not leave it implicit.
 
 `crochet:assess` passes a decision. `crochet:chain-review` passes a chain with
 its coverage and plan-quality lenses. `crochet:review` passes `pu...HEAD` with
@@ -101,9 +116,19 @@ no pressure to converge.
 participant invalidates the answer being asked for, and turns findings stale
 rather than wrong.
 
-**The loop is bounded.** Take the shape `crochet:execute` already uses — three
-iterations, then report non-convergence rather than spinning. A loop that will
-not converge is itself a finding about the subject.
+**The loop is bounded, and the bound is not three.** The two sessions on record
+that produced this skill took five rounds and four: the assessment of 0003, and
+the chain-review of the milestone implementing it. A bound of three would have
+declared both non-convergent and 0003 would never have been accepted.
+
+So: **bound at eight rounds**, and report non-convergence rather than spinning.
+A loop that will not converge is itself a finding about the subject, and the
+bound exists to make that finding arrive rather than to hurry agreement.
+
+Do not copy `crochet:execute`'s number. It bounds two different things — ten
+passes for its inner convergence, three reopen cycles for its outer gate — and
+neither is this loop. A round here is a full dispatch of every participant,
+which is far more expensive than a reopen and far cheaper than being wrong.
 
 ## The minute
 
