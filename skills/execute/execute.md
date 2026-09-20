@@ -335,10 +335,21 @@ control section decides whether that happens now or after confirmation.
 
 ### Step 5: Milestone Completion
 
-When all issues are closed, the order matters: verify, then write the
+When all issues are closed, the order matters: verify, review, then write the
 postmortem, then complete. Completing first would gate the postmortem behind
 the thing it is meant to explain, and completing the milestone runs the
 verify gate over every done issue's acceptance criteria.
+
+**Record a checklist entry in the milestone body** carrying **when execute was
+satisfied, by whom, and whether it was backfilled**. Execute's derived signal is
+the `Implements:` trailer on its commits, which shows that execute ran — it
+cannot show that execute backfilled rather than ran in place, and that is what
+the entry is for. Where the entry and the trailer disagree, the disagreement is
+itself a finding.
+
+**Then run `crochet:review`** over the delivery before the postmortem. Nothing
+else looks at the milestone's diff as a whole; the per-issue PAAD passes above
+review units of work, not the unit of delivery.
 
 **If `superpowers:verification-before-completion` is available** (check preflight capabilities):
   Invoke it now, before anything is marked complete.

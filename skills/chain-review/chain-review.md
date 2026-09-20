@@ -79,6 +79,26 @@ When both lenses produce no findings, confirm to the user that the chain is read
 
 When either lens produces findings, present them and stop. Do not proceed to execution until the user decides how to handle the findings. The user may choose to address them first or proceed anyway.
 
+## Step 4: Record the outcome
+
+Write a checklist entry into the milestone body carrying **when the gate was
+satisfied, by whom, and whether it was backfilled**. Those are the three fields
+no derived signal can supply: the chain's existence shows that refinement ran; it
+cannot show that chain-review ran, still less that it ran after the fact.
+
+It dies with the chain, and that is correct rather than a compromise — a chain
+torn down and rebuilt was never reviewed, and a verdict surviving the teardown
+would certify work nobody looked at.
+
+**Where a checklist entry disagrees with its derived signal, that disagreement is
+itself a finding** — ticked but underivable, or derivable but unticked.
+
+**If `crochet:discernment` is available** (check preflight capabilities):
+  Delegate the convergence to it, passing the chain as the subject and the two
+  lenses as participants. It owns the rounds and the minute.
+**Otherwise:**
+  Run both lenses, collect their findings, and record the outcome yourself.
+
 ## Key Constraints
 
 - **Delegate, never reimplement.** alignment and pushback contain the check logic. chain-review orchestrates them — it does not duplicate their checks inline.
