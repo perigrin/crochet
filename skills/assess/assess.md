@@ -9,7 +9,15 @@ Run `crochet:preflight` as the first step. It checks git-zhi availability, reads
 
 # crochet:assess
 
-Reads a PRD and analyzes it against the existing codebase and chain state to produce a gap analysis. Output feeds `crochet:refinement` — blocking items become prerequisite refactoring issues at the front of the chain.
+Reads a PRD and analyses it against the existing codebase and chain state to
+produce a gap analysis. Output feeds `crochet:refinement` — blocking items become
+prerequisite refactoring issues at the front of the chain.
+
+**This gate produces the acceptance.** A decision is accepted when its assessment
+reaches a fixed point: a round raising nothing new, from participants that did
+not author it. That is why the session is dispatched rather than performed here,
+and why it is written to an archive rather than presented and lost.
+
 
 ## Trigger
 
@@ -25,7 +33,32 @@ Reads a PRD and analyzes it against the existing codebase and chain state to pro
 
 ## Process
 
-### Step 0: Spec Quality Validation
+### Step 0: Dispatch the session
+
+**If `crochet:discernment` is available** (check preflight capabilities):
+  Delegate the session to it, passing the spec as the subject. It owns the
+  rounds, the dispatch, the recommendation contract and the minute.
+**Otherwise:**
+  Dispatch the participants yourself: fresh subagents, never forks, resumed by
+  name across rounds, each ending with a recommendation of reject, modify or
+  accept.
+
+**An agent may not assess its own work.** Asking whether shipped work is the
+direction the repository should go, of the agent that shipped it, returns yes —
+the document and the code agree because the work made them agree. The bar is
+authorship, not species: another agent satisfies it, a human is not required.
+At least one participant is neither the author nor the drafter.
+
+**Who names the file.** The archive is keyed by milestone, and in nominal
+position no milestone exists yet — the architect names it during refinement. So
+assess names the file after the decision it assesses (`docs/assessments/<NNNN>.md`)
+and refinement renames it to the milestone when it creates one. A backfilled
+assessment, run when a milestone already exists, uses the milestone name
+directly. That settles who names the assessment file in the case where the thing
+it is keyed to does not exist yet.
+
+### Step 0.5: Spec Quality Validation
+
 
 **If `paad:pushback` is available** (check preflight capabilities):
   Run `paad:pushback` on the PRD. Follow the skill — do not reimplement it. Resolve or acknowledge all pushback findings before continuing. The user may choose to proceed at any point; this is a quality gate, not a hard blocker.
@@ -71,6 +104,36 @@ For Partial and Blocking items, use chain lineage data to understand:
 - What other code depends on the area that needs changing
 
 ### Step 5: Output
+
+**Write the assessment to `docs/assessments/`, then present it.** An assessment
+that exists only in conversation is lost at the first compaction or agent
+handoff — and this protocol instructs the orchestrator to compact between units
+of delivery, so the gate's record cannot live in the context it is told to
+discard. `crochet:refinement` copies it into the milestone body; the archive file
+stays, because the milestone body lives in one clone.
+
+`docs/assessments/` must be reachable from `CONTRIBUTING.md`, or `git zhi docs
+check` reports every file in it unreachable.
+
+#### The three axes
+
+Every assessment answers these, with evidence:
+
+1. **Codebase** — does the spec align with the code as it stands?
+2. **Architecture** — does it align with the decisions in force?
+3. **Direction** — does it align with where the repository is going? Crochet's
+   is maximising the autonomy of agents delivering software in collaboration
+   with a human.
+
+#### The cursory form
+
+A **cursory** assessment answers the three axes explicitly, with evidence, and
+does nothing else: no `paad:pushback` pass, no decomposition into blocking,
+missing and partial, no prerequisite ordering. It is what backfill produces when
+a later gate finds no assessment, not a lesser version of the full one.
+
+#### The full form
+
 
 Present results grouped by category, most critical first:
 
