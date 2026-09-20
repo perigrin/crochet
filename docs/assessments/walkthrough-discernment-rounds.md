@@ -118,6 +118,32 @@ live check into the same tool call as the diff, breaking its own file-first,
 diff-last ordering, in a way that contaminated nothing and was still not what it
 had claimed to be doing.
 
+**And the second participant found a different degradation, which is the more
+dangerous one.** Not the reflex to discharge, but a narrowing of scope:
+
+> Not cheaper in effort. Cheaper in breadth, and I can name exactly where. **I
+> did not re-attack F1 or F2.** They were released in round two and I treated
+> them as settled… If this revision had quietly regressed AC1, I would have
+> caught it only by luck.
+
+Releasing a finding retires the objection. It does not retire the fixture that
+proved the fix, and a round scoped to the delta cannot see a regression in
+something already released. Both modes are now guarded in the skill.
+
+**One participant also corrected its own previous round unprompted.** Its round-two
+block had called a rule "unsatisfiable"; a fixture this round showed it was
+merely unspecified and satisfiable by the only sensible reading. It said so
+without being asked and noted that the overstatement had made its earlier
+recommendation look heavier than it deserved. A participant that revises its own
+severity downward is doing the thing the release protocol exists to enable.
+
+**A note on the relay, not on the participants.** Several reports arrived here
+truncated, twice at the exact point where a finding was released. One participant
+checked and confirmed its text left complete on its side, and declined to invent
+a continuation: "an invented 'what I was about to say' is worth less than
+nothing to you." The truncation is in the message path, and asking for
+remainders that do not exist wastes a round.
+
 ## What this still did not test
 
 The bound of eight was not approached; three rounds is well inside it. The minute

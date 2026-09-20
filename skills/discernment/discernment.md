@@ -165,6 +165,12 @@ no pressure to converge.
      work than the round before. Predicting the blast radius first is what stops
      a correct-looking paragraph from closing a finding whose other half is
      untouched.
+   - **Attack the findings you already released.** The other degradation is
+     narrowing: a released finding stops being defended, so the round's attention
+     scopes to the delta plus what the delta broke. A participant put it exactly —
+     "if this revision had quietly regressed [the fixed criterion], I would have
+     caught it only by luck." Releasing a finding retires the objection, not the
+     fixture. Re-run what proved the fix, every round.
 4. Repeat from 1 with the participants resumed, until a round raises nothing new
    and nothing is outstanding.
 
