@@ -117,8 +117,30 @@ of delivery, so the gate's record cannot live in the context it is told to
 discard. `crochet:refinement` copies it into the milestone body; the archive file
 stays, because the milestone body lives in one clone.
 
-`docs/assessments/` must be reachable from `CONTRIBUTING.md`, or `git zhi docs
-check` reports every file in it unreachable.
+**The path is relative to the subject's repository**, not to wherever the
+assessing agent happens to be pinned. Create the directory if it is absent;
+nothing else does.
+
+**Then link it from `CONTRIBUTING.md`, in the same pass.** Writing the
+assessment without the link turns a green repository red: `git zhi docs check`
+reports every file in `docs/assessments/` unreachable. This is a step, not a
+warning — the first assessment a repository ever writes is the one that breaks
+it, and the fix is one line. If the repository has no `CONTRIBUTING.md` at all,
+say so and stop rather than inventing one, because its absence is a larger
+finding than a missing link.
+
+(`docs check` will have reported "all files reachable from `CONTRIBUTING.md`"
+before this, whether or not such a file exists. That green is not evidence.)
+
+#### Every assessment ends with a recommendation
+
+**reject, modify or accept**, with the findings behind it, at the top of the
+file. This is the contract `crochet:discernment` requires of every participant,
+and it holds whichever form below you are writing. A positive statement is
+better evidence than having run out of objections.
+
+Record the revision assessed, so a later reader knows what the verdict was
+about.
 
 #### The three axes
 
@@ -144,6 +166,13 @@ Present results grouped by category, most critical first:
 
 ```
 ## Assessment: <PRD title>
+
+**Recommendation: <reject | modify | accept>** — revision <sha>
+
+### The three axes
+1. **Codebase** — <does it align with the code as it stands, with evidence>
+2. **Architecture** — <does it align with the decisions in force>
+3. **Direction** — <does it align with where the repository is going>
 
 ### Blocking (must resolve first)
 1. **<requirement>** — <what conflicts and why>
