@@ -51,8 +51,15 @@ not worth carrying in every agent's context.
 ## The pipeline
 
 ```
-superpowers:brainstorming → crochet:assess → crochet:refinement → crochet:chain-review → crochet:execute → crochet:postmortem
+superpowers:brainstorming → crochet:assess → crochet:refinement →
+crochet:chain-review → crochet:execute → crochet:review → crochet:postmortem
 ```
 
-Each step is a gate. Asking for refinement against a proposed decision is what
-accepts it; see `docs/decisions/0003-acceptance-by-refinement.md`.
+Each step is a gate, and a gate backfills what is missing rather than refusing
+to start. **Assessment produces the acceptance** — a decision is accepted when
+assessment reaches a fixed point, reached by participants that did not author
+it. Refinement records that with `state: accepted`; it does not decide it.
+
+Brainstorming is the one optional gate: what is mandatory is that a spec
+exists, not the method that produced it. The rest is in
+`docs/decisions/0003-acceptance-by-refinement.md`.

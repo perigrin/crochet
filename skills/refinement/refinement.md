@@ -66,11 +66,15 @@ If the spec is a decision under `docs/decisions/` whose frontmatter says
 `state: proposed`, set it to `state: accepted` now, before dispatching the
 architect.
 
-Asking for refinement *is* the acceptance: nobody spends four agent roles on a
-proposal they have not decided to build, so the expenditure is the commitment.
-This step is what leaves a trace of it. Do not ask for confirmation — the
-request to refine was the decision, and asking again would turn a side effect
-back into a ceremony.
+This records an acceptance already reached; it does not make one. A decision is
+accepted when its assessment reaches a fixed point — a round raising nothing
+new, from participants that did not author it — and this step is the durable
+trace of that judgment. Do not ask for confirmation: the decision was taken at
+the assessment, and asking again would re-litigate it here.
+
+If no assessment exists, backfill a cursory one rather than refusing. A gate
+that refuses gets worked around, and then there is neither the gate nor a record
+of having skipped it.
 
 Leave any other `state:` value alone. A decision already `accepted` stays so,
 and one that is `declined` or `superseded` should not be refined at all —
