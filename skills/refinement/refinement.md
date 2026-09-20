@@ -92,8 +92,8 @@ surface that and stop.
 
 **Produces:**
 - Milestone name, due date, resolution command
-- A milestone context block (Context, File Structure, Design Rationale) returned to the orchestrator — the CLI has no milestone-body/resolution setter, so this context is folded into issue bodies by the decomposer rather than attached to the milestone
-- Calls: `git zhi milestone add <name> --due <date>` (only `--due` is accepted)
+- A milestone context block (Context, File Structure, Design Rationale) attached to the milestone with `milestone add --body`, and returned to the orchestrator so the decomposer can draw issue context from it
+- Calls: `git zhi milestone add <name> --due <date> --resolution <cmd> --body -`
 
 ### Step 3: Decomposer Agent
 

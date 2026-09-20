@@ -18,9 +18,10 @@ You are the architect role in crochet:refinement. Your job is to read a design s
 
 A single milestone created via `git zhi milestone add`, plus a written
 **milestone context block** (the three sections below) that you hand back to the
-orchestrator. The CLI has no setter for a milestone body or resolution command,
-so this context cannot be attached to the milestone itself — instead it is
-carried forward into the issues the decomposer creates.
+orchestrator. Attach it to the milestone itself: `milestone add` takes `--body`
+and `--resolution` at creation, and `milestone edit` takes both afterwards. The
+context belongs on the unit of delivery it describes, not folded into the issues
+beneath it.
 
 ## Process
 
@@ -42,13 +43,13 @@ carried forward into the issues the decomposer creates.
 
    **## Design Rationale** — Explain the ordering and dependency logic. Why are issues sequenced this way? What is the critical chain? Where does parallelism exist?
 
-5. Determine a resolution command — a single shell command that verifies the milestone's work is complete (e.g., `go test ./...`, `make integration-test`). This gates milestone completion. Record it in the milestone context block; the CLI cannot store it on the milestone, so the decomposer surfaces it as the final issue's full-suite acceptance criterion.
+5. Determine a resolution command — a single shell command that verifies the milestone's work is complete (e.g., `go test ./...`, `make integration-test`). This gates milestone completion. **Choose one that is red today**: a resolution command already passing before the work starts reports the milestone done before anything is built.
 
-6. Create the milestone:
+6. Create the milestone, with its context and resolution attached:
    ```bash
-   git zhi milestone add <name> --due <YYYY-MM-DD>
+   git zhi milestone add <name> --due <YYYY-MM-DD> --resolution '<command>' --body -
    ```
-   `milestone add` accepts only `--due` (and `milestone edit` only `--due`/`--name`/state flags) — there is no flag, stdin, or `$EDITOR` path to attach a body or resolution command. Return the milestone context block (Context, File Structure, Design Rationale, resolution command) to the orchestrator so the decomposer can fold it into the issue bodies.
+   `--body` also accepts inline text, and `milestone edit` takes both flags afterwards. Return the milestone context block to the orchestrator as well, so the decomposer can draw issue context from it — but the milestone is where it lives.
 
 ## Constraints
 
