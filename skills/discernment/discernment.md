@@ -119,6 +119,22 @@ no pressure to converge.
 3. The author responds; **only the raiser releases its own finding.** Asking
    whether a resolution is sufficient is a view on the subject in everything but
    name, so the drafter asks and the participant answers.
+
+   **A resumed participant verifies; it does not re-derive.** That is what
+   actually happens, observed rather than assumed: it re-reads the file, re-runs
+   the commands, and checks them against the bars it set last round — but the
+   findings themselves are already in its context and are used as a checklist.
+   Three consequences, and a participant should be told all three:
+
+   - **You are biased toward finding your own bar met.** A bar you wrote is one
+     you want to have been cleared. Say so when you release against one.
+   - **Hunt for what the change broke, not only for what it fixed.** Confirming
+     the fix is pattern-matching; a fixture aimed at the revision's *new* failure
+     modes is the thing that distinguishes verification from assent.
+   - **Re-read what did not change, on its own terms.** A paragraph that is
+     byte-identical in the diff looks like nothing to re-read, which is exactly
+     where coasting happens — and a finding released because an *earlier* finding
+     was fixed is the most common way a live objection disappears unexamined.
 4. Repeat from 1 with the participants resumed, until a round raises nothing new
    and nothing is outstanding.
 
