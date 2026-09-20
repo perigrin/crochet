@@ -152,6 +152,50 @@ only because the gaps had been recorded in an issue body. A rule favouring fresh
 agents therefore carries an obligation to record, and the decision should say so
 in the same breath rather than in a different section.
 
+**Nothing drives the pipeline, and whatever does becomes the orchestration
+session.** 0003 defines seven gates and leaves invocation to a human typing
+seven commands in order. This is tangential to subagent coordination and lands
+here because the driver *is* the long-lived context that gates dispatch out of:
+deciding what persists across gates and what is spawned fresh into them is the
+same question this decision opens with, asked at the scale of the whole
+pipeline.
+
+`crochet:preflight` already computes the hard part. Its six-row table maps
+observed chain state to the next gate, and the skill calls the result "advisory
+output only — it never blocks". A driver is thin: run preflight, invoke the gate
+it names, repeat. What is not thin is where it stops.
+
+**Stop on a finding, not on a gate.** `skills/chain-review/chain-review.md`
+already has this shape — it confirms and suggests the next gate when both lenses
+produce nothing, and presents and halts when either produces something. A gate
+still runs, still reaches its fixed point, still writes its minute; it does not
+interrupt a human to report that nothing was wrong. Halting on every gate
+regardless of its verdict is the friction 0003 exists to remove.
+
+**Three conditions stop the driver, and the third is the one that needs
+building:**
+
+- a finding;
+- a discernment session that reports non-convergence rather than unity;
+- **a gate that cannot show what it examined.**
+
+The third is the vacuous pass, and it is the reason a driver that advances on
+green is dangerous in a way a human typing seven commands is not. On the day this
+was written, three separate checks in this repository reported success over
+nothing: `verify --dry-run` returned empty and exit 0 against a pending chain
+carrying sixty-nine commands, `verify <milestone>` reported 54/54 while running
+the negative scenarios twice, and `docs check` confirmed reachability from a
+`CONTRIBUTING.md` that did not exist. All three were green. None was caught by
+reading the output; each came out of attacking the check on purpose.
+
+A human advancing by hand re-reads the subject between gates and has a chance of
+noticing. A driver reading exit codes has none, and would run the whole pipeline
+on vacuum and report a clean delivery. So a gate must be able to say what its
+subject was, and **what "cannot show what it examined" means in a form a driver
+can act on is unsettled.** Part of it depends on work requested in
+`docs/requests/git-zhi-verification-integrity.md` landing, since several of the
+gates cannot currently answer the question at all.
+
 **The relay is a failure mode of its own.** Several reports in the discernment
 walkthrough arrived truncated, twice at the exact point a finding was released;
 the participant confirmed its text had left complete and declined to invent a
