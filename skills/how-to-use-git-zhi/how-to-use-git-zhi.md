@@ -61,7 +61,8 @@ Note: the `--state` flag's own `--help` string lists only `start, pause, resume,
 |---|---|---|---|
 | Find next work | `git zhi next [--label <l>]` — bare, with `ZHI_ACTOR` set | env | the HEAD issue for this worker |
 | Find next work across repos | `git zhi project next <file.yaml>` — needs an identity | env or flag | cross-repo recommendation |
-| Inspect the chain | `git zhi list [--ready] [--milestone <m>] [--label <l>] [--all] [--critical]` | flag | issue list |
+| Inspect the chain | `git zhi list [--ready] [--milestone <m>] [--label <l>] [--critical]` | flag | open issues |
+| Inspect the chain, including done | `git zhi issue list --all` | flag | every issue |
 | View an issue | `git zhi issue show [<ref>]` | arg | issue detail |
 | Check work state | `git zhi status` | none | HEAD + ready_count |
 | Create an issue | `git zhi issue add "<title>" --body "<text>" [--milestone <m>]` | arg + flag | new issue (JSON array) |
@@ -138,6 +139,13 @@ git-zhi marks unfinished surfaces inline in its own `--help` output (e.g.
 For example, `git zhi issue add --after`/`--before` and `git zhi list --graph`
 are not yet implemented — but treat that as an illustration of the pattern, not
 a maintained list; always confirm with `--help`.
+
+**`--help` can also be wrong, and one case is known.** `git zhi list --help`
+advertises `--all  include done and cancelled issues`; the flag is accepted,
+exits 0, and changes nothing — output with it is byte-identical to output
+without it, while `git zhi issue list --all` does include done issues. Observed
+on 0.6.0. Where a flag's effect matters, check that the output changed rather
+than that the command succeeded.
 
 ## Companion subcommands
 

@@ -11,6 +11,7 @@ that ship.
 - [Decisions](docs/decisions) — the numbered decision archive, and why things are as they are
 - [Assessments](docs/assessments) — what each decision was assessed against, and by whom
 - [Postmortems](docs/postmortems) — milestone retrospectives
+- [Requests](docs/requests) — design documents written from here for another repository
 - [Plans](docs/plans) — pre-series design and implementation documents, frozen and cited by path
 
 Every link here points at a directory that holds a file. Git does not track
