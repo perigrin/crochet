@@ -295,6 +295,20 @@ Followed by: one sentence rationale
 
 Run PAAD based on the tier determined by the gate analyst.
 
+**Dispatch the lenses to a fresh subagent. Do not run them yourself.** You wrote
+the commits they are judging, and the composition rule in
+`docs/decisions/0003-acceptance-by-refinement.md` applies to this gate as much as
+to assessment. A reviewer that is the executing agent is the failure the gate
+exists to catch.
+
+**A lens that cannot run in-session reports inline, and that is the expected
+shape.** `paad:agentic-architecture` and `paad:agentic-review` both refuse a
+session that already has substantive history — which an execution session always
+has by the time it reaches Step 4 — and both want to write reports into `paad/`.
+Apply their taxonomies and evidence discipline to the scoped subject and report
+in the message. Say which lenses ran fully and which were applied inline, so the
+record does not claim a dispatch that did not happen.
+
 **Tier 1:**
 1. **paad:alignment** — check implementation against the issue's AC
 
@@ -302,6 +316,11 @@ Run PAAD based on the tier determined by the gate analyst.
 1. **paad:alignment** — check implementation against the issue's AC
 2. **paad:agentic-architecture** — check structural choices
 3. **paad:agentic-review** — check for debt, security, coverage gaps
+
+Tier 2 is expensive: the two multi-agent lenses dispatch roughly a dozen
+subagents between them. That cost is why this gate gets skipped, and a gate too
+expensive to run is one that gets worked around — so if you are declining it,
+decline it in writing rather than silently.
 
 **Evaluate findings:**
 
@@ -330,8 +349,22 @@ Run PAAD based on the tier determined by the gate analyst.
   git zhi issue add "<finding title>" --milestone <milestone>
   ```
 
-If no findings, proceed to the next issue — back to Step 2, whose Loop
-control section decides whether that happens now or after confirmation.
+**Record the tier and the outcome, including on a clean pass**, as a checklist
+entry in the milestone body: which tier the analyst chose and why, which lenses
+ran, and whether the gate was backfilled. Then proceed to the next issue — back
+to Step 2, whose Loop control section decides whether that happens now or after
+confirmation.
+
+**Write it on a clean pass especially.** Without it, an issue that passed review
+and an issue where review never ran are byte-identical in the chain: same state,
+same transitions, no derived signal for "reviewed". The gate becomes
+unfalsifiable from outside, and a skip is invisible to everything except a person
+reading this file. That is not hypothetical — thirteen issues in `rfc-0003` were
+closed that way, and `docs/assessments/rfc-0003.md` records it.
+
+**Between Step 3.5 and this entry an issue is closed but not yet reviewed.**
+That window is real and `git zhi list` cannot show it, so the entry is what
+distinguishes done from done-and-reviewed.
 
 ### Step 5: Milestone Completion
 
