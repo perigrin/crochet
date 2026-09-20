@@ -45,9 +45,16 @@ fi
 # ------------------------------------------------------------- actor floor
 # The subcommand check asks whether a command exists. This asks whether it
 # behaves the way execute.md selects against, which a --help exit cannot say.
+# Report which assertion failed rather than blaming the version for all four.
+# A probe that fails for an unrelated reason and says "below the floor" sends a
+# reader to check a floor that is correct.
 if [ "$SELFTEST" = yes ] && [ -f xt/zhi-actor-probe.sh ]; then
-    if ! sh xt/zhi-actor-probe.sh >/dev/null 2>&1; then
-        note "xt/zhi-actor-probe.sh — installed git-zhi is below the 0.6.0 floor execute.md needs"
+    if ! PROBE=$(sh xt/zhi-actor-probe.sh 2>&1); then
+        printf '%s\n' "$PROBE" | grep '^FAIL: ' | while IFS= read -r l; do
+            note "xt/zhi-actor-probe.sh — ${l#FAIL: }"
+        done
+        printf '%s\n' "$PROBE" | grep -q '^FAIL: ' ||
+            note "xt/zhi-actor-probe.sh failed without naming an assertion"
     fi
 fi
 

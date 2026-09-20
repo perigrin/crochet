@@ -78,10 +78,14 @@ elif ! printf '%s' "$OUT" | grep -qi 'actor\|agent:\|human:'; then
 fi
 
 # -- 3: nothing declared is unchanged (the assertion that must pass) -------
+# Unset rather than trusting the caller's environment. execute.md tells every
+# agent to export ZHI_ACTOR once per run, so this assertion runs with one set
+# whenever the checks are run from inside an execution session -- and would
+# then test the opposite of what it claims.
 mk underived
 add Three
 ID=$(first_id)
-git zhi issue edit "$ID" --state start >/dev/null 2>&1
+(unset ZHI_ACTOR; git zhi issue edit "$ID" --state start >/dev/null 2>&1)
 GOT=$(last_actor "$ID")
 case "$GOT" in
     "")       note "no transition recorded with nothing declared -- is git-zhi working at all?" ;;
