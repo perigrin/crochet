@@ -88,7 +88,8 @@ The fallback does not retry the write during the same session.
 The SDLC pipeline runs in strict order:
 
 ```
-superpowers:brainstorming → crochet:assess → crochet:refinement → crochet:chain-review → crochet:execute → crochet:postmortem
+superpowers:brainstorming → crochet:assess → crochet:refinement →
+crochet:chain-review → crochet:execute → crochet:review → crochet:postmortem
 ```
 
 Preflight infers the agent's position from chain state. The **absence** of chain
