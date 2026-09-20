@@ -140,12 +140,12 @@ For example, `git zhi issue add --after`/`--before` and `git zhi list --graph`
 are not yet implemented — but treat that as an illustration of the pattern, not
 a maintained list; always confirm with `--help`.
 
-**`--help` can also be wrong, and one case is known.** `git zhi list --help`
-advertises `--all  include done and cancelled issues`; the flag is accepted,
-exits 0, and changes nothing — output with it is byte-identical to output
-without it, while `git zhi issue list --all` does include done issues. Observed
-on 0.6.0. Where a flag's effect matters, check that the output changed rather
-than that the command succeeded.
+**`--help` can also be wrong, and one case is on record.** Through 0.6.0,
+`git zhi list --help` advertised `--all  include done and cancelled issues`
+while the flag was accepted, exited 0 and changed nothing — output with it was
+byte-identical to output without. It was fixed in 0.7.0 and both forms now
+return every issue. The habit it earned outlives it: where a flag's effect
+matters, check that the output changed rather than that the command succeeded.
 
 ## Companion subcommands
 

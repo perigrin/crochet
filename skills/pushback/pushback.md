@@ -62,7 +62,7 @@ Acceptance criteria must be concrete enough to write a test against. Vague crite
 
 Testability (check 5) is about whether an AC is *conceptually* checkable. This check is about whether `git-zhi-verify` can *actually execute* the command — because `milestone edit --state complete` runs the verify gate, and an AC whose command is not runnable blocks completion with a false "regression".
 
-`git-zhi-verify` extracts and runs exactly the command inside the FIRST paren-wrapped backtick span — `` - [ ] <desc> (`<command>`) `` — on each checkbox line under `## Acceptance Criteria` (and its `### Positive Scenarios` / `### Negative Scenarios` subsections). **Parenthesization is the only marker**: a bare backtick span with no surrounding parens (`` `code fragment` ``) is treated as prose and ignored; a paren-wrapped span is run verbatim via `sh -c`.
+`git-zhi-verify` extracts and runs exactly the command inside the LAST paren-wrapped backtick span — `` - [ ] <desc> (`<command>`) `` — on each checkbox line under `## Acceptance Criteria` (and its `### Positive Scenarios` / `### Negative Scenarios` subsections). **Parenthesization is the only marker**: a bare backtick span with no surrounding parens (`` `code fragment` ``) is treated as prose and ignored; a paren-wrapped span is run verbatim via `sh -c`. Taking the last span is what lets a criterion mention parenthesised code in its description and still be verified by the command at the end; before git-zhi 0.7.0 the first span was taken, so such a criterion ran its own description.
 
 Run the gate's own extractor to see what it WOULD run, without executing:
 
@@ -75,11 +75,11 @@ Flag, per issue:
 - **No extractable command** — an issue with zero paren-wrapped AC commands. It cannot be verified; `--state complete` will mark it unverifiable.
 - **Non-runnable paren-wrapped span** — a `(`...`)` command that is not a real shell command line: an un-substituted placeholder (`` (`t/<name>.t`) ``, `` (`<verification command>`) ``), a bare word (`` (`gate`) ``), or a language/code fragment (`` (`if ($c) {...}`) ``, `` (`sub foo { }`) ``). These fail as invalid shell and become false "regressions".
 - **Code fragment wrongly paren-wrapped** — a Negative Scenario whose *subject* code was written as `` (`<perl fragment>`) `` instead of bare backticks. The subject is a description, not a command; only the SCENARIO's verification command belongs in parens. Bare-backtick the fragment; paren-wrap only the runnable check.
-- **Multiple commands on one line** — `git-zhi-verify` runs only the FIRST paren-wrapped span per checkbox and silently drops the rest. Flag AC lines with two or more `(`...`)` spans; split them across lines.
+- **Multiple commands on one line** — `git-zhi-verify` runs only the LAST paren-wrapped span per checkbox and silently drops the rest. Flag AC lines with two or more `(`...`)` spans; split them across lines.
 
 The fix for a flagged AC is: paren-wrap exactly one runnable shell command (a `prove`/`perl`/`go test`/`git` invocation with real paths, runnable from repo root), and demote every code fragment or placeholder to a bare backtick (which the extractor ignores).
 
-**`verify --dry-run` reads only *done* issues, so on a fresh chain it returns nothing.** That is the state this lens runs in, so the check above passes by producing no output — which is the failure it exists to catch, wearing the shape of a pass. Extract the spans yourself: read each issue body, take the first paren-wrapped span on every checkbox line under `## Acceptance Criteria`, and count criterion lines against spans found. A line yielding none is the "no extractable command" case, and it is invisible if you only count the spans you did extract.
+**From git-zhi 0.7.0 `verify --dry-run` extracts regardless of issue state**, so on a fresh chain it reports the criteria this lens exists to check. Below that floor it read only *done* issues and returned nothing on the chain this lens always runs against — the check passed by producing no output, which is the failure it exists to catch wearing the shape of a pass. `crochet:preflight` enforces the floor, so trust the dry run only once it has. Either way, count criterion lines against spans found: a line yielding none is the "no extractable command" case, and it is invisible if you only count the spans you did extract.
 
 ### 7. Run every criterion against the tree
 
