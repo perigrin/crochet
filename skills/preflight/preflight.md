@@ -73,6 +73,10 @@ Set `"installed": true` for a plugin if any of its skills are found. Set each sk
 
 The system-reminder lists available skills at runtime. After reading the manifest, compare the `superpowers:*` and `paad:*` skill names in the system-reminder against the manifest entries. If a skill appears in system-reminder but not the manifest, or appears in the manifest but not system-reminder, that is a discrepancy — update the manifest and report the change.
 
+**Crochet's own skills are deliberately absent from the manifest, and must not be added.** Each one ships in this plugin, so it is always present — there is nothing to detect. A `crochet:*` skill also cannot be cross-checked here: the runtime list carries only skills with a `commands/` stub, so every internal one (`preflight`, `alignment`, `pushback`, `discernment`, `how-to-use-git-zhi`) is invisible to it by construction.
+
+So never guard a crochet sibling behind a capability check. The check cannot pass, the guarded branch never runs, and the `Otherwise` fallback becomes a silent second implementation of the thing the sibling exists to hold. Invoke it directly. The conditional pattern exists for plugins that may not be installed, which crochet is not to itself.
+
 ## Fallback Behavior
 
 If the manifest cannot be read or written (read-only filesystem, permission error, disk full), preflight falls back to in-memory detection for the current session:

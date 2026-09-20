@@ -74,12 +74,12 @@ from the decision document directly.
 
 ## Step 3: Run to a bounded fixed point
 
-**If `crochet:discernment` is available** (check preflight capabilities):
-  Delegate the convergence to it, passing the branch diff as the subject and
-  the lenses above as participants.
-**Otherwise:**
-  Run the lenses, apply what they find, run them again, until a round raises
-  nothing new.
+**Delegate the convergence to `crochet:discernment`**, passing the branch diff as
+the subject, the lenses above as participants, and the milestone body as where
+the minute goes.
+
+No capability check: it ships in this plugin and is always present. The
+conditional pattern above is for `paad:` and `ponytail:`, which may not be.
 
 A single pass reports what one look caught; a fixed point reports that nothing
 further is visible. **Bound it** at three iterations, as `crochet:execute` bounds

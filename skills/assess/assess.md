@@ -35,13 +35,18 @@ and why it is written to an archive rather than presented and lost.
 
 ### Step 0: Dispatch the session
 
-**If `crochet:discernment` is available** (check preflight capabilities):
-  Delegate the session to it, passing the spec as the subject. It owns the
-  rounds, the dispatch, the recommendation contract and the minute.
-**Otherwise:**
-  Dispatch the participants yourself: fresh subagents, never forks, resumed by
-  name across rounds, each ending with a recommendation of reject, modify or
-  accept.
+**Delegate the session to `crochet:discernment`**, passing the spec as the
+subject, `docs/assessments/` as where the minute goes, and who drafts. It owns
+the rounds, the dispatch, the recommendation contract and the minute.
+
+No capability check: it ships in this plugin, so it is always present. The
+conditional pattern is for superpowers and paad, which may not be installed —
+guarding a sibling behind it means the guard never passes and the fallback is a
+second implementation of the thing built once.
+
+**Delegation is the caller's job, not a participant's.** If you are reading this
+as a dispatched participant rather than as the agent invoking assess, the step
+above is not yours: do the analysis you were sent to do and report it.
 
 **An agent may not assess its own work.** Asking whether shipped work is the
 direction the repository should go, of the agent that shipped it, returns yes —

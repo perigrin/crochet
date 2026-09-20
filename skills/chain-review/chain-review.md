@@ -93,11 +93,11 @@ would certify work nobody looked at.
 **Where a checklist entry disagrees with its derived signal, that disagreement is
 itself a finding** — ticked but underivable, or derivable but unticked.
 
-**If `crochet:discernment` is available** (check preflight capabilities):
-  Delegate the convergence to it, passing the chain as the subject and the two
-  lenses as participants. It owns the rounds and the minute.
-**Otherwise:**
-  Run both lenses, collect their findings, and record the outcome yourself.
+**Delegate the convergence to `crochet:discernment`**, passing the chain as the
+subject, the two lenses as participants, and the milestone body as where the
+minute goes. It owns the rounds and the minute.
+
+No capability check: it ships in this plugin and is always present.
 
 ## Key Constraints
 
