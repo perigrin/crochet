@@ -97,7 +97,10 @@ itself a finding** — ticked but underivable, or derivable but unticked.
 subject, the two lenses as participants, and the milestone body as where the
 minute goes. It owns the rounds and the minute.
 
-No capability check: it ships in this plugin and is always present.
+No capability check: it ships in this plugin, so within one release it is
+present with this skill or absent with it. Across releases an installed cache
+may be older than this file — see the release discipline in
+`docs/contributing/development-workflow.md`.
 
 ## Key Constraints
 

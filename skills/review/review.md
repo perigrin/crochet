@@ -112,8 +112,17 @@ from the decision document directly.
 the subject, the lenses above as participants, and the milestone body as where
 the minute goes.
 
-No capability check: it ships in this plugin and is always present. The
-conditional pattern above is for `paad:` and `ponytail:`, which may not be.
+No capability check: it ships in this plugin, so within any one release it is
+either present with this skill or absent with it. The conditional pattern above
+is for `paad:` and `ponytail:`, which vary independently.
+
+**Across releases that is not true**, and a walkthrough hit it: `discernment`
+exists in the checkout and in neither installed cache, so an agent running the
+installed plugin while this file is newer finds the delegation unresolvable.
+That is the cache-versus-checkout hazard `docs/contributing/development-workflow.md`
+names, and the fix is the release discipline there — bump the plugin version and
+the marketplace's, then confirm what you actually got — not a capability check
+that cannot pass.
 
 A single pass reports what one look caught; a fixed point reports that nothing
 further is visible. **Bound it** at three iterations, as `crochet:execute` bounds
@@ -149,7 +158,18 @@ underivable, or derivable but unticked — that disagreement is itself a finding
 - **No command stub is optional here.** Review is user-invocable; it has one.
 - **Delegate, never reimplement.** The lenses hold the checking logic; this skill
   orchestrates them.
-- **Both lenses run every time.** One producing findings does not skip the other.
+- **Both lenses are put every time.** One producing findings does not skip the
+  other. But a lens may *decline* — `paad:agentic-review` refuses a session with
+  substantive history, a repository with no determinable default branch, and a
+  branch that is itself the default. Record which lenses ran, which declined,
+  and on what grounds. A declined lens is a gap in the review, not a pass, and
+  saying so is the difference between one lens looking and two.
+- **Delegating and dispatching are different acts, and the difference is the
+  whole point.** Invoking a lens through the Skill tool loads its instructions
+  into *this* context — the lens is then you, wearing its taxonomy. Dispatching
+  sends the subject to an agent that has not read your reasoning. Independence
+  requires the second. Where a lens can only be delegated, say so in the minute;
+  a self-administered lens is evidence of a different and weaker kind.
 - **The reviewer is not the author.** Where the branch is the reviewer's own
   work, dispatch the lenses to fresh subagents rather than reading the diff
   inline — the composition rule in
