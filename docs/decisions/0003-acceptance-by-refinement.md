@@ -6,6 +6,7 @@ date: 2026-09-18
 supersedes: []
 superseded-by: []
 amends: [0001]
+amended-by: [0006]
 ---
 
 # 0003: The workflow protocol
