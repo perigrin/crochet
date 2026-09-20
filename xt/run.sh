@@ -128,6 +128,37 @@ if [ -d "$DEC" ]; then
     link_check amends amended-by
 fi
 
+# --------------------------------------------- accepted on a proposed footing
+# A decision may not be accepted while a decision it amends is still proposed:
+# the amendment would be in force against a rule nobody has agreed to. 0004 came
+# within one step of this against 0003, which is why the rule exists. Checkable
+# at the moment `state: accepted` is written, which is the only moment it can be
+# broken.
+state_of() { sed -n '2,/^---$/p' "$1" | sed -n 's/^state:[[:space:]]*//p' | head -1; }
+
+if [ -d "$DEC" ]; then
+    for f in "$DEC"/*.md; do
+        [ -f "$f" ] || continue
+        [ "$(state_of "$f")" = accepted ] || continue
+        me=$(num_of "$f")
+        entries=$(sed -n '2,/^---$/p' "$f" | grep -E '^amends:' |
+                  sed -E 's/^amends:[[:space:]]*//; s/[][]//g; s/,/ /g')
+        for e in $entries; do
+            case "$e" in
+                ""|"[]") continue ;;
+                */*|*.md) continue ;;
+            esac
+            target=$(ls "$DEC/$e"-*.md 2>/dev/null | head -1)
+            [ -n "$target" ] || continue
+            st=$(state_of "$target")
+            case "$st" in
+                accepted|superseded) : ;;
+                *) note "$me is accepted, but $e — which it amends — is '$st'" ;;
+            esac
+        done
+    done
+fi
+
 # ------------------------------------------------- decisions cite symbols
 # A decision names a symbol, never a line: line numbers decay silently, and a
 # citation into another repository has no check anywhere in the world. The
