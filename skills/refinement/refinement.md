@@ -72,9 +72,29 @@ new, from participants that did not author it — and this step is the durable
 trace of that judgment. Do not ask for confirmation: the decision was taken at
 the assessment, and asking again would re-litigate it here.
 
-If no assessment exists, backfill a cursory one rather than refusing. A gate
-that refuses gets worked around, and then there is neither the gate nor a record
-of having skipped it.
+If no assessment exists, backfill a cursory assessment rather than refusing. A
+gate that refuses gets worked around, and then there is neither the gate nor a
+record of having skipped it.
+
+### Step 1.6: Carry the assessment and the criteria onto the milestone
+
+Once the architect has named the milestone:
+
+1. **Rename the assessment to the milestone.** assess names it after the
+   decision, because in nominal position no milestone exists yet. Now one does:
+   `docs/assessments/<NNNN>.md` becomes `docs/assessments/<milestone>.md`.
+2. **Copy the assessment into the milestone body**, with `milestone add --body`
+   at creation or `milestone edit --body` after. Always copy the assessment
+   rather than moving it: the archive file is the durable record, and
+   `refs/zhi/` is not pushed, so the milestone body lives in one clone.
+3. **Carry the decision's acceptance criteria onto the milestone.** A milestone
+   is the unit of delivery and had no criteria of its own; criteria lived on
+   issues, which are units of work. The decision's criteria are the milestone's,
+   and `crochet:review` verifies them there.
+
+Without step 3 the delivery has no criteria at its own boundary, and nothing
+checks the decision's acceptance criteria at the point the decision is
+delivered.
 
 Leave any other `state:` value alone. A decision already `accepted` stays so,
 and one that is `declined` or `superseded` should not be refined at all —
