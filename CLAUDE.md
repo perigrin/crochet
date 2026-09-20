@@ -57,9 +57,16 @@ crochet:chain-review → crochet:execute → crochet:review → crochet:postmort
 
 Each step is a gate, and a gate backfills what is missing rather than refusing
 to start. **Assessment produces the acceptance** — a decision is accepted when
-assessment reaches a fixed point, reached by participants that did not author
-it. Refinement records that with `state: accepted`; it does not decide it.
+assessment reaches a fixed point. The author may sit in that session and may not
+be the only voice: at least one participant is neither the author nor a role
+that holds no view. Refinement records the outcome with `state: accepted`; it
+does not decide it.
 
-Brainstorming is the one optional gate: what is mandatory is that a spec
-exists, not the method that produced it. The rest is in
-`docs/decisions/0003-acceptance-by-refinement.md`.
+**Three gates are mandatory: assess, review and postmortem.** Those produce
+judgments, and nothing else produces them. Brainstorming, refinement and execute
+are methods — they produce an artifact, so each is optional whenever that
+artifact arrives another way. A finished pull request enters at review, and what
+gets backfilled is the assessment and the decision, not the work. Chain-review
+is mandatory only when a chain exists.
+
+The rest is in `docs/decisions/0003-acceptance-by-refinement.md`.

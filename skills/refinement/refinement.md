@@ -67,14 +67,18 @@ If the spec is a decision under `docs/decisions/` whose frontmatter says
 architect.
 
 This records an acceptance already reached; it does not make one. A decision is
-accepted when its assessment reaches a fixed point — a round raising nothing
-new, from participants that did not author it — and this step is the durable
-trace of that judgment. Do not ask for confirmation: the decision was taken at
-the assessment, and asking again would re-litigate it here.
+accepted when its assessment reaches a fixed point — a round raising nothing new
+— and this step is the durable trace of that judgment. The author may have sat
+in that session; what the rule requires is that at least one participant was
+neither the author nor a role holding no view. Do not ask for confirmation: the
+decision was taken at the assessment, and asking again would re-litigate it
+here.
 
-If no assessment exists, backfill a cursory assessment rather than refusing. A
-gate that refuses gets worked around, and then there is neither the gate nor a
-record of having skipped it.
+If no assessment exists, **invoke `crochet:assess` for a cursory one** rather
+than refusing, and let it write and name the file. Do not write one here: this
+step runs before Step 2 names the milestone, so the archive key does not exist
+yet, and assess is what settles that. A gate that refuses gets worked around,
+and then there is neither the gate nor a record of having skipped it.
 
 ### Step 1.6: Carry the assessment and the criteria onto the milestone
 
