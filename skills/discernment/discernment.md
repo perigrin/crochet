@@ -17,6 +17,11 @@ it themselves.
 **Internal skill.** Called by `crochet:assess`, `crochet:chain-review` and
 `crochet:review`. It has no command stub and is not invoked directly by users.
 
+Each section below says whose job it is. Most of this file is caller-facing;
+the participant-facing parts are "What a round produces" and the release rule in
+step 3 of the loop. If you were dispatched into a session, read those two and
+skim the rest.
+
 Three gates run the same loop: dispatch independent participants over a subject,
 collect findings and a recommendation from each, iterate until a round raises
 nothing new, and draft the outcome. This is that loop, built once and
@@ -135,6 +140,31 @@ no pressure to converge.
      byte-identical in the diff looks like nothing to re-read, which is exactly
      where coasting happens — and a finding released because an *earlier* finding
      was fixed is the most common way a live objection disappears unexamined.
+
+   Four techniques, all of which caught something in the session that produced
+   this section:
+
+   - **Read the diff last.** A diff tells you where to look, so reading it first
+     lets the author choose what you examine. Read the subject, run the checks,
+     then read the diff.
+   - **Carry definitions forward, never conclusions.** Your notes are for what
+     you found and the bar you set. Every claim about the current revision comes
+     from this round.
+   - **An exit code you did not bracket is one you have not earned.** A check
+     failing today may be failing for the reason you think, or because it is
+     malformed. Construct the case that makes it pass and the case that makes it
+     fail; without both, a red is just a red.
+   - **What landed near your bar is not your bar.** A change sitting where you
+     asked for something is not the thing you asked for. Score it against what
+     you wrote, then say separately whether what arrived is better.
+   - **Before looking at whether a fix landed, say what it would have to *also*
+     change.** This is the guard for the one thing that measurably worsens with
+     each round: not effort, but the reflex to match a paragraph against a stored
+     finding and discharge it. A participant three rounds in reported that
+     reflex as "measurably stronger than it was in round two" while doing *more*
+     work than the round before. Predicting the blast radius first is what stops
+     a correct-looking paragraph from closing a finding whose other half is
+     untouched.
 4. Repeat from 1 with the participants resumed, until a round raises nothing new
    and nothing is outstanding.
 
