@@ -21,8 +21,9 @@ again.
 
 ## Problem Statement
 
-Crochet dispatches subagents in five skills and has no single account of how it
-does so. The rules exist, but each was settled where it was first needed:
+Crochet dispatches subagents in five skills, exchanges messages with peer
+sessions it does not dispatch, and has no single account of either. The rules
+that exist were each settled where they were first needed:
 `crochet:discernment` owns who may sit and how rounds resume, `crochet:review`
 owns the difference between delegating and dispatching, `crochet:execute` owns
 the review-tier dispatch and the orchestration session. A rule that is right in
@@ -105,6 +106,51 @@ distinction is general and is written down in one skill.
 **A silent agent is a failed dispatch, not an abstention.**
 `skills/discernment/discernment.md` says so for participants. It is a claim about
 dispatch mechanics rather than about discernment.
+
+**A peer session is not a subagent, and coordinating with one is unowned.**
+Crochet dispatches subagents it briefs and collects from. It also exchanges
+messages with long-running peer sessions it does not dispatch, does not brief,
+and whose lifecycle it does not control — the `git-zhi` session is the standing
+example. Nothing in any skill says how that works.
+
+**The rule to start from: assume a peer has crochet loaded, and verify it.**
+Where it does, the two sessions can work through documents rather than through
+messages — a design document handed over and walked through the loop in the
+peer's own repository, which is what `docs/requests/git-zhi-verification-integrity.md`
+attempts. Where it does not, the same content has to arrive as a message that
+stands on its own, because there is no shared protocol to carry it.
+
+This is `docs/architecture/plugin-structure.md`'s probe-rather-than-test rule
+pointed at an agent instead of a binary, and **it degrades when it gets there.**
+`git zhi <sub> --help` is an observation; asking a peer whether it has a skill
+loaded returns a claim, and a peer that has been restarted may answer about a
+configuration it no longer has. What a verification of this kind can actually
+rest on is an open question, and the cheap answer — ask, and treat the reply as
+provisional until something it produces shows the skill ran — should be written
+down rather than assumed.
+
+Two things observed on the day this was written, both cheap to repeat:
+
+- **A peer restart is invisible until it costs something.** The `git-zhi`
+  session was replaced between exchanges. It returned carrying none of five
+  prior exchanges and had to ask cold what it was still owed. The only notice
+  was a line in a delivery result saying the name had been used by an earlier
+  session.
+- **A peer's report of another session's state can be wrong.** This session was
+  described to perigrin as complete while a milestone gate had not run and
+  seventy-seven commits were unpushed.
+
+Both are the same finding as the resumption evidence above, arrived at from the
+outside: **what survives an agent ending is what was written down.** That is an
+argument for the minute and the archive rather than against fresh dispatch, and
+it is the reason peer coordination belongs in this decision instead of its own.
+
+**The counter-evidence belongs here too.** Respawning has a cost, and the
+`git-zhi` restart is the clearest measurement of it available: the session spent
+a full exchange reconstructing what it already knew. That cost was survivable
+only because the gaps had been recorded in an issue body. A rule favouring fresh
+agents therefore carries an obligation to record, and the decision should say so
+in the same breath rather than in a different section.
 
 **The relay is a failure mode of its own.** Several reports in the discernment
 walkthrough arrived truncated, twice at the exact point a finding was released;
