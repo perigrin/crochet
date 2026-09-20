@@ -79,6 +79,34 @@ Flag, per issue:
 
 The fix for a flagged AC is: paren-wrap exactly one runnable shell command (a `prove`/`perl`/`go test`/`git` invocation with real paths, runnable from repo root), and demote every code fragment or placeholder to a bare backtick (which the extractor ignores).
 
+**`verify --dry-run` reads only *done* issues, so on a fresh chain it returns nothing.** That is the state this lens runs in, so the check above passes by producing no output — which is the failure it exists to catch, wearing the shape of a pass. Extract the spans yourself: read each issue body, take the first paren-wrapped span on every checkbox line under `## Acceptance Criteria`, and count criterion lines against spans found. A line yielding none is the "no extractable command" case, and it is invisible if you only count the spans you did extract.
+
+### 7. Run every criterion against the tree
+
+**A criterion is not reviewed until it has been run against the tree as it stands.** Reading tells you what a command says; running tells you what it answers today. Execute every extracted span with `sh -c` from the repository root and report which pass before any work starts.
+
+A criterion green today is one of two things, and say which:
+
+- **A regression guard** — it must stay true, and its greenness is the point. `docs/contributing/development-workflow.md` asks for one of these for every red assertion, so a suite of only-red checks cannot detect its own absence.
+- **A check that cannot fail** — it is green for a reason unrelated to the work, and will be green whether or not the work happens. Flag each one with why.
+
+Two shapes recur and neither is visible by reading:
+
+- **`! grep` on a path that may not exist.** A negation succeeds when the file is missing, so `rm` satisfies it. Pair every negative grep with a positive one on the same path.
+- **A negation of a whole command.** `! some-check fixture` is green when the fixture is absent, for the same reason `127` and the error you expected both satisfy `! command`. Assert on the failure *text*, not the exit code.
+
+### 8. Name the cheapest path to green
+
+For each criterion, ask what the least work is that would satisfy it, and compare that to the work the issue actually asks for.
+
+**A criterion that makes fabrication cheaper than the work is worse than a weak one, because it rewards the fabrication.** A weak criterion fails to catch a defect; this kind pays for one. The shape to watch for is a criterion demanding a runtime artifact from an issue whose deliverable is source — the only ways to green it are to hand-write the artifact or to wait for another issue, and the first is cheaper.
+
+Flag any criterion where the cheapest path is:
+
+- typing the string the grep looks for, into a file that does otherwise nothing;
+- creating an empty file, or one containing only `exit 0`;
+- hand-writing an artifact that some other issue is supposed to produce.
+
 ## Presentation
 
 Group findings by check. For each finding:
