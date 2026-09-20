@@ -52,7 +52,13 @@ above is not yours: do the analysis you were sent to do and report it.
 direction the repository should go, of the agent that shipped it, returns yes —
 the document and the code agree because the work made them agree. The bar is
 authorship, not species: another agent satisfies it, a human is not required.
-At least one participant is neither the author nor the drafter.
+
+The composition rule itself lives in `crochet:discernment` and is not restated
+here. Restating it is how two skills come to hold two slightly different rules,
+which had already happened: this file named the drafter specifically where
+discernment names any role holding no view, and the drafter is one such role
+rather than the only one. A rule worth stating twice is a rule that will
+eventually be two rules.
 
 **Who names the file.** The archive is keyed by milestone, and in nominal
 position no milestone exists yet — the architect names it during refinement. So
