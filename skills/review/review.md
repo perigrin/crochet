@@ -32,6 +32,31 @@ the result sound".
 crochet:review <milestone>
 ```
 
+## Step 0: Refuse to review nothing
+
+```bash
+git diff --stat pu...HEAD
+```
+
+**If the diff is empty, stop and say so.** Do not proceed to the lenses.
+
+This is the one guard the gate cannot do without. `pu...HEAD` resolves cleanly
+on a repository where `pu` *is* the current branch — empty output, exit 0 — so
+without this check every downstream step runs normally over nothing and reports a
+clean pass. A review of the empty set and a review that examined a branch and
+found it sound are indistinguishable in the output, and the first is worthless.
+`paad:agentic-review` guards this explicitly; so does this.
+
+**If no milestone was named**, say so and stop. The invocation contract is
+`crochet:review <milestone>`; the command stub passes no argument, so an
+unattended invocation arrives without one. Reviewing a delivery requires knowing
+which delivery.
+
+**If preflight reported that there is no chain**, believe it. Orientation is
+advisory and never blocks, which means it cannot stop this gate — so read its
+output and stop here yourself. A gate whose only state check is one that cannot
+halt it has no state check.
+
 ## Step 1: The subject is the branch diff
 
 ```bash
@@ -55,7 +80,16 @@ Both are ordinary skills, reached by the usual conditional pattern.
 
 **Coverage — does the diff cover the decision?**
 
-Read the decision named by the milestone's `Implements:` trailers and check its
+Find the decision from the **commits'** `Implements:` trailers — a milestone has
+no trailers, only a free-markdown body, and an earlier draft of this skill said
+otherwise:
+
+```bash
+git log pu..HEAD --format='%(trailers:key=Implements,valueonly)' | tr -d ' ' | sort -u
+```
+
+If that yields nothing, the delivery cites no decision and that is itself a
+finding. Then read the decision and check its
 acceptance criteria against what was built. Criteria live on the milestone once
 refinement carries them across; on a milestone refined before that, read them
 from the decision document directly.
