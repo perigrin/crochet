@@ -59,6 +59,12 @@ git-zhi verify <milestone> --dry-run
 
 Cross-check the listed commands against the chain:
 
+- **Rows labelled `milestone body` belong to no issue.** The extractor reads the
+  milestone body as well, and those rows are the decision's own criteria rather
+  than any issue's. Check them as commands — the runnability rule below applies —
+  and do not count them against an issue when applying the rule below. When
+  flagging a non-runnable body span, name the milestone rather than an issue;
+  there is no issue to name.
 - **Every done-able issue has ≥1 extracted command.** An issue that produces no
   command from `--dry-run` has no paren-wrapped AC; it will be "unverifiable" at
   completion. Flag it.
@@ -78,6 +84,29 @@ Present findings from both lenses together, grouped by lens. For each finding, s
 When both lenses produce no findings, confirm to the user that the chain is ready for execution and suggest running `crochet:execute`.
 
 When either lens produces findings, present them and stop. Do not proceed to execution until the user decides how to handle the findings. The user may choose to address them first or proceed anyway.
+
+## Step 4: Record the outcome
+
+Write a checklist entry into the milestone body carrying **when the gate was
+satisfied, by whom, and whether it was backfilled**. Those are the three fields
+no derived signal can supply: the chain's existence shows that refinement ran; it
+cannot show that chain-review ran, still less that it ran after the fact.
+
+It dies with the chain, and that is correct rather than a compromise — a chain
+torn down and rebuilt was never reviewed, and a verdict surviving the teardown
+would certify work nobody looked at.
+
+**Where a checklist entry disagrees with its derived signal, that disagreement is
+itself a finding** — ticked but underivable, or derivable but unticked.
+
+**Delegate the convergence to `crochet:discernment`**, passing the chain as the
+subject, the two lenses as participants, and the milestone body as where the
+minute goes. It owns the rounds and the minute.
+
+No capability check: it ships in this plugin, so within one release it is
+present with this skill or absent with it. Across releases an installed cache
+may be older than this file — see the release discipline in
+`docs/contributing/development-workflow.md`.
 
 ## Key Constraints
 

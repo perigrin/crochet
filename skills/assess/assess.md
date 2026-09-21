@@ -9,11 +9,21 @@ Run `crochet:preflight` as the first step. It checks git-zhi availability, reads
 
 # crochet:assess
 
-Reads a PRD and analyzes it against the existing codebase and chain state to produce a gap analysis. Output feeds `crochet:refinement` — blocking items become prerequisite refactoring issues at the front of the chain.
+Reads a PRD and analyses it against the existing codebase and chain state to
+produce a gap analysis. Output feeds `crochet:refinement` — blocking items become
+prerequisite refactoring issues at the front of the chain.
+
+**This gate produces the acceptance.** A decision is accepted when its assessment
+reaches a fixed point: a round raising nothing new, from participants that did
+not author it. That is why the session is dispatched rather than performed here,
+and why it is written to an archive rather than presented and lost.
+
 
 ## Trigger
 
-`crochet:assess` is the required entry point for the SDLC pipeline. Run it when a user provides a PRD file path, invokes it after brainstorming produces a spec, or initiates any structured feature development. No pipeline step should begin before assess has run.
+`crochet:assess` is required before refinement. Run it when a user provides a PRD file path, invokes it after brainstorming produces a spec, or initiates any structured feature development.
+
+**It is not the only entry point.** Work can arrive at a later gate — a finished pull request enters at `crochet:review` — and a gate backfills what is missing rather than refusing to start, which is what `docs/decisions/0003-acceptance-by-refinement.md` settles. This skill previously said no pipeline step should begin before assess had run, which forbids the path the protocol calls legal.
 
 ## Inputs
 
@@ -25,7 +35,43 @@ Reads a PRD and analyzes it against the existing codebase and chain state to pro
 
 ## Process
 
-### Step 0: Spec Quality Validation
+### Step 0: Dispatch the session
+
+**Delegate the session to `crochet:discernment`**, passing the spec as the
+subject, `docs/assessments/` as where the minute goes, and who drafts. It owns
+the rounds, the dispatch, the recommendation contract and the minute.
+
+No capability check: it ships in this plugin, so it is always present. The
+conditional pattern is for superpowers and paad, which may not be installed —
+guarding a sibling behind it means the guard never passes and the fallback is a
+second implementation of the thing built once.
+
+**Delegation is the caller's job, not a participant's.** If you are reading this
+as a dispatched participant rather than as the agent invoking assess, the step
+above is not yours: do the analysis you were sent to do and report it.
+
+**An agent may not assess its own work.** Asking whether shipped work is the
+direction the repository should go, of the agent that shipped it, returns yes —
+the document and the code agree because the work made them agree. The bar is
+authorship, not species: another agent satisfies it, a human is not required.
+
+The composition rule itself lives in `crochet:discernment` and is not restated
+here. Restating it is how two skills come to hold two slightly different rules,
+which had already happened: this file named the drafter specifically where
+discernment names any role holding no view, and the drafter is one such role
+rather than the only one. A rule worth stating twice is a rule that will
+eventually be two rules.
+
+**Who names the file.** The archive is keyed by milestone, and in nominal
+position no milestone exists yet — the architect names it during refinement. So
+assess names the file after the decision it assesses (`docs/assessments/<NNNN>.md`)
+and refinement renames it to the milestone when it creates one. A backfilled
+assessment, run when a milestone already exists, uses the milestone name
+directly. That settles who names the assessment file in the case where the thing
+it is keyed to does not exist yet.
+
+### Step 0.5: Spec Quality Validation
+
 
 **If `paad:pushback` is available** (check preflight capabilities):
   Run `paad:pushback` on the PRD. Follow the skill — do not reimplement it. Resolve or acknowledge all pushback findings before continuing. The user may choose to proceed at any point; this is a quality gate, not a hard blocker.
@@ -72,10 +118,69 @@ For Partial and Blocking items, use chain lineage data to understand:
 
 ### Step 5: Output
 
+**Write the assessment to `docs/assessments/`, then present it.** An assessment
+that exists only in conversation is lost at the first compaction or agent
+handoff — and this protocol instructs the orchestrator to compact between units
+of delivery, so the gate's record cannot live in the context it is told to
+discard. `crochet:refinement` copies it into the milestone body; the archive file
+stays, because the milestone body lives in one clone.
+
+**The path is relative to the subject's repository**, not to wherever the
+assessing agent happens to be pinned. Create the directory if it is absent;
+nothing else does.
+
+**Then link it from `CONTRIBUTING.md`, in the same pass.** Writing the
+assessment without the link turns a green repository red: `git zhi docs check`
+reports every file in `docs/assessments/` unreachable. This is a step, not a
+warning — the first assessment a repository ever writes is the one that breaks
+it, and the fix is one line. If the repository has no `CONTRIBUTING.md` at all,
+say so and stop rather than inventing one, because its absence is a larger
+finding than a missing link.
+
+(`docs check` will have reported "all files reachable from `CONTRIBUTING.md`"
+before this, whether or not such a file exists. That green is not evidence.)
+
+#### Every assessment ends with a recommendation
+
+**reject, modify or accept**, with the findings behind it, at the top of the
+file. This is the contract `crochet:discernment` requires of every participant,
+and it holds whichever form below you are writing. A positive statement is
+better evidence than having run out of objections.
+
+Record the revision assessed, so a later reader knows what the verdict was
+about.
+
+#### The three axes
+
+Every assessment answers these, with evidence:
+
+1. **Codebase** — does the spec align with the code as it stands?
+2. **Architecture** — does it align with the decisions in force?
+3. **Direction** — does it align with where the repository is going? Crochet's
+   is maximising the autonomy of agents delivering software in collaboration
+   with a human.
+
+#### The cursory form
+
+A **cursory** assessment answers the three axes explicitly, with evidence, and
+does nothing else: no `paad:pushback` pass, no decomposition into blocking,
+missing and partial, no prerequisite ordering. It is what backfill produces when
+a later gate finds no assessment, not a lesser version of the full one.
+
+#### The full form
+
+
 Present results grouped by category, most critical first:
 
 ```
 ## Assessment: <PRD title>
+
+**Recommendation: <reject | modify | accept>** — revision <sha>
+
+### The three axes
+1. **Codebase** — <does it align with the code as it stands, with evidence>
+2. **Architecture** — <does it align with the decisions in force>
+3. **Direction** — <does it align with where the repository is going>
 
 ### Blocking (must resolve first)
 1. **<requirement>** — <what conflicts and why>

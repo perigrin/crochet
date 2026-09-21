@@ -84,7 +84,7 @@ runs it. So the paren-wrapped span MUST be an actually-runnable shell command:
 - If you must show a code fragment in an AC description, use a BARE backtick span
   (`` `if ($c) {...}` ``) — with no surrounding parens. git-zhi-verify ignores
   unwrapped backticks, treating them as prose.
-- One command per checkbox line — git-zhi-verify runs only the FIRST paren-wrapped
+- One command per checkbox line — git-zhi-verify runs only the LAST paren-wrapped
   span and drops the rest.
 
 ### 3. Create Issues

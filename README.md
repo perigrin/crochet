@@ -12,6 +12,7 @@ generating reports, onboarding repos, and validating pipeline outputs.
 | `crochet:refinement` | Decompose a spec into an executable git-zhi chain (architect, decomposer, SQE, tech writer) |
 | `crochet:chain-review` | Review a decomposed issue chain for quality, coverage, and dependency integrity before execution |
 | `crochet:execute` | Execute issues from the chain via TDD with Ralph Loop inner cycle and PAAD outer gate |
+| `crochet:review` | Review the completed milestone's diff against the decision that authorised it |
 | `crochet:postmortem` | Mandatory process retrospective at milestone completion |
 | `crochet:install` | Install git-zhi binary and companion symlinks |
 | `crochet:verify` | On-demand environment health check — templates, commands on PATH, data commands, template structure |
@@ -19,7 +20,7 @@ generating reports, onboarding repos, and validating pipeline outputs.
 | `crochet:import` | Assisted ticket import from Jira or other trackers with dependency inference |
 | `crochet:report` | Generate narrative reports from user-defined templates with Mermaid charts |
 
-The following are internal skills (not directly user-invocable): `crochet:preflight`, `crochet:pushback`, `crochet:alignment`, `crochet:how-to-use-git-zhi`
+The following are internal skills (not directly user-invocable): `crochet:preflight`, `crochet:pushback`, `crochet:alignment`, `crochet:discernment`, `crochet:how-to-use-git-zhi`
 
 ## Prerequisites
 

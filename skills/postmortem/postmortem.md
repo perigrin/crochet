@@ -81,6 +81,37 @@ Flag unexpected patterns:
 - Lineage surprises — coupling nobody anticipated
 - Sentiment anomalies without obvious cause
 
+### 3.5. Where did a human have to act, and what would have let the agent proceed?
+
+The autonomy audit. Crochet exists to maximise the autonomy of agents
+delivering software in collaboration with a human, so every point where the loop
+stopped for a person is a defect to engineer away rather than a fact to record.
+
+Ask it of each interruption:
+
+- **Reopen cycles and stuck issues** — what did the agent lack that a human
+  supplied?
+- **Readiness checks that stopped and asked** — was the question answerable from
+  the repository? If it was, the gate should have answered it.
+- **Permissions and refusals** — a denied tool call is friction with a cause.
+- **Escalations** — a judgment call handed up. Was it genuinely the human's, or
+  did it only feel that way from the inside?
+
+**Not every interruption is a defect.** Collaboration is the point, and a human
+making a judgment the protocol reserves for them — the direction of the
+repository, a decision to decline, an override — is the system working. The
+audit distinguishes friction from collaboration rather than counting every human
+touch as waste.
+
+**The actor telemetry is not the source, yet.** Worker identity prefixes a
+transition's actor with `human:` or `agent:`, which looks like the right signal
+and is not: the prefix records whether `ZHI_ACTOR` was exported, not who acted.
+`ZHI_ACTOR` is minted in execute's dispatch, so refinement, chain-review and a
+backfilling review all write transitions outside it. An audit keyed on it today
+would report every agent action as a human interruption. Ask the question of the
+session instead, and use the query once identity discipline reaches every skill
+that writes a transition.
+
 ### 4. What will we change?
 
 Propose concrete, actionable process changes:
@@ -109,6 +140,9 @@ cat > docs/postmortems/<milestone>.md <<'EOF'
 ...
 
 ## What Puzzles Us
+...
+
+## Where A Human Had To Act
 ...
 
 ## What Will We Change

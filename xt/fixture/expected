@@ -1,0 +1,49 @@
+# count: 9
+#
+# One line per finding site the fixture proves. The self-test requires every
+# substring to appear in the fixture's output, so a check that stops examining
+# is named rather than passing silently. `# count:` is checked, so removing an
+# entry is a finding. Matched with grep -F: literal substrings, not patterns.
+
+# covers: a live document declaring covers and naming nothing
+covers is empty, so nothing watches it
+
+# link symmetry, supersedes direction
+has no superseded-by link back
+
+# link symmetry, amends direction — the second invocation, own witness
+amends 0004, but 0004 has no amended-by link back
+
+# a forward reference to a decision that was never written
+supersedes 0099, which does not exist
+
+# accepted on a proposed footing
+which it amends — is 'proposed'
+
+# decisions cite symbols
+cites a line number, not a symbol
+
+# git zhi docs check: a link to a file that is not there
+git zhi docs check
+
+# implementing an accepted one: the self-test's commit trailer names 0004
+the refinement gate was skipped
+
+# declared floor vs installed binary: a manifest demanding 99.0.0
+below the declared floor
+
+# --------------------------------------------------------------------------
+# 9 of 26 sites covered — 24 `note` calls and 2 hard exits, counted rather than
+# estimated. Recount when a site is added. Uncovered:
+#
+#   product check, failing and missing    reads this repo's skills/, not $ROOT's
+#   no docs/ under $ROOT                  hard exit, before the counter exists
+#   git-zhi absent                        hard exit
+#   README to commands, both directions   fixture has no README.md or commands/
+#   cycle detection                       no fixture pair cycles
+#   Implements not in series              no fixture commit names a non-decision
+#   five floor sub-notes                  only the below-floor arm is exercised
+#   the self-test itself                  nothing guards the guard
+#
+# The reasoning behind this ledger, and the false claim that preceded it, are in
+# docs/postmortems/rfc-0003.md.

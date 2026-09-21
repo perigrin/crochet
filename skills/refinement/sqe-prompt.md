@@ -42,7 +42,7 @@ Each negative scenario must:
 - Be independently testable — the executing agent can write the test without additional context
 
 **git-zhi-verify contract (critical for negative scenarios).** `git-zhi-verify`
-runs the FIRST paren-wrapped backtick span on each AC checkbox line — including
+runs the LAST paren-wrapped backtick span on each AC checkbox line — including
 under `### Negative Scenarios` — verbatim via `sh -c`, and `--state complete`
 blocks on a failure. So:
 - ONLY paren-wrap a real runnable command. The scenario's *condition* — the code

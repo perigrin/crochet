@@ -1,0 +1,6 @@
+{
+  "name": "fixture",
+  "description": "Deliberately broken plugin manifest. The floor is above any version that will ever be installed, so the floor-vs-installed-binary check must report it. Do not repair it; it is the fixture.",
+  "version": "0.0.0",
+  "git_zhi_min_version": "99.0.0"
+}

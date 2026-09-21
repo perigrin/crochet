@@ -1,6 +1,6 @@
 #!/bin/sh
 # ABOUTME: Author tests — does the repo do what CONTRIBUTING.md claims of it?
-# ABOUTME: Runs the product check, doc structure, covers, and decision-link symmetry.
+# ABOUTME: Eight check families; xt/fixture/expected names which ones it proves.
 #
 # Usage:
 #   sh xt/run.sh              run every check against this repo, then self-test
@@ -25,8 +25,23 @@ if [ ! -d "$ROOT" ]; then
     exit 1
 fi
 
-fail=0
-note() { echo "FAIL: $*"; fail=$((fail + 1)); }
+# Counter in a file: a variable cannot survive the subshell a pipeline's right
+# side runs in.
+FAILS="${TMPDIR:-/tmp}/zhi-xt-fail-$$"
+: > "$FAILS"
+trap 'rm -f "$FAILS"' EXIT
+note() { echo "FAIL: $*"; echo x >> "$FAILS"; }
+
+# One missing binary produced four failure messages, none of which named it:
+# a skill supposedly naming a subcommand that does not exist, unreachable files
+# and dead links, and a working check accused of having gone quiet. The rule
+# this repository already states is to read the failure text rather than the
+# exit code, and a check that fails for the wrong reason has told you nothing.
+# `t/git-zhi-subcommands.sh` learned this and guards itself; the caller did not.
+if [ "$SELFTEST" = yes ] && ! command -v git-zhi >/dev/null 2>&1; then
+    echo "FAIL: git-zhi is not on \$PATH — most of these checks cannot run" >&2
+    exit 1
+fi
 
 # A root with nothing to check is a failure. A runner that reports success
 # while observing nothing has failed open, which is worse than being absent.
@@ -36,8 +51,13 @@ if [ ! -d "$ROOT/docs" ]; then
 fi
 
 # ---------------------------------------------------------------- product
-if [ "$SELFTEST" = yes ] && [ -f t/git-zhi-subcommands.sh ]; then
-    if ! sh t/git-zhi-subcommands.sh >/dev/null 2>&1; then
+# A check whose subject is missing is a finding, not a skip. `[ -f X ] &&` made
+# a deleted product check indistinguishable from a passing one: moving this file
+# away left the runner reporting ok: and exiting 0.
+if [ "$SELFTEST" = yes ]; then
+    if [ ! -f t/git-zhi-subcommands.sh ]; then
+        note "t/git-zhi-subcommands.sh is missing — the product check cannot run"
+    elif ! sh t/git-zhi-subcommands.sh; then
         note "t/git-zhi-subcommands.sh — a skill names a git zhi subcommand that does not exist"
     fi
 fi
@@ -85,7 +105,24 @@ link_check() {
     for f in "$DEC"/*.md; do
         [ -f "$f" ] || continue
         me=$(num_of "$f")
-        entries=$(sed -n '2,/^---$/p' "$f" | grep -E "^$forward:" | sed -E "s/^$forward:[[:space:]]*//; s/[][]//g; s/,/ /g")
+        # Both YAML sequence styles. Flow (`supersedes: [0001, 0002]`) is what
+        # every decision here uses; block (`supersedes:` then `  - 0001`) is
+        # what `git zhi docs init` templates and a human writing several links
+        # produce, and it parsed to nothing — so the obligation this check
+        # exists to discharge mechanically was silently undischarged for it.
+        # The covers: check fifteen lines above already handled both.
+        entries=$(sed -n '2,/^---$/p' "$f" | awk -v key="$forward" '
+            $0 ~ "^" key ":" {
+                rest = $0; sub("^" key ":[[:space:]]*", "", rest)
+                gsub(/[][,]/, " ", rest)
+                if (rest ~ /[^[:space:]]/) { print rest; next }
+                block = 1; next
+            }
+            block && /^[[:space:]]*-[[:space:]]/ {
+                item = $0; sub(/^[[:space:]]*-[[:space:]]*/, "", item); print item; next
+            }
+            block { block = 0 }
+        ')
         for e in $entries; do
             case "$e" in
                 ""|"[]") continue ;;
@@ -112,28 +149,196 @@ if [ -d "$DEC" ]; then
     link_check amends amended-by
 fi
 
+# --------------------------------------------- accepted on a proposed footing
+# A decision may not be accepted while a decision it amends is still proposed:
+# the amendment would be in force against a rule nobody has agreed to. 0004 came
+# within one step of this against 0003, which is why the rule exists. Checkable
+# at the moment `state: accepted` is written, which is the only moment it can be
+# broken.
+state_of() { sed -n '2,/^---$/p' "$1" | sed -n 's/^state:[[:space:]]*//p' | head -1; }
+
+if [ -d "$DEC" ]; then
+    for f in "$DEC"/*.md; do
+        [ -f "$f" ] || continue
+        [ "$(state_of "$f")" = accepted ] || continue
+        me=$(num_of "$f")
+        entries=$(sed -n '2,/^---$/p' "$f" | grep -E '^amends:' |
+                  sed -E 's/^amends:[[:space:]]*//; s/[][]//g; s/,/ /g')
+        for e in $entries; do
+            case "$e" in
+                ""|"[]") continue ;;
+                */*|*.md) continue ;;
+            esac
+            target=$(ls "$DEC/$e"-*.md 2>/dev/null | head -1)
+            [ -n "$target" ] || continue
+            st=$(state_of "$target")
+            case "$st" in
+                accepted|superseded) : ;;
+                *) note "$me is accepted, but $e — which it amends — is '$st'" ;;
+            esac
+        done
+    done
+fi
+
+# ------------------------------------------------- decisions cite symbols
+# A decision names a symbol, never a line: line numbers decay silently, and a
+# citation into another repository has no check anywhere in the world. The
+# reasoning is in docs/contributing/coding-conventions.md.
+if [ -d "$DEC" ]; then
+    for f in "$DEC"/*.md; do
+        [ -f "$f" ] || continue
+        for h in $(grep -oE '[A-Za-z0-9_./-]+\.(go|md|json|sh|ya?ml):[0-9]+(-[0-9]+)?' "$f" | sort -u); do
+            note "${f#"$ROOT"/} cites a line number, not a symbol: $h"
+        done
+    done
+fi
+
+# --------------------------------------------- implementing an accepted one
+# A skipped gate and a passed one leave the same trace: none. The commit's claim
+# to implement a decision is the exception, so commits implementing a decision
+# that is still proposed are the pipeline running out of order — 0003 sets the
+# rule. Reads $ROOT so the fixture can witness it.
+if [ -d "$DEC" ]; then
+    for n in $( (cd "$ROOT" && git log --format='%(trailers:key=Implements,valueonly)' 2>/dev/null) | tr -d ' ' | grep . | sort -u); do
+        target=$(ls "$DEC/$n"-*.md 2>/dev/null | head -1)
+        if [ -z "$target" ]; then
+            note "a commit claims Implements: $n, which is not a decision in the series"
+            continue
+        fi
+        state=$(sed -n '2,/^---$/p' "$target" | sed -n 's/^state:[[:space:]]*//p')
+        case "$state" in
+            accepted|superseded) : ;;
+            *) note "commits implement $n while it is '$state' — the refinement gate was skipped" ;;
+        esac
+    done
+fi
+
+# ------------------------------------------------- README against commands/
+# development-workflow.md claimed this check existed and it did not, in a
+# document imported into every agent's context — a false coverage claim inside
+# the coverage layer, which is this runner's own defect class. Written rather
+# than the sentence deleted, because the claim is worth making true.
+if [ "$SELFTEST" = yes ] && [ -f "$ROOT/README.md" ] && [ -d "$ROOT/commands" ]; then
+    for c in "$ROOT"/commands/*.md; do
+        [ -f "$c" ] || continue
+        name=$(basename "$c" .md)
+        grep -q "crochet:$name" "$ROOT/README.md" ||
+            note "commands/$name.md has no row in README.md"
+    done
+    # The other direction. A skill on the internal-skills line has no stub by
+    # design, so exempt only the names on that line — the guard must be about
+    # the name under test. tr because the case below matches space-delimited
+    # words and sort emits newlines.
+    internal=$(grep -i 'internal' "$ROOT/README.md" | grep -oE 'crochet:[a-z-]+' |
+               sed 's/^crochet://' | sort -u | tr '\n' ' ')
+    for name in $(grep -oE 'crochet:[a-z-]+' "$ROOT/README.md" | sed 's/^crochet://' | sort -u); do
+        [ -f "$ROOT/commands/$name.md" ] && continue
+        case " $internal " in *" $name "*) continue ;; esac
+        note "README.md names crochet:$name with no commands/$name.md"
+    done
+fi
+
+# ------------------------------------------- declared floor vs installed binary
+# Compares the declared floor against the installed binary. Reads $ROOT rather
+# than the current directory, so the fixture can witness it.
+if [ -f "$ROOT/.claude-plugin/plugin.json" ] || [ "$SELFTEST" = yes ]; then
+    if [ ! -f "$ROOT/.claude-plugin/plugin.json" ]; then
+        note ".claude-plugin/plugin.json is missing — nothing declares a git-zhi floor"
+    else
+        floor=$(sed -n 's/.*"git_zhi_min_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+                "$ROOT/.claude-plugin/plugin.json" | head -1)
+        installed=$(git zhi version 2>/dev/null | head -1 | awk '{print $2}')
+        # Both operands must be versions, not just non-empty: `v0.7.1` and
+        # `garbage` sort above a 0.7.2 floor.
+        is_version() { case "$1" in ''|*[!0-9.]*) return 1 ;; *) return 0 ;; esac; }
+
+        if [ -z "$floor" ]; then
+            note "plugin.json declares no git_zhi_min_version — preflight has no floor to enforce"
+        elif ! is_version "$floor"; then
+            note "git_zhi_min_version is '$floor', which is not a version — the floor cannot be compared"
+        elif [ -z "$installed" ]; then
+            note "could not read a version from git zhi version — the floor is unverifiable"
+        elif ! is_version "$installed"; then
+            note "git zhi version reported '$installed', which is not a version — the floor is unverifiable"
+        else
+            # sort -V understands versions, so 1.10.0 sorts above 1.2.3, a
+            # four-field version works, and a floor that is not a version at all
+            # sorts last and is reported rather than silently passing.
+            lowest=$(printf '%s\n%s\n' "$installed" "$floor" | sort -V | head -1)
+            if [ "$installed" != "$floor" ] && [ "$lowest" = "$installed" ]; then
+                note "installed git-zhi $installed is below the declared floor $floor"
+            fi
+        fi
+    fi
+fi
+
 # -------------------------------------------------------------- self-test
 # The runner must be able to fail. A guardrail that silently stopped firing
 # has failed open, and you stopped watching for what it caught.
+#
+# One exit code is not enough to say that. It only proves *some* check fired,
+# and it stayed green while four checks were deleted outright — link symmetry,
+# accepted-on-a-proposed-footing, cite-symbols and Implements, 106 lines, with
+# output identical to a full run. So the fixture declares what every check must
+# report, in xt/fixture/expected, and a check that stops examining goes missing
+# from the fixture's output and is named here.
 if [ "$SELFTEST" = yes ]; then
     if [ ! -d xt/fixture ]; then
         note "xt/fixture is missing — the runner cannot demonstrate that it fails"
+    elif [ ! -s xt/fixture/expected ]; then
+        note "xt/fixture/expected is missing or empty — nothing says which checks must fire"
+    elif [ "$(grep -cvE '^[[:space:]]*(#|$)' xt/fixture/expected)" != \
+           "$(sed -n 's/^# count: *//p' xt/fixture/expected | head -1)" ]; then
+        # An empty list is caught above, a shortened one was not: deleting a
+        # single line disarmed one check silently, which is the cheapest
+        # possible attack on this whole mechanism. The list declares its own
+        # length, so removing an entry is a finding and adding one is a
+        # deliberate edit in two places.
+        note "xt/fixture/expected has $(grep -cvE '^[[:space:]]*(#|$)' xt/fixture/expected) entries but declares $(sed -n 's/^# count: *//p' xt/fixture/expected | head -1)"
     else
         TMP="${TMPDIR:-/tmp}/zhi-xt-self-$$"
         rm -rf "$TMP"
         mkdir -p "$TMP"
         cp -R xt/fixture "$TMP/fixture"
-        if sh "$0" "$TMP/fixture" >/dev/null 2>&1; then
+
+        # Two checks need this copy to be a git repository. `git zhi docs check`
+        # reports every tree clean when it is not one, and the Implements check
+        # reads commit trailers — so the trailer names 0004, which the fixture
+        # keeps `proposed`, giving that check something to report.
+        ( cd "$TMP/fixture" && git init -q . &&
+          git -c user.email=xt@fixture -c user.name=xt add -A &&
+          git -c user.email=xt@fixture -c user.name=xt commit -qm "fixture
+
+Implements: 0004"
+        ) >/dev/null 2>&1
+
+        OUT=$(sh "$0" "$TMP/fixture" 2>&1) || true
+        if printf '%s\n' "$OUT" | grep -q '^ok:'; then
             note "the runner passed its own broken fixture — it can no longer fail"
         fi
+        while IFS= read -r want; do
+            [ -n "$want" ] || continue
+            case "$want" in \#*) continue ;; esac
+            printf '%s\n' "$OUT" | grep -qF "$want" ||
+                note "no check reported \"$want\" against the fixture — that check has gone quiet"
+        done < xt/fixture/expected
+
         rm -rf "$TMP"
     fi
 fi
+
+fail=$(wc -l < "$FAILS" | tr -d ' ')
 
 if [ "$fail" -gt 0 ]; then
     echo "$fail check(s) failed in $ROOT" >&2
     exit 1
 fi
 
-echo "ok: xt checks pass in $ROOT"
+# Name the mode. A partial run and a full one reported the same success text,
+# so "ok" carried no information about how much was examined.
+if [ "$SELFTEST" = yes ]; then
+    echo "ok: xt checks pass in $ROOT (full run)"
+else
+    echo "ok: xt checks pass in $ROOT (structural checks only)"
+fi
 exit 0

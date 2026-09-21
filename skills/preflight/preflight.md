@@ -22,7 +22,7 @@ Preflight runs seven checks in order:
 3. **Cross-check manifest against system-reminder skill list** — compare the skills listed in the manifest against the skills present in the current system-reminder. Additions and removals both count as discrepancies.
 4. **Update manifest on discrepancy** — if the cross-check finds a discrepancy, update the manifest and tell the user what changed (e.g. "Detected superpowers:dispatching-parallel-agents is now available — updated capabilities manifest").
 5. **Warn if manifest cannot be written** — if the filesystem is read-only or the write fails for any reason, warn the user: "Cannot write capabilities manifest — using runtime-only detection for this session." Proceed with in-memory detection for the rest of the session.
-6. **Report pipeline orientation** — run `git zhi status --format json` (and `git zhi list --format json` to resolve soft boundaries) and report the agent's position in the SDLC pipeline plus the likely next gate, following the inference table in the Pipeline Orientation section below. This is advisory output only — it never blocks, and it skips silently on any `git zhi status` error other than an empty chain. Before running any `git zhi` write command (`issue add`, `issue edit`, `milestone add/edit`), consult `crochet:how-to-use-git-zhi` for the exact syntax and input mode.
+6. **Report pipeline orientation** — run `git zhi status --format json` (and `git zhi issue list --all --format json` to resolve soft boundaries) and report the agent's position in the SDLC pipeline plus the likely next gate, following the inference table in the Pipeline Orientation section below. This is advisory output only — it never blocks, and it skips silently on any `git zhi status` error other than an empty chain. Before running any `git zhi` write command (`issue add`, `issue edit`, `milestone add/edit`), consult `crochet:how-to-use-git-zhi` for the exact syntax and input mode.
 7. **Return capabilities map** — make the capabilities map available to the calling skill so it can apply the conditional reference pattern (see Usage below).
 
 ## Manifest
@@ -73,6 +73,10 @@ Set `"installed": true` for a plugin if any of its skills are found. Set each sk
 
 The system-reminder lists available skills at runtime. After reading the manifest, compare the `superpowers:*` and `paad:*` skill names in the system-reminder against the manifest entries. If a skill appears in system-reminder but not the manifest, or appears in the manifest but not system-reminder, that is a discrepancy — update the manifest and report the change.
 
+**Crochet's own skills are deliberately absent from the manifest, and must not be added.** Each one ships in this plugin, so it is always present — there is nothing to detect. A `crochet:*` skill also cannot be cross-checked here: the runtime list carries only skills with a `commands/` stub, so every internal one (`preflight`, `alignment`, `pushback`, `discernment`, `how-to-use-git-zhi`) is invisible to it by construction.
+
+So never guard a crochet sibling behind a capability check. The check cannot pass, the guarded branch never runs, and the `Otherwise` fallback becomes a silent second implementation of the thing the sibling exists to hold. Invoke it directly. The conditional pattern exists for plugins that may not be installed, which crochet is not to itself.
+
 ## Fallback Behavior
 
 If the manifest cannot be read or written (read-only filesystem, permission error, disk full), preflight falls back to in-memory detection for the current session:
@@ -88,32 +92,55 @@ The fallback does not retry the write during the same session.
 The SDLC pipeline runs in strict order:
 
 ```
-superpowers:brainstorming → crochet:assess → crochet:refinement → crochet:chain-review → crochet:execute → crochet:postmortem
+superpowers:brainstorming → crochet:assess → crochet:refinement →
+crochet:chain-review → crochet:execute → crochet:review → crochet:postmortem
 ```
 
 Preflight infers the agent's position from chain state. The **absence** of chain
 state is itself meaningful — it means the work is still in the pre-chain stages.
 
 **Primary signal:** `git zhi status --format json` (exit 0 even on an empty
-chain). To resolve the soft boundaries, also consult `git zhi list --format json`,
-whose `issues[]` carry a per-issue `state`. Do **not** use `git zhi next` as the
-primary signal — it errors on an empty chain where `status` degrades gracefully.
+chain). To resolve the soft boundaries, also consult `git zhi issue list --all
+--format json`, whose entries carry a per-issue `state`. Do **not** use `git zhi
+next` as the primary signal — it errors on an empty chain where `status` degrades
+gracefully.
+
+**Use `issue list --all`, not `list`.** A completed milestone lists nothing
+without `--all`, and with the wrong command row 1 matches first and reports "No
+chain yet" for a finished chain, so row 3 is never reached.
+
+Through 0.6.0 the reason was that `--all` was inert on the top-level `list` —
+observed against a repository with three completed milestones and twenty closed
+issues, where `list --all` returned nothing and `issue list --all` returned the
+twenty. **That was fixed in 0.7.0 and both forms now return every issue**, so
+the old conclusion — "adding a flag does not fix it; the command has to change"
+— is false on every version this plugin supports.
+
+The reason to keep `issue list --all` is now shape, not coverage: it returns a
+bare JSON array, where `list` returns `{"issues": [...]}`. An orientation step
+written against one and run against the other parses nothing and reports an
+empty chain — the same row-1 misdiagnosis by a different route.
 
 Evaluate these rows **in order** and report the first that matches:
 
 | # | Chain state observed | Inferred position | Reported next gate |
 |---|---|---|---|
-| 1 | `status` has a `message` field / no `milestone`; `list` issues empty | Pre-chain (brainstorming → assess → refinement) | "No chain yet — next gate is `crochet:refinement` to create the milestone and issues" |
-| 2 | Milestone exists; an issue is `in-progress` | Mid-execute | "Executing issue `<title>` — continue `crochet:execute`" |
-| 3 | Milestone exists; all `list` issues closed; none `pending`/`in-progress` | Chain complete | "All issues closed — next gate is `crochet:postmortem`" |
-| 4 | Milestone exists; one or more issues `pending`; none `in-progress` | Chain built / ready to execute | "Chain ready — next gate is `crochet:chain-review`, then `crochet:execute` (`<N>` ready)" |
-| 5 | Milestone exists, but JSON matches none of the above | Unknown | Skip orientation silently (fail open) |
+| 1 | No milestone anywhere; `issue list --all` empty | Pre-chain (brainstorming → assess) | "No chain yet — next gate is `crochet:assess`, whose outcome is the acceptance" |
+| 2 | Milestone exists; zero issues | Refinement pending | "Milestone exists but is empty — next gate is `crochet:refinement` to decompose it" |
+| 3 | Milestone exists; an issue is `in-progress` | Mid-execute | "Executing issue `<title>` — continue `crochet:execute`" |
+| 4 | Milestone exists; all issues closed; none `pending`/`in-progress` | Chain complete | "All issues closed — next gate is `crochet:review`, then `crochet:postmortem`" |
+| 5 | Milestone exists; one or more issues `pending`; none `in-progress` | Chain built / ready to execute | "Chain ready — next gate is `crochet:chain-review`, then `crochet:execute` (`<N>` ready)" |
+| 6 | Milestone exists, but JSON matches none of the above | Unknown | Skip orientation silently (fail open) |
 
-Rows 2 and 3 are the unambiguous states. Row 4 deliberately merges "chain just
+Rows 3 and 4 are the unambiguous states. Row 5 deliberately merges "chain just
 built" and "ready to execute" — they are indistinguishable from `status` alone
 (an all-`pending` chain always has `ready_count > 0`), so the single row keeps
 the `chain-review`-then-`execute` phrasing visible rather than forcing a choice.
-Row 5 is the explicit fallback for an unrecognized shape: never guess, never block.
+Row 6 is the explicit fallback for an unrecognized shape: never guess, never block.
+
+Row 2 is new and is the state refinement leaves behind when a milestone is
+created before its issues exist. It was previously swallowed by row 1, which
+reported "no chain yet" for a milestone that plainly existed.
 
 **Report facts alongside the inference.** Print the observed state next to the
 inferred gate, e.g.:

@@ -19,23 +19,40 @@ If not found, run `crochet:install` to set it up.
 
 ## The stdin convention
 
-Titles and short metadata are positional args or flag values. **`issue edit`
-body/batch/split content arrives via stdin pipe — not as arguments.** Note the
-asymmetry: **`issue add` has NO stdin form** — it needs a positional title and
-a `--body` flag; only `issue edit --body`/`--batch`/`--split` read stdin.
+Titles and short metadata are positional args or flag values. Body content
+arrives via a stdin pipe. **`issue add` reads stdin only as a whole issue
+spec — the title in YAML frontmatter, no positional argument.** Passing the
+title positionally puts `issue add` on a different code path that does not read
+stdin at all.
 
 ```bash
-# WRONG: issue add does NOT read a body from stdin (errors: title required / no content)
+# RIGHT: a whole spec on stdin. The title is in the frontmatter, not an argument.
+printf -- '---\ntitle: "Fix login"\n---\n\nLong body text...\n' |
+    git zhi issue add --milestone <m>
+
+# RIGHT: a short body as a flag value, title positional.
+git zhi issue add "Fix login" --body "Short body text"
+
+# WRONG: a positional title with a body on stdin. Errors, title is required.
 echo "Long body text..." | git zhi issue add "Fix login"
-# RIGHT: issue add takes a positional title and a --body flag
-git zhi issue add "Fix login" --body "Long body text..."
 
 # stdin IS the input mode for issue edit body replacement:
-echo "New body text..." | git zhi issue edit <ref> --body
+echo "New body text..." | git zhi issue edit <ref> --body -
 ```
 
-This asymmetry is verified against the binary and matches the repo's own
-`skills/refinement/refinement.md:77` ("no working stdin/batch form" of issue add).
+`issue add "Title" --body -` reads stdin from 0.7.2, and an empty pipe is
+refused rather than creating a bodyless issue. `git_zhi_min_version` requires
+0.7.2, so both hold in every supported environment.
+
+**The habit it earned is worth more than the fix.** Through 0.7.1 the `-` was
+stored as the literal body, one character long, while the command exited 0
+printing `Created <id>: <title>`: the writing end of the pipe was simply never
+read. The issue then had no acceptance criteria, so `verify` found nothing to
+run for it and `issue edit --state done` closed it without the
+`N/N acceptance criteria verified` line. **An absent line was the only tell** —
+three issues were created and two closed green before anyone noticed. So after
+any write that should have stored content, check that the content is there
+rather than that the command succeeded.
 
 ## State model: verbs vs nouns
 
@@ -59,8 +76,10 @@ Note: the `--state` flag's own `--help` string lists only `start, pause, resume,
 
 | Intent | Command | Input mode | Output |
 |---|---|---|---|
-| Find next work | `git zhi next [--actor <id>] [--label <l>]` | flag | the HEAD issue |
-| Inspect the chain | `git zhi list [--ready] [--milestone <m>] [--label <l>] [--all] [--critical]` | flag | issue list |
+| Find next work | `git zhi next [--label <l>]` — bare, with `ZHI_ACTOR` set | env | the HEAD issue for this worker |
+| Find next work across repos | `git zhi project next <file.yaml>` — needs an identity | env or flag | cross-repo recommendation |
+| Inspect the chain | `git zhi list [--ready] [--milestone <m>] [--label <l>] [--critical]` | flag | open issues |
+| Inspect the chain, including done | `git zhi issue list --all` | flag | every issue |
 | View an issue | `git zhi issue show [<ref>]` | arg | issue detail |
 | Check work state | `git zhi status` | none | HEAD + ready_count |
 | Create an issue | `git zhi issue add "<title>" --body "<text>" [--milestone <m>]` | arg + flag | new issue (JSON array) |
@@ -74,13 +93,54 @@ Input mode is one of `arg` (positional), `flag`, `stdin` (piped), or `none`.
 Note the asymmetry from the stdin section: `issue add` is `arg + flag` (no stdin);
 `issue edit --body`/`--batch`/`--split` are `stdin`.
 
+## Worker identity: `ZHI_ACTOR`
+
+Every transition records who made it. A process declares itself by exporting:
+
+```bash
+export ZHI_ACTOR=agent:worker-3
+```
+
+The actor resolves in order: an explicit `--actor` flag where a command has one,
+then `ZHI_ACTOR`, then a derivation from git's `user.name` and `user.email`.
+
+**Only `next` and `project next` take `--actor`, and both are read-side.** No
+write command has the flag (git-zhi ADR 0004), so on the write path `ZHI_ACTOR`
+is the only way to declare an identity. Use bare `git zhi next` with the
+variable exported rather than `next --actor`: passing it on the read side while
+the write side reads the environment is how one worker ends up with two
+identities.
+
+The value must name its type — `agent:` or `human:`. A bare string is refused
+at this boundary rather than defaulted, because defaulting would silently record
+agents as humans. To override for a single command, prefix the assignment:
+
+```bash
+ZHI_ACTOR=human:chris git zhi issue edit <ref> --state done
+```
+
+With nothing exported, behaviour is exactly what it was before this existed:
+the git-author derivation, one actor, no migration.
+
+**Why this matters.** Every agent in one repository shares the git author
+config, so without a declared identity they all resolve to the same actor —
+`next` hands each of them whatever another started, and the exclusion that
+keeps two workers off one issue excludes nothing. Identity is for coordination,
+never authorization: a declared value is unverified and is not a basis for
+deciding what a worker may do.
+
+Requires git-zhi 0.6.0, which `git_zhi_min_version` is above.
+`crochet:preflight` reports the installed version against that floor and warns;
+it does not block, so an older binary runs anyway.
+
 ## JSON output (field inventory)
 
 Pass `--format json` (a global flag) to get machine-readable output. For commands
 an agent parses, the keys it relies on:
 
 - **`git zhi status`** — `head`, `title`, `state`, `milestone`, `ready_count` (and a `message` field with `ready_count` instead of the chain keys when no chain exists). `crochet:preflight`'s **Pipeline Orientation** section shows how these keys map to pipeline position; run `git zhi status --format json` for the live shape.
-- **`git zhi list`** — `{ "issues": [ … ] }`; each issue carries `id`, `title`, `state`, `urgency`, `milestone`, `labels`, `created`, `updated`, `body`. `crochet:preflight` uses these same keys for orientation; run `git zhi list --format json` for the live shape.
+- **`git zhi list`** — `{ "issues": [ … ] }`, an **object wrapping an array**; each issue carries `id`, `title`, `state`, `urgency`, `milestone`, `labels`, `created`, `updated`, `body`. Run `git zhi list --format json` for the live shape.
+- **`git zhi issue list`** — a **bare array**, `[ … ]`, with the same per-issue keys. The two differ at the top level and only here: code written for one returns nothing when pointed at the other, silently. `crochet:preflight` runs `issue list --all`, so an orientation step that parses `.issues[]` gets an empty result and reports no chain for a live one.
 - **`git zhi next`** — the same per-issue keys as a `list` issue plus a `description` key (it resolves the HEAD issue). Errors when the chain is empty.
 - **`git zhi issue show <ref>`** — the same per-issue keys as `next` (the `list` issue keys plus `description`).
 
@@ -89,15 +149,25 @@ To see the live shape of any of these, run `git zhi <cmd> --format json`.
 ## When this reference and the CLI disagree
 
 Confirm the current surface with `git zhi <cmd> --help`. This reference is
-verified against git-zhi 0.4.0, and the CLI evolves. **When `--help` and this
+verified against git-zhi 0.7.2, and the CLI evolves. **When `--help` and this
 reference disagree, `--help` wins** — proceed using `--help`'s current surface
 and do not treat this reference as authoritative for that command.
 
 git-zhi marks unfinished surfaces inline in its own `--help` output (e.g.
 "not yet implemented"), so for whether a specific flag works, trust `--help`.
-For example, `git zhi issue add --after`/`--before` and `git zhi list --graph`
-are not yet implemented — but treat that as an illustration of the pattern, not
-a maintained list; always confirm with `--help`.
+For example, `git zhi list --graph` still carries the marker on 0.7.1 — but
+treat that as an illustration of the pattern, not a maintained list; always
+confirm with `--help`. This reference previously named `issue add --after` and
+`--before` alongside it; both have been implemented since 0.5.0, and the stale
+claim outlived the fact by four releases in a file whose own rule is that
+`--help` wins.
+
+**`--help` can also be wrong, and one case is on record.** Through 0.6.0,
+`git zhi list --help` advertised `--all  include done and cancelled issues`
+while the flag was accepted, exited 0 and changed nothing — output with it was
+byte-identical to output without. It was fixed in 0.7.0 and both forms now
+return every issue. The habit it earned outlives it: where a flag's effect
+matters, check that the output changed rather than that the command succeeded.
 
 ## Companion subcommands
 

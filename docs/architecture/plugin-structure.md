@@ -34,11 +34,19 @@ ships and the thing that is read are the same file.
 ## SDLC Pipeline
 
 ```
-superpowers:brainstorming → crochet:assess → crochet:refinement → crochet:chain-review → crochet:execute → crochet:postmortem
+superpowers:brainstorming → crochet:assess → crochet:refinement →
+crochet:chain-review → crochet:execute → crochet:review → crochet:postmortem
 ```
 
-Each step is a gate; do not proceed until the current one passes. The pipeline
-runs in strict order.
+Each step is a gate. **Which gates are mandatory, and what happens when the loop
+is entered somewhere other than the start, is policy rather than architecture:**
+`docs/decisions/0003-acceptance-by-refinement.md` settles it and `CLAUDE.md`
+summarises it. This document carries the pipeline's shape and stops there.
+
+It previously said the pipeline runs in strict order and that no step proceeds
+until the current one passes, which contradicts the backfill rule one import
+away — an agent reviewing a finished pull request was told both to enter at
+review and not to proceed past brainstorming.
 
 ## Skills
 
@@ -53,6 +61,7 @@ user-invocable; the rest are invoked by name from another skill.
 | `refinement` | Decomposes a spec into a git-zhi chain of issues |
 | `chain-review` | Gate between refinement and execute; runs the two lenses below |
 | `execute` | Drives the execution loop, issue by issue |
+| `review` | Gate between execute and postmortem; reviews the delivery's diff against the decision |
 | `postmortem` | Milestone retrospective, written to `docs/postmortems/` |
 
 ### Infrastructure skills
@@ -72,9 +81,10 @@ user-invocable; the rest are invoked by name from another skill.
 | `report` | Renders narrative reports from templates |
 | `alignment` | Coverage lens: does the chain cover its spec? Called by `chain-review` |
 | `pushback` | Plan-quality lens: sizing, dependencies, AC executability. Called by `chain-review` |
+| `discernment` | Convergence mechanism: rounds of independent participants to a fixed point. Called by `assess`, `chain-review` and `review` |
 | `how-to-use-git-zhi` | Agent-facing command reference, consulted before running `git zhi` |
 
-`preflight`, `alignment`, `pushback` and `how-to-use-git-zhi` have no command
+`preflight`, `alignment`, `pushback`, `discernment` and `how-to-use-git-zhi` have no command
 stub. They are internal by construction, not by convention.
 
 ## Refinement's agent roles
