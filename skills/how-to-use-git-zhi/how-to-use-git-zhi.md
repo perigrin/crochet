@@ -40,20 +40,19 @@ echo "Long body text..." | git zhi issue add "Fix login"
 echo "New body text..." | git zhi issue edit <ref> --body -
 ```
 
-**Never write `issue add "Title" --body -`.** Observed on 0.7.1: the `-` is
-stored as the literal body, one character long, and the command exits 0 printing
-`Created <id>: <title>`. Nothing fails — the writing end of the pipe is simply
-never read. The issue then has no acceptance criteria, so `verify` finds nothing
-to run for it and `issue edit --state done` closes it without the
-`N/N acceptance criteria verified` line. **An absent line is the only tell**, and
-the milestone-level zero-extraction guard cannot fire because the chain's other
-issues keep the count non-zero. Three issues were created and two closed green
-this way before it was noticed.
+`issue add "Title" --body -` reads stdin from 0.7.2, and an empty pipe is
+refused rather than creating a bodyless issue. `git_zhi_min_version` requires
+0.7.2, so both hold in every supported environment.
 
-Every sibling handles `-` correctly — `issue edit --body -`, `milestone add
---body -` and `milestone edit --body -` all read stdin — which is what makes
-this one dangerous: the working forms teach that the broken one is safe. Use the
-frontmatter spec above for any body long enough to want a pipe.
+**The habit it earned is worth more than the fix.** Through 0.7.1 the `-` was
+stored as the literal body, one character long, while the command exited 0
+printing `Created <id>: <title>`: the writing end of the pipe was simply never
+read. The issue then had no acceptance criteria, so `verify` found nothing to
+run for it and `issue edit --state done` closed it without the
+`N/N acceptance criteria verified` line. **An absent line was the only tell** —
+three issues were created and two closed green before anyone noticed. So after
+any write that should have stored content, check that the content is there
+rather than that the command succeeded.
 
 ## State model: verbs vs nouns
 
