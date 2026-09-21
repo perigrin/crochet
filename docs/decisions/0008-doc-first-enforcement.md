@@ -31,8 +31,13 @@ of its own rules in that position.
 health` reports drift when commits touch a document's `covers:` paths since the
 document last changed. Two things make it unusable as a gate, both measured on
 0.7.2 and recorded in `docs/requests/git-zhi-docs-health-silent-passes.md`: a
-`covers:` entry written with a trailing slash matches no churn, and a document
-whose commit date cannot be resolved is reported as current rather than unknown.
+`covers:` entry written with a trailing slash matches no churn, and a repository
+whose history is truncated — a shallow clone, which `actions/checkout` produces
+by default — reports every document current rather than unknown.
+
+An uncommitted document is *not* one of those cases, and an earlier version of
+this decision said it was. Its unresolvable date opens an unbounded window, so
+it reports `HIGH` unless the first defect silences it.
 
 Those are defects and the first has a one-character workaround. **The structural
 reason survives both being fixed**, and it is narrower than it first looks.

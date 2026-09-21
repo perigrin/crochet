@@ -162,7 +162,17 @@ that a fourth entry in the list was a corpse.
    is written; the cleanup is not, and a corpse in a task list is indistinguishable
    from work in progress to the person reading it.
 
-6. **Do not stop participants on a proposal to stop.** The drafter proposed
+6. **After correcting a passage, re-read the sentence that summarises it.**
+   Three rounds in a row, a correct new paragraph landed beneath a summary that
+   no longer covered it: an amendment count left without its third item, a
+   section table left unchanged when four rows were placed against it in prose,
+   and a justifying sentence describing a kind of edit the paragraph above had
+   just said this was not. A participant named it as one property of how the
+   document was being revised rather than three findings, which is what it is.
+   The check is the same each time and takes seconds: after editing a passage,
+   grep for the sentence that counts, names or justifies it.
+
+7. **Do not stop participants on a proposal to stop.** The drafter proposed
    ending the gate and then reaped all four participants, so the six rounds of
    findings can no longer be released by the participants who raised them —
    `crochet:discernment` requires exactly that, which is why it says participants

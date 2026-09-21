@@ -311,12 +311,18 @@ old path. It is recorded here because the citation check catches a `file:line`
 reference and not a filename that stopped existing, and nothing at all catches a
 filename that was never right.
 
-**Retargeting a citation into a file that no longer exists is a repair, not a
-revision** — it changes where a reference points, not what the decision holds.
-That is why 0006's is repaired and 0003's two are not: one of them names the old
-path in order to say this decision will absorb it, and the other is a dated
-claim about where the ordering appeared. Changing either alters what 0003 says,
-and 0001 holds an accepted entry "immutable in content, append-only in status".
+**The asymmetry is `state:`, not the kind of edit.** 0006 is `proposed` and may
+change freely; 0003 is `accepted`, and 0001 holds an accepted entry "immutable
+in content, append-only in status". That settles it without needing a
+repair-versus-revision distinction — which would not survive scrutiny here
+anyway, since correcting 0006's attribution does change what 0006 holds: it held
+that the rule lives in `plugin-structure.md` and afterwards holds that it lives
+elsewhere.
+
+Even were 0003 mutable, neither of its two sites wants changing. One names the
+old path in order to say this decision will absorb it; the other is a dated
+claim about where the pipeline ordering appeared when 0003 was written. Both are
+true as of their date, which is what an archive entry is for.
 
 ## Acceptance Criteria
 

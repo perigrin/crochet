@@ -111,30 +111,40 @@ every entry in this repository, all of which are silent.
 request should not read as a blocker: dropping the trailing slash from each
 entry makes the check work today on 0.7.2.
 
-# 2. A document whose date cannot be resolved is reported as current
+# 2. A truncated history is reported as health, not as unknown
 
 When `docs health` cannot resolve a commit for a document, `doc_modified` is the
-Go zero value, `0001-01-01T00:00:00Z`. A modification date at the dawn of time
-should mean maximal drift. It yields `code_churn: 0` and `drift: NONE`, and the
-document is counted in the summary while contributing nothing to it.
+Go zero value, `0001-01-01T00:00:00Z`. Where the repository's history is also
+truncated, there is nothing to count against that date and every document
+reports current — which is indistinguishable from a repository in good order.
 
-Four conditions reach it on 0.7.2, measured against a tree whose full clone
-reports `10 docs checked, 2 LOW drift`:
+Measured on 0.7.2 against a tree whose full clone reports `10 docs checked,
+2 LOW drift`:
 
 | condition | reported |
 |---|---|
 | `git clone --depth 1` | `10 docs checked, all current` |
 | a worktree of a shallow clone | `10 docs checked, all current` |
-| a document added but not yet committed | `doc_modified: 0001-01-01T00:00:00Z`, `drift: NONE` |
 | no git repository at all | `1 docs checked, all current` |
 
-The first two matter because `actions/checkout` is shallow by default, so the
+These matter because `actions/checkout` is shallow by default, so the
 configuration most likely to run this command is the one that silences it across
 every document at once — and reports the silence as health.
 
-The third matters most to whoever is writing a new live document, because the
-document that most needs a drift signal is the one that does not have a commit
-yet, and it is counted in the total while being invisible to the check.
+**The zero date is not itself the fault, and an earlier version of this document
+said it was.** An uncommitted document in a repository with history opens an
+unbounded window, so all of it counts and the report is `drift: HIGH` — the
+correct direction. Two untracked documents in one repository, same zero date,
+demonstrate that the shape of the `covers:` entry is what decides:
+
+```
+docs/uncommitted-DIR.md    covers: src/          churn 0   NONE
+docs/uncommitted-FILE.md   covers: src/foo.txt   churn 6   HIGH
+```
+
+The first is silent because of defect 1, not because of its date. Attributing it
+to the date is a conflation this report carried through several revisions, and
+it is recorded because a reader who fixes the zero date will not fix that row.
 
 **What would resolve it.** An unresolvable date is not zero drift, it is unknown
 drift, and the two should not render the same. Reporting the document as
