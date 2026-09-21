@@ -259,6 +259,19 @@ repairs. One assessment answered twenty-four first-round findings with a diff of
 +249/−62 on a two-hundred-line document, and every later round's findings landed
 in lines that had not existed the round before.
 
+**Run a criterion against a tree where its work is done, not only against the
+tree as it stands.** A criterion that passes before its work and a criterion
+that can never pass are the same defect with the sign flipped, and only the
+first announces itself: it exits 0 the moment you run it. The second exits
+non-zero, which is exactly what a correct red looks like on day one, so running
+it tells you nothing — it stays hidden until someone does the work, watches the
+criterion stay red, and has to guess whether the work or the criterion is wrong.
+
+For a grep-shaped criterion the check costs two copies and an edit. One session
+found ten criteria that passed before their work and never once asked whether a
+criterion could pass at all; the one that nearly shipped unsatisfiable was the
+one whose strings lived in prose other sentences in the same file also touched.
+
 **When a finding is about a tool's behaviour, the answer is a measurement in a
 scratch repository that varies one input**, recorded as the command and its
 output — not a rewording of the claim. One claim about `git zhi docs health`
