@@ -349,7 +349,8 @@ against. And git-zhi's **ADR 0004** settled the question this decision was
 written around: no write command takes `--actor`, so identity on the write path
 is the environment and nothing else.
 
-`xt/zhi-actor-probe.sh` is what holds that floor honest from this side.
+`xt/run.sh` holds that floor honest from this side, by comparing the declared
+`git_zhi_min_version` against the version the installed binary reports.
 
 **`skills/execute/execute.md`.** Select with bare `git zhi next`, identity
 supplied by the environment. Mint `ZHI_ACTOR` **at dispatch**, not at worktree
@@ -365,18 +366,36 @@ all-blocked, and matching both strings survives either behaviour.
 **`skills/how-to-use-git-zhi/how-to-use-git-zhi.md`.** Document `ZHI_ACTOR` and
 the resolution order, and add the actor-aware row to the intent table.
 
-**`xt/zhi-actor-probe.sh`.** A probe asserting the installed binary honours
-`ZHI_ACTOR`: initialise a scratch repository, create and start an issue under a
-known actor, and assert the recorded transition actor matches. Multi-step setup
-belongs in a script rather than an acceptance criterion.
+**A probe of the installed binary's `ZHI_ACTOR` handling** was written for this
+decision and has since been removed. It initialised a scratch repository,
+created and started an issue under a known actor, and asserted the recorded
+transition actor matched.
+
+It was deleted because its subject was git-zhi's behaviour rather than this
+repository's, which is git-zhi's own test suite's job, and because the floor
+comparison in `xt/run.sh` covers the version-skew case it was written for. What
+this repository can hold honest is the floor it declares; what the binary does
+above that floor is held honest where the binary lives.
 
 ### Acceptance Criteria
 
-- [ ] the installed binary honours ZHI_ACTOR (`sh xt/zhi-actor-probe.sh`)
-- [ ] execute selects with bare next, not the flag (`grep -q 'git zhi next' skills/execute/execute.md && ! grep -q 'next --actor' skills/execute/execute.md`)
-- [ ] execute no longer selects from the ready set (`! grep -q 'list --milestone .* --ready' skills/execute/execute.md`)
-- [ ] execute mints a worker identity (`grep -q 'ZHI_ACTOR' skills/execute/execute.md`)
-- [ ] the command reference documents the identity variable (`grep -q 'ZHI_ACTOR' skills/how-to-use-git-zhi/how-to-use-git-zhi.md`)
+**Removed, 2026-09-21.** This section carried five runnable commands, and a
+decision does not carry those. It states what must be true; the milestone
+refinement creates from it holds the commands that check it, which is the
+division `docs/decisions/0003-acceptance-by-refinement.md` settles and
+`docs/contributing/coding-conventions.md` records.
+
+One of the five showed why. Its subject was git-zhi's handling of `ZHI_ACTOR` —
+another repository's behaviour — so no work here could ever have turned it green
+or red, and when the probe it named was deleted it became permanently
+unrunnable with nothing detecting it. A cross-repository dependency belongs in
+`git_zhi_min_version`, which `crochet:preflight` enforces and `xt/run.sh` now
+compares against the installed binary: a claim this repository can check.
+
+The other four asserted that `skills/execute/execute.md` and
+`skills/how-to-use-git-zhi/how-to-use-git-zhi.md` say what the Scope of Change
+above says they should. That is still required. It is simply not this document's
+job to hold the command that checks it.
 
 ## Open Questions
 

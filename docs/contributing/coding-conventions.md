@@ -68,11 +68,13 @@ that — which is the division `docs/decisions/0003-acceptance-by-refinement.md`
 settles, and the reason `git zhi verify` reads a milestone body at all.
 
 **A decision naming a specific test is a decision that decays when the test is
-renamed.** `0002-worker-identity.md` predates the rule and names
-`sh xt/zhi-actor-probe.sh` as a criterion. That probe has since been deleted; the
-decision is frozen, so it now names a file that is not there, and nothing
-detects it — `xt/run.sh` checks for `file.go:12` citations, not for filenames
-that stopped existing.
+renamed.** `0002-worker-identity.md` predated this rule and carried five
+runnable criteria, one of them a probe script. When that script was deleted the
+criterion became permanently unrunnable and nothing detected it: the citation
+check here rejects a file-and-line reference, not a filename that stopped
+existing. The section has since been removed from that decision — not as an
+amendment, because a criterion that should never have been in a decision is a
+defect in it rather than a position it took.
 
 **And no criterion should be satisfiable only by another repository shipping
 something.** That probe's subject was git-zhi's behaviour rather than this
