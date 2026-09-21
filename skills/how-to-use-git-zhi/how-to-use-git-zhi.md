@@ -19,23 +19,41 @@ If not found, run `crochet:install` to set it up.
 
 ## The stdin convention
 
-Titles and short metadata are positional args or flag values. **`issue edit`
-body/batch/split content arrives via stdin pipe — not as arguments.** Note the
-asymmetry: **`issue add` has NO stdin form** — it needs a positional title and
-a `--body` flag; only `issue edit --body`/`--batch`/`--split` read stdin.
+Titles and short metadata are positional args or flag values. Body content
+arrives via a stdin pipe. **`issue add` reads stdin only as a whole issue
+spec — the title in YAML frontmatter, no positional argument.** Passing the
+title positionally puts `issue add` on a different code path that does not read
+stdin at all.
 
 ```bash
-# WRONG: issue add does NOT read a body from stdin (errors: title required / no content)
+# RIGHT: a whole spec on stdin. The title is in the frontmatter, not an argument.
+printf -- '---\ntitle: "Fix login"\n---\n\nLong body text...\n' |
+    git zhi issue add --milestone <m>
+
+# RIGHT: a short body as a flag value, title positional.
+git zhi issue add "Fix login" --body "Short body text"
+
+# WRONG: a positional title with a body on stdin. Errors, title is required.
 echo "Long body text..." | git zhi issue add "Fix login"
-# RIGHT: issue add takes a positional title and a --body flag
-git zhi issue add "Fix login" --body "Long body text..."
 
 # stdin IS the input mode for issue edit body replacement:
-echo "New body text..." | git zhi issue edit <ref> --body
+echo "New body text..." | git zhi issue edit <ref> --body -
 ```
 
-This asymmetry is verified against the binary and matches the repo's own
-`skills/refinement/refinement.md:77` ("no working stdin/batch form" of issue add).
+**Never write `issue add "Title" --body -`.** Observed on 0.7.1: the `-` is
+stored as the literal body, one character long, and the command exits 0 printing
+`Created <id>: <title>`. Nothing fails — the writing end of the pipe is simply
+never read. The issue then has no acceptance criteria, so `verify` finds nothing
+to run for it and `issue edit --state done` closes it without the
+`N/N acceptance criteria verified` line. **An absent line is the only tell**, and
+the milestone-level zero-extraction guard cannot fire because the chain's other
+issues keep the count non-zero. Three issues were created and two closed green
+this way before it was noticed.
+
+Every sibling handles `-` correctly — `issue edit --body -`, `milestone add
+--body -` and `milestone edit --body -` all read stdin — which is what makes
+this one dangerous: the working forms teach that the broken one is safe. Use the
+frontmatter spec above for any body long enough to want a pipe.
 
 ## State model: verbs vs nouns
 
