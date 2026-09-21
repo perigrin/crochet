@@ -102,36 +102,25 @@ the codebase as the subject, assess reports where it asserts something the code
 does not do. When it reports an issue, run it again over each decision the
 document cites: only the decisions say which of the two is wrong.
 
-Its hole is the trigger. `git zhi docs health` compares commits touching a
-document's `covers:` paths against the commit that last touched the document —
-both git-derived, so the answer is the same in any clone, and the reporting
-machinery works. What does not work is the matching: **a `covers:` entry naming
-a directory never matches churn.** Observed on 0.7.2 against this repository,
-where `skills/` had been touched by three commits since the documents covering
-it were last changed:
+Its hole is the trigger, and the obvious candidate cannot be one. `git zhi docs
+health` reports a document as drifted when commits have touched its `covers:`
+paths since the document itself last changed. **Under doc-first those are the
+same pull request**, so a compliant repository never accumulates drift, and a
+signal that is structurally silent for compliant work cannot schedule work on
+it. The two documents drifting here are archive, which doc-first never governed.
 
-| `covers:` entry | churn reported |
-|---|---|
-| `skills/review/review.md` | 1 |
-| `skills/`, `commands/`, the manifest | 0 |
+That argument holds whatever git-zhi does. The trigger is therefore the
+implementing pull request, the same event doc-first attaches to, plus
+`crochet:review`, which 0003 makes mandatory — both events nobody can skip,
+which is what 0001's ladder asks of an enforcement point.
 
-Same tree, same history, opposite answers, and the discriminator is the shape of
-the path. Every live document in this repository declares directory paths, so
-`docs health` has never reported drift on any of them — and it fails in the
-direction of reporting clean, which is the direction that is never noticed.
-`docs/contributing/development-workflow.md` already records other ways that
-summary reports all-clear over nothing.
-
-That settles the trigger for this decision rather than in general.
-`docs/ARCHITECTURE.md` is specified below with `covers: skills/`, `commands/`
-and the manifest, so `docs health` would say nothing about the synthesis for as
-long as the defect stands. The trigger is therefore the implementing pull
-request, the same event doc-first attaches to, plus `crochet:review`, which 0003
-makes mandatory. Both are events nobody can skip, which is what 0001's ladder
-asks of an enforcement point.
-
-The defect belongs to git-zhi and is recorded in `docs/requests/`. Nothing here
-waits on it.
+`docs health` remains a secondary signal for history that did not follow the
+rule. Two defects limit it further, both recorded in `docs/requests/` and
+neither blocking anything here: a `covers:` entry naming a directory never
+matches churn, which is every live document in this repository; and a document
+whose commit date cannot be resolved is reported as current rather than unknown,
+which covers a shallow checkout and — the case this decision creates — a
+synthesis that has been added but not yet committed.
 
 **The citation check**, as backstop. Its subject is every accepted decision with
 at least one commit carrying its `Implements:` trailer — the population
