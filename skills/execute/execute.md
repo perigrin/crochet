@@ -329,12 +329,14 @@ decline it in writing rather than silently.
   the issue via two-step state transition, and return to Step 3 for another
   execution pass.
   ```bash
-  # Append findings to issue body via --body on stdin
+  # Append findings to issue body via --body on stdin. The dash is the stdin
+  # argument: `--body` is a string flag, so a bare one consumes nothing and the
+  # binary rejects the command while the transitions below still succeed.
   echo "<current body>
 
   ### Review Findings
 
-  <findings>" | git zhi issue edit <id> --body
+  <findings>" | git zhi issue edit <id> --body -
   git zhi issue edit <id> --state reopen
   git zhi issue edit <id> --state start
   ```

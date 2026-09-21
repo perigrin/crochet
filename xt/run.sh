@@ -12,6 +12,16 @@
 # These are project tests, not product tests. None of this ships to anyone
 # consuming crochet. t/ tests the product; xt/ tests the repo.
 
+# Every git call below means the repository at $ROOT, and `cd` does not say so:
+# git reads GIT_DIR from the environment and a cd cannot override it. Git
+# exports GIT_DIR and GIT_INDEX_FILE to hooks — absolute ones when the checkout
+# is a worktree — so a runner wired in as a pre-commit hook, which is what
+# CONTRIBUTING.md's check list invites, would aim the self-test's `git init`,
+# `add -A` and `commit` at the developer's own repository rather than at its
+# fixture copy. Clear them rather than fight them.
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY \
+      GIT_ALTERNATE_OBJECT_DIRECTORIES GIT_NAMESPACE GIT_COMMON_DIR
+
 ROOT="$1"
 SELFTEST=yes
 if [ -n "$ROOT" ]; then
@@ -310,7 +320,7 @@ if [ "$SELFTEST" = yes ]; then
           git -c user.email=xt@fixture -c user.name=xt commit -qm "fixture
 
 Implements: 0004"
-        ) >/dev/null 2>&1
+        ) >/dev/null 2>&1 || note "the self-test could not build its fixture repository"
 
         OUT=$(sh "$0" "$TMP/fixture" 2>&1) || true
         if printf '%s\n' "$OUT" | grep -q '^ok:'; then

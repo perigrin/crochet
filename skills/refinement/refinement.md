@@ -154,7 +154,7 @@ After decomposition, two independent agents enrich the issues: one adds negative
 
 **Produces:**
 - Negative scenarios for each issue: boundary conditions, error paths, race conditions, invalid inputs, state corruption
-- Updates issues via `git zhi issue edit <id> --body` (full-body replace reading from stdin) with the revised body containing `### Negative Scenarios`
+- Updates issues via `git zhi issue edit <id> --body -` (full-body replace reading from stdin) with the revised body containing `### Negative Scenarios`
 
 #### Step 5: Technical Writer Agent
 

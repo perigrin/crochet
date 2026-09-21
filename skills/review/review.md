@@ -70,19 +70,38 @@ Everywhere below, `pu...HEAD` means `$BASE...HEAD` with the base resolved here.
 
 **If no milestone was named**, resolve the active one the way `crochet:execute`
 does — `git zhi milestone list --format json`, taking the milestone whose state
-is not completed. Stop only if that is ambiguous or empty; reviewing a delivery
+is not completed. Stop only if that is *ambiguous*; reviewing a delivery
 requires knowing which delivery, but the name is usually derivable rather than
-missing.
+missing, and an empty result is the finished-pull-request path below rather than
+a reason to halt.
 
 This skill used to stop outright here, having observed that `commands/review.md`
 passed no argument. The stub now passes `$ARGUMENTS`, as `commands/execute.md`
 always did — diagnosing a defect in a sibling file and then halting on it left
 the only entry point to a mandatory gate unable to run unattended.
 
-**If preflight reported that there is no chain**, believe it. Orientation is
-advisory and never blocks, which means it cannot stop this gate — so read its
-output and stop here yourself. A gate whose only state check is one that cannot
-halt it has no state check.
+**If preflight reported that there is no chain**, believe it — and then keep
+going, because that is the entry path this gate exists for rather than a reason
+to refuse.
+
+`docs/decisions/0003-acceptance-by-refinement.md` settles it: code arrives fully
+formed, "entry is at review", and "a chain is not backfilled". So the absence of
+a chain is the normal state on this path, not a fault. This skill previously
+stopped here, and stopping made the one mandatory gate that the finished pull
+request enters at the one gate it could never run — the same shape as halting on
+a sibling's missing argument, one paragraph up.
+
+The subject is derivable without a chain: `$BASE...HEAD` is the branch diff and
+needs no milestone. What a chain would have supplied is the minute's
+destination, and `crochet:discernment` requires one, since a gate that leaves no
+trace cannot be a precondition for anything. So on this path **write the minute
+to `docs/assessments/<branch>.md`** rather than into a milestone body. The
+assessment is backfilled on this path anyway, and the two belong in one place.
+
+Stop only when the chain's state is *contradictory* — a milestone named on the
+command line that does not exist, or several active ones — because then it is
+unclear which delivery is being reviewed. Nothing to review is a different
+condition, and Step 0's base-resolution guard above already catches it.
 
 ## Step 1: The subject is the branch diff
 

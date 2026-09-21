@@ -54,7 +54,7 @@ These are real issues in the chain with:
 For each code issue:
 1. Read its context paths
 2. Check if any existing doc's `covers` field references those paths
-3. If yes: add a doc update step to the code issue (read its body with `git zhi issue show <id> --format json`, add the step, and write the full revised body back via `git zhi issue edit <id> --body` reading from stdin — `--body` replaces the whole body, it does not append)
+3. If yes: add a doc update step to the code issue (read its body with `git zhi issue show <id> --format json`, add the step, and write the full revised body back via `git zhi issue edit <id> --body -` reading from stdin — `--body` replaces the whole body, it does not append)
 4. If the issue introduces a new subsystem with no existing doc: create a standalone doc issue
 
 ### 2. Check for Gaps

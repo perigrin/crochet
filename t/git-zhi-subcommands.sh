@@ -111,6 +111,38 @@ else
     dispatch_bad=0   # name absent entirely, which is the other correct state
 fi
 
+# A string-valued flag written bare is accepted by the shell and rejected by the
+# binary. `issue edit <id> --body` exits 1 with "flag needs an argument" while
+# the next line of the same block succeeds, so the body is never written and
+# nothing says so — the reopened issue comes back without the findings that
+# were meant to be in it.
+#
+# Arity comes from the binary, not a list here: a flag that changes kind is
+# then caught rather than assumed. Fenced blocks only, for the same reason the
+# hyphenated check uses them — a backtick span may name a flag to discuss it,
+# where a fenced line is something to run.
+STRFLAGS=$(
+    for sub in 'issue edit' 'issue add' 'milestone edit' 'milestone add'; do
+        # shellcheck disable=SC2086
+        git zhi $sub --help 2>&1 | sed -n 's/^ *--\([a-z][a-z-]*\) string .*/\1/p'
+    done | sort -u | tr '\n' '|' | sed 's/|$//'
+)
+if [ -z "$STRFLAGS" ]; then
+    echo "FAIL: no string-valued flags found on the binary — the arity check is observing nothing" >&2
+    exit 1
+fi
+BARE=$(printf '%s\n' "$FENCED" |
+       grep -E -- "--($STRFLAGS)([[:space:]]*\$|[[:space:]]*\||[[:space:]]*<<)" || true)
+if [ -n "$BARE" ]; then
+    printf '%s\n' "$BARE" | while IFS= read -r l; do
+        [ -n "$l" ] || continue
+        echo "FAIL: a string-valued flag is written bare, so the binary rejects it:$(printf '%s' "$l" | sed 's/^[[:space:]]*/ /')"
+    done
+    arity_bad=$(printf '%s\n' "$BARE" | grep -c .)
+else
+    arity_bad=0
+fi
+
 TMP="${TMPDIR:-/tmp}/zhi-subcommands.$$"
 printf '%s\n' "$CANDIDATES" > "$TMP"
 
@@ -150,10 +182,13 @@ while IFS= read -r cand; do
 done < "$TMP"
 rm -f "$TMP"
 
-bad=$((bad + hyph_count + dispatch_bad))
+bad=$((bad + hyph_count + dispatch_bad + arity_bad))
 
 if [ "$bad" -gt 0 ]; then
-    echo "$bad of $total subcommands named in $DIR do not exist" >&2
+    # Not "$bad of $total subcommands do not exist": the count now mixes
+    # missing subcommands with flags written at the wrong arity, and a summary
+    # naming the wrong defect sends the reader to the wrong line.
+    echo "$bad problem(s) in $DIR across $total subcommands named" >&2
     exit 1
 fi
 
