@@ -154,9 +154,12 @@ and do not treat this reference as authoritative for that command.
 
 git-zhi marks unfinished surfaces inline in its own `--help` output (e.g.
 "not yet implemented"), so for whether a specific flag works, trust `--help`.
-For example, `git zhi issue add --after`/`--before` and `git zhi list --graph`
-are not yet implemented — but treat that as an illustration of the pattern, not
-a maintained list; always confirm with `--help`.
+For example, `git zhi list --graph` still carries the marker on 0.7.1 — but
+treat that as an illustration of the pattern, not a maintained list; always
+confirm with `--help`. This reference previously named `issue add --after` and
+`--before` alongside it; both have been implemented since 0.5.0, and the stale
+claim outlived the fact by four releases in a file whose own rule is that
+`--help` wins.
 
 **`--help` can also be wrong, and one case is on record.** Through 0.6.0,
 `git zhi list --help` advertised `--all  include done and cancelled issues`

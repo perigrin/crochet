@@ -24,3 +24,21 @@ cites a line number, not a symbol
 
 # git zhi docs check: a link to a file that is not there
 git zhi docs check
+
+# implementing an accepted one: a commit trailer naming a proposed decision.
+# The self-test writes that trailer when it git inits its copy.
+the refinement gate was skipped
+
+# declared floor vs installed binary: a manifest demanding a version that will
+# never exist. This check was added to close the "nothing examined" class and
+# was itself unreachable from the fixture until it learned to read $ROOT.
+below the declared floor
+
+# NOT COVERED, and this is the honest limit of this file.
+#
+# The product check runs `sh t/git-zhi-subcommands.sh`, which reads this
+# repository's own skills/ rather than $ROOT's, so pointing it at the fixture
+# would not test the fixture. It stays gated behind SELFTEST and is the one
+# check that can still be deleted without the self-test noticing. Its absence
+# is at least loud — a missing t/git-zhi-subcommands.sh is reported rather than
+# skipped — but a neutered one is not.

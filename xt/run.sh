@@ -176,8 +176,11 @@ fi
 # have implemented a decision is written into the commit, and the decision says
 # whether it had been accepted yet. Per 0003, acceptance is what refinement
 # writes; implementing before that is the pipeline running out of order.
-if [ "$SELFTEST" = yes ] && [ -d "$DEC" ]; then
-    for n in $(git log --format='%(trailers:key=Implements,valueonly)' | tr -d ' ' | grep . | sort -u); do
+# Reads $ROOT rather than the current directory, so the fixture can prove this
+# check still fires. It was gated behind SELFTEST, which put it beyond the
+# fixture's reach: deleting it outright left the runner green.
+if [ -d "$DEC" ]; then
+    for n in $( (cd "$ROOT" && git log --format='%(trailers:key=Implements,valueonly)' 2>/dev/null) | tr -d ' ' | grep . | sort -u); do
         target=$(ls "$DEC/$n"-*.md 2>/dev/null | head -1)
         if [ -z "$target" ]; then
             note "a commit claims Implements: $n, which is not a decision in the series"
@@ -200,12 +203,16 @@ fi
 # git-zhi is required, not optional: the product check and `docs check` above
 # both fail without it, so the earlier claim that this runner tolerates a
 # machine without the binary was never true.
-if [ "$SELFTEST" = yes ]; then
-    if [ ! -f .claude-plugin/plugin.json ]; then
+#
+# Reads $ROOT, not the current directory. Gated behind SELFTEST this check sat
+# outside the fixture's reach, so deleting it left the runner reporting a full
+# run and exit 0 — the same hole it was written to close, one level up.
+if [ -f "$ROOT/.claude-plugin/plugin.json" ] || [ "$SELFTEST" = yes ]; then
+    if [ ! -f "$ROOT/.claude-plugin/plugin.json" ]; then
         note ".claude-plugin/plugin.json is missing — nothing declares a git-zhi floor"
     else
         floor=$(sed -n 's/.*"git_zhi_min_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
-                .claude-plugin/plugin.json | head -1)
+                "$ROOT/.claude-plugin/plugin.json" | head -1)
         installed=$(git zhi version 2>/dev/null | head -1 | awk '{print $2}')
         if [ -z "$floor" ]; then
             note "plugin.json declares no git_zhi_min_version — preflight has no floor to enforce"
@@ -247,9 +254,15 @@ if [ "$SELFTEST" = yes ]; then
         # `git zhi docs check` reports every tree clean when it is not a git
         # repository, so without this the fixture could never prove that check
         # still fires.
+        # The commit trailer names 0004, which the fixture keeps `proposed`, so
+        # the Implements check has something to report. And `git zhi docs check`
+        # reports every tree clean when it is not a git repository, so without
+        # the init that check could never be proven by the fixture either.
         ( cd "$TMP/fixture" && git init -q . &&
           git -c user.email=xt@fixture -c user.name=xt add -A &&
-          git -c user.email=xt@fixture -c user.name=xt commit -qm fixture
+          git -c user.email=xt@fixture -c user.name=xt commit -qm "fixture
+
+Implements: 0004"
         ) >/dev/null 2>&1
 
         OUT=$(sh "$0" "$TMP/fixture" 2>&1) || true

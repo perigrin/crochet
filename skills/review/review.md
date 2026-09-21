@@ -145,9 +145,18 @@ so, and `crochet:how-to-use-git-zhi` tells agents that `--help` wins where it an
 the reference disagree. A reviewer meeting an older binary should trust
 preflight's warning over this paragraph.
 
+**The body's heading must be exactly `## Acceptance Criteria`.** The extractor
+uses the same parser as an issue body, so a milestone headed
+`## Milestone Acceptance Criteria` yields nothing — no rows, no warning, and
+`verify` reporting that it extracted nothing. The trap is that the *output*
+header reads `Milestone Acceptance Criteria:`, so the wrong guess is the natural
+one.
+
 **Confirm it ran rather than that it exited 0.** A milestone body carrying no
 paren-wrapped command yields nothing to run, and a `verify` that extracted
-nothing is not a milestone whose criteria passed. Read the count.
+nothing is not a milestone whose criteria passed. Read the count. `rfc-0003`'s
+own body has no such section, so this step finds nothing at the milestone level
+on the very milestone that introduced it.
 
 ## Step 5: Record the outcome
 
