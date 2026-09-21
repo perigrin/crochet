@@ -60,6 +60,32 @@ imitation, which meant every agent that met it decided again.
   exist on `$PATH` and no longer dispatch, so `git zhi <sub> --help` answers the
   real question where `test -x` does not.
 
+## A decision states what must be true; a milestone says how to check it
+
+A decision does not carry runnable acceptance criteria. It says what must hold,
+and the milestone refinement creates from it carries the commands that check
+that — which is the division `docs/decisions/0003-acceptance-by-refinement.md`
+settles, and the reason `git zhi verify` reads a milestone body at all.
+
+**A decision naming a specific test is a decision that decays when the test is
+renamed.** `0002-worker-identity.md` predates the rule and names
+`sh xt/zhi-actor-probe.sh` as a criterion. That probe has since been deleted; the
+decision is frozen, so it now names a file that is not there, and nothing
+detects it — `xt/run.sh` checks for `file.go:12` citations, not for filenames
+that stopped existing.
+
+**And no criterion should be satisfiable only by another repository shipping
+something.** That probe's subject was git-zhi's behaviour rather than this
+repository's. A criterion of that shape cannot go green by any work done here,
+so it blocks a milestone on an external release and reports the wait as a
+failure. The same defect appeared again in `rfc-0003`, where an issue's
+criterion was `git zhi verify --help | grep -q 'pending'` and sat red until
+git-zhi cut 0.7.1.
+
+Where crochet genuinely depends on another repository, the dependency belongs in
+`git_zhi_min_version`, which `crochet:preflight` enforces and `xt/run.sh`
+compares against the installed binary. That is a claim this repository can check.
+
 ## Citing code from a decision
 
 A decision names a symbol, never a line. `Graph.headForActor`, `ReadySet`, the
