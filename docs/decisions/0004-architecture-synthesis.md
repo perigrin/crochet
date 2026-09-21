@@ -1,6 +1,6 @@
 ---
 title: The architecture document is a synthesis of accepted decisions
-state: proposed
+state: accepted
 author: Chris Prather
 date: 2026-09-19
 supersedes: []
@@ -66,6 +66,7 @@ The synthesis is organised by the reader's frame — the sections below — not 
 the decisions' own structure. It is not a restatement. One section commonly
 draws on two decisions, and one decision commonly informs several sections;
 citations sit at the claim so that correspondence is visible where it applies.
+
 **Completeness is a judgment, not a check.** Whether the synthesis reflects what
 was decided cannot be established by counting citations: a document listing
 every decision's headings at the bottom would satisfy any such count while
@@ -83,20 +84,20 @@ never became a synthesis.
 What this decision needs from it is one guarantee: **that something reads the
 synthesis against the archive, and that it is a judgment rather than a count.**
 
-**0008 is `proposed`, and that dependency is in prose where no check reaches
-it.** `xt/run.sh` verifies `supersedes` and `amends` symmetry; there is no
-frontmatter relation for "needs", and inventing one to satisfy a check would be
-worse than saying this plainly. So: if 0008 is declined or does not land, this
-decision ships with eight placement criteria and nothing that reads the
-document — the synthesis would be in the right place, imported everywhere, and
-judged by nobody. That is a worse state than `plugin-structure.md` is in today,
-because a directory tree that nobody checks makes no claims, and a synthesis
-that nobody checks makes one per line.
+**That dependency sits in prose where no check reaches it.** `xt/run.sh`
+verifies `supersedes` and `amends` symmetry; there is no frontmatter relation
+for "needs", and inventing one to satisfy a check would be worse than saying
+this plainly. Without 0008 this decision would ship with eight placement
+criteria and nothing that reads the document — the synthesis in the right place,
+imported everywhere, and judged by nobody. That is a worse state than
+`plugin-structure.md` is in today, because a directory tree nobody checks makes
+no claims and a synthesis nobody checks makes one per line.
 
-**0004 should not be accepted before 0008 is.** Not because it depends on 0008's
-implementation — the synthesis can be written and land first — but because its
-answer to "what keeps this honest" is otherwise a forward reference to a
-decision that might not exist.
+**So this decision was not accepted before 0008 was.** Not because it depends on
+0008's implementation — the synthesis can be written and land first — but
+because its answer to "what keeps this honest" would otherwise have been a
+forward reference to a decision that might never exist. 0008 reached unity
+first, and the acceptance recorded here follows it.
 
 ### Sections
 

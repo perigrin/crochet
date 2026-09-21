@@ -1,6 +1,6 @@
 ---
 title: Doc-first is enforced by review
-state: proposed
+state: accepted
 author: Chris Prather
 date: 2026-09-21
 supersedes: []
@@ -12,8 +12,8 @@ amends: []
 
 Doc-first is a rule in the live layer that no gate enforces. `0001` requires a
 live document to be updated in the pull request that changes what it describes,
-`CLAUDE.md` states it more strictly still, and nothing reads a live document at any point in the
-pipeline.
+`CLAUDE.md` states it more strictly still, and nothing reads a live document at
+any point in the pipeline.
 
 ## Problem Statement
 
