@@ -33,10 +33,8 @@ architectural concepts missing from it:
 | assignment is a hint, not a lock | absent |
 | `wip_limit` composing with per-worker WIP | absent |
 
-The table's header is a claim about each row's provenance, and every row carries
-it: each traces to `0001-documentation-architecture.md` or
-`0002-worker-identity.md`, both accepted. "Compiler, not runtime" is a section
-heading in 0001.
+Every row traces to `0001-documentation-architecture.md` or
+`0002-worker-identity.md`, both accepted.
 
 What the document holds instead is a directory tree, three tables of skills, the
 pipeline diagram, refinement's four roles, execute's two loops, and the
@@ -193,6 +191,18 @@ It is stated as a lens rather than a check on purpose. Whether a synthesis
 reflects what was decided is the thing this decision argues cannot be counted,
 so the mechanism that judges it must be one that reads.
 
+**The quiet case is the common case, and it is not a finding.** All three live
+documents declare `covers: skills/`, so the lens fires on nearly every branch
+that touches a skill, and on most of them there will be nothing to record. A
+trigger that fires on everything is ignored the same way one that fires on
+nothing is, and this decision has already dropped one mechanism for the second
+failure — it should not adopt the first by leaving the quiet case undefined.
+
+A finding requires one of two things: the diff falsifies a claim the document
+makes, or the diff completes work the document describes as pending. A diff
+under a `covers:` path that the document never claimed anything about is not a
+finding, and the lens says so and moves on.
+
 ### Sections
 
 Seven. Sections carry synthesis where a decision governs them and description
@@ -241,10 +251,8 @@ keeping both would duplicate all of them. `docs/architecture/` empties and is
 removed, and `CONTRIBUTING.md`'s Short Link — which its own text requires to
 point at a directory holding a file — retargets to `docs/ARCHITECTURE.md`.
 
-The procedure for adding a skill is not part of what is absorbed. It is a *how*,
-it lives in `docs/contributing/development-workflow.md`, and it stays there —
-naming it here as something that "does not move" would send an implementer
-looking for a section `plugin-structure.md` has never held.
+The procedure for adding a skill is not part of what is absorbed. It is a *how*
+and it lives in `docs/contributing/development-workflow.md`.
 
 Two paragraphs are dropped rather than absorbed, and dropping is the point in
 both cases. The pipeline section's refusal to carry 0003 is superseded, as above.
@@ -315,11 +323,11 @@ in with this change, as Scope of Change records. Removing a criterion under a
 rule that arrives in the same pull request is the honest order; removing it
 under a rule that does not exist is what would need the argument.
 
-**Seven sites, not two.** `docs/architecture` appears in 0001 seven times, and a
-reader told "two rules change" who then finds seven mentions has no way to sort
-deliberate staleness from oversight. Named by what they are, because a decision
-names a symbol and never a line — a line number decays the moment anything above
-it shifts, and decays silently, since nothing reads a decision at build time:
+**The move touches seven sites in 0001**, and a reader who finds seven mentions
+of a path said to move needs to know which are deliberate. Named by what they
+are, because a decision names a symbol and never a line — a line number decays
+the moment anything above it shifts, and decays silently, since nothing reads a
+decision at build time:
 
 - the rule placing covers-bearing live documents, and the reasoning about which
   documents the tools can see — **changed here**
@@ -347,7 +355,6 @@ as a live document.
 **`docs/architecture/plugin-structure.md`.** Removed, its content absorbed. The
 directory goes with it.
 
-**`CLAUDE.md`.** The import retargets to `@docs/ARCHITECTURE.md`.
 
 **`CONTRIBUTING.md`.** The Architecture short link retargets to the file. It
 stays at the repository root: `docs check` starts its reachability walk from
@@ -410,9 +417,8 @@ same idioms:
 check honest.** The trailer population must come from the repository at `$ROOT`
 and from nowhere else. Run directly against `xt/fixture`, `git log` resolves to
 the *enclosing* repository, so the check reads crochet's own trailers and
-reports on a subject that is not the one named — the defect class this
-repository has found nine times, reintroduced by the fix for it. Squashing
-crochet's history would change what a check about the fixture reports.
+reports on a subject that is not the one named. Squashing crochet's history
+would change what a check about the fixture reports.
 
 So: **where `$ROOT` is not itself the top of a git repository, the population is
 undetermined and the check says so** rather than borrowing one. And the
@@ -433,10 +439,16 @@ new check has a case that fails on purpose.
 **`xt/fixture/expected`.** Three entries — one per new check — and a recount.
 The file declares its own length as `# count:`, that count is checked against
 its entries, and its ledger of covered sites says "Recount when a site is
-added". That ledger currently reads 9 of 27, so this lands 12 of 30. It is the
-only thing that detects a check going quiet, so a fixture case landing without
-its `expected` entry leaves the self-test passing while proving nothing about
-the new checks.
+added". It is the only thing that detects a check going quiet, so a fixture case
+landing without its `expected` entry leaves the self-test passing while proving
+nothing about the new checks.
+
+**Four sites are added, not three**, and the ledger's "counted rather than
+estimated" only holds if the fourth is counted: the undetermined-population
+report above is an emission site with no fixture case, since the fixture's
+`$ROOT` is always either a repository top or the self-test's copy. So the ledger
+goes from 9 of 27 to 12 of 31, and the fourth site joins the `Uncovered:` list
+rather than quietly changing the denominator.
 
 ## Acceptance Criteria
 
@@ -449,9 +461,12 @@ verification, the failure it argues against. `git-zhi-verify` runs these at
 prove is that the document is in the right place, wired to the right tools, and
 guarded by checks that can still fail.
 
-**What judges the synthesis is `crochet:review`**, which 0003 makes mandatory,
-reading the branch diff against the decisions the document cites. That is a
-judgment, and nothing else produces one.
+**What will judge the synthesis is `crochet:review`**, which 0003 makes
+mandatory, once it gains the live-document step this decision adds to it. That
+is a judgment, and nothing else produces one. Stated in the future tense
+deliberately: the step does not exist on the tree this decision is being
+assessed against, and writing it as present fact here is the failure 0001 exists
+to prevent.
 
 - [ ] the synthesis is at docs/ARCHITECTURE.md (`test -f docs/ARCHITECTURE.md`)
 - [ ] the installed binary lists it as a document (`git zhi docs health --format json | grep -q '"file": "docs/ARCHITECTURE.md"'`)
@@ -459,7 +474,7 @@ judgment, and nothing else produces one.
 - [ ] CLAUDE.md imports it (`grep -q '^@docs/ARCHITECTURE.md' CLAUDE.md`)
 - [ ] CONTRIBUTING.md links to it (`grep -q 'docs/ARCHITECTURE.md' CONTRIBUTING.md`)
 - [ ] CONTRIBUTING.md no longer claims every short link is a directory (`! grep -q 'Every link here points at a directory' CONTRIBUTING.md`)
-- [ ] the other decisions no longer cite the absorbed document by path (`! grep -q 'architecture/plugin-structure.md' docs/decisions/0003-*.md docs/decisions/0006-*.md`)
+- [ ] the other decisions no longer cite the absorbed document by path (`ls docs/decisions/0003-*.md docs/decisions/0006-*.md && ! grep -q 'architecture/plugin-structure.md' docs/decisions/0003-*.md docs/decisions/0006-*.md`)
 - [ ] review reads live documents against the diff (`grep -q 'read the document against the diff' skills/review/review.md`)
 - [ ] the fixture proves the unaccepted-citation check (`grep -q 'the synthesis cites' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the fixture proves the cited-nowhere check (`grep -q 'cited nowhere in the synthesis' xt/fixture/expected && sh xt/run.sh`)
@@ -478,13 +493,20 @@ That also lets a synthesis be present in one pass and absent in another, which
 three criteria against one fixture tree otherwise cannot express.
 
 **Each runner criterion names a substring no existing check emits**, and that is
-a known cost rather than an oversight: a criterion asserting a check fires must
-name something about it, and wording is what there is to name. One of these
-already decayed once — `'cited nowhere'` became `'cited nowhere in the
-synthesis'` between revisions of this decision — which is the decay
-`coding-conventions.md`'s first constraint describes, in the mildest form it
-takes. The alternative is a criterion that cannot tell a check from its absence,
-and this decision has already shipped one of those.
+a known cost: a criterion asserting a check fires must name something about it,
+and wording is what there is to name, so rewording a `note` reddens a criterion.
+That is the decay `coding-conventions.md`'s first constraint describes, in the
+mildest form it takes. The alternative is a criterion that cannot tell a check
+from its absence, which is the more expensive failure.
+
+**And the conjunction holds only while the matcher does.** A criterion of the
+form "the entry is declared and `sh xt/run.sh` passes" proves the note fired
+because the self-test reports declared entries that went unmatched. Disable that
+matching and all three go green with nothing behind them. `xt/fixture/expected`
+names this site in its own uncovered list — "the self-test itself: nothing
+guards the guard" — so these three criteria rest on the one part of the runner
+that nothing checks. The trade is deliberate: the form it replaced drew its
+population from the wrong repository and did so silently.
 
 ## Open Questions
 
@@ -517,8 +539,9 @@ and this decision has already shipped one of those.
 - `0003-acceptance-by-refinement.md`. Where `amends`/`amended-by` come from, the
   source of the pipeline section, and the gate that accepts this decision.
 - <https://architecture.md>. The section specification adopted here, in part.
-- `skills/review/review.md`. The gate that judges the synthesis. The acceptance
-  criteria cannot, and say so.
+- `skills/review/review.md`. The gate that will judge the synthesis, once this
+  decision's live-document step lands in it. The acceptance criteria cannot, and
+  say so.
 - `skills/assess/assess.md`. Run over the synthesis as a spec when review or an
   implementing pull request calls for it.
 - `docs/contributing/development-workflow.md`. The cheapest-first validation
