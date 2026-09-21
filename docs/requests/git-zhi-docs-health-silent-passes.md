@@ -10,7 +10,7 @@ Both were found while assessing a decision that proposed to rely on this
 command. They are independent, they compound, and both fail toward reporting
 clean.
 
-# 1. No churn is reported for a `covers:` entry naming a directory
+# 1. A `covers:` entry with a trailing slash matches no churn
 
 **Observed on git-zhi 0.7.2 (darwin/arm64).** A document whose `covers:` list
 names a directory reports `code_churn: 0` and `drift: NONE` however much that
@@ -29,19 +29,33 @@ $ git zhi docs health --format json | grep -E '"file"|"code_churn"|"drift"'
   "file": "docs/contributing/coding-conventions.md",  "code_churn": 0,   "drift": "NONE"
 ```
 
-| document | `covers:` | shape | churn |
-|---|---|---|---|
-| `walkthrough-review.md` | `skills/review/review.md` | file | 1 |
-| `plugin-structure.md` | `skills/`, `commands/`, `.claude-plugin/plugin.json` | directory | 0 |
-| `coding-conventions.md` | `skills/`, `commands/` | directory | 0 |
+**Isolated in a scratch repository**, six documents over one history with three
+commits under `src/`, varying only the `covers:` string:
 
-Same tree, same history, opposite answers. The discriminator is the shape of the
-path, not the amount of churn: `b35b00f` and `cd10098` both touch files under
-`skills/`, and `walkthrough-review.md` sees one of them because it names a file
-directly.
+| `covers:` entry | churn | ground truth |
+|---|---|---|
+| `src` | 3 | 3 |
+| `src/` | 0 | 3 |
+| `src/*` | 0 | 3 |
+| `src/**` | 0 | 3 |
+| `./src/` | 0 | 3 |
+| `src/foo.txt` | 2 | 2 |
 
-Every live document in this repository declares directory paths, so `docs
-health` has never reported drift on any of them since they were written.
+`src` names a directory and matches correctly. `src/` names the same directory
+and matches nothing, so the defect is the trailing slash rather than the
+directory.
+
+**Confirmed against this repository** by editing one document's frontmatter and
+changing nothing else:
+
+```
+covers: skills/, commands/, .claude-plugin/plugin.json   →  churn 1
+covers: skills,  commands,  .claude-plugin/plugin.json   →  churn 4
+```
+
+The churn of 1 in the first line comes entirely from the one file-shaped entry.
+Every live document in this repository writes trailing slashes, so the directory
+halves of their `covers:` lists have never been watched.
 
 ## What this is not
 
@@ -75,14 +89,19 @@ the documents are present, the churn is real, and the report is confident.
 
 ## What would resolve it
 
-A `covers:` entry naming a directory matches commits touching anything beneath
-it. A trailing slash is the obvious signal and `plugin-structure.md` already
-writes one, so the entries in this repository would need no edit.
+**A `covers:` entry should match the same commits with or without a trailing
+slash.** Today `src` matches and `src/` does not, so the more conventional way
+of writing a directory is the one that silences the check.
 
-If directory entries are intentionally unsupported, then `docs check`'s
-covers-path validation should reject them rather than accepting a value the
-health report will silently ignore — an accepted-and-ignored input is worse than
-a rejected one, because nothing tells the author.
+Failing that, `docs check`'s covers-path validation should reject a trailing
+slash rather than accepting a value the health report will silently ignore. An
+accepted-and-ignored input is worse than a rejected one, because nothing tells
+the author — and `docs check` currently reports `✓ All covers paths valid` for
+every entry in this repository, all of which are silent.
+
+**The workaround needs no upstream change**, and is recorded here because this
+request should not read as a blocker: dropping the trailing slash from each
+entry makes the check work today on 0.7.2.
 
 # 2. A document whose date cannot be resolved is reported as current
 
