@@ -71,14 +71,10 @@ Refinement carries them onto the milestone it creates, which is why `git zhi
 verify` reads a milestone body at all.
 
 **Two constraints on what such a criterion may be**, both learned by shipping a
-criterion that broke them.
-
-This section previously opened by saying a decision carries no runnable criteria
-at all. That is broader than either constraint below, and it contradicted 0001,
-which is accepted and requires them — a rule in the live layer that the archive
-denies, which is the failure 0001 exists to prevent. Nothing followed the broad
-version either: 0001 carries eight criteria, 0003 carries thirty-three and 0004
-carries eight, and only `0002-worker-identity.md` was ever stripped.
+criterion that broke them. Neither is a rule about whether criteria belong in a
+decision — 0001 settles that and says they do. A rule here that contradicted it
+would be prose one import away overriding an accepted decision, which is rung 4
+pre-empting rung 1 of 0001's own ladder.
 
 **A decision naming a specific test is a decision that decays when the test is
 renamed.** `0002-worker-identity.md` predated this rule and carried five
@@ -87,9 +83,8 @@ criterion became permanently unrunnable and nothing detected it: the citation
 check here rejects a file-and-line reference, not a filename that stopped
 existing. The section has since been removed from that decision — not as an
 amendment, because a criterion that should never have been in a decision is a
-defect in it rather than a position it took. It is this constraint and the one
-below that made the removal right, not the broader rule that briefly stood here:
-all five of those criteria broke one or both.
+defect in it rather than a position it took. All five of those criteria broke
+this constraint or the one below it, which is what made the removal right.
 
 **And no criterion should be satisfiable only by another repository shipping
 something.** That probe's subject was git-zhi's behaviour rather than this
