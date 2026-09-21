@@ -130,8 +130,8 @@ keeps two workers off one issue excludes nothing. Identity is for coordination,
 never authorization: a declared value is unverified and is not a basis for
 deciding what a worker may do.
 
-Requires git-zhi 0.6.0. `sh xt/zhi-actor-probe.sh` asserts the installed binary
-honours it.
+Requires git-zhi 0.6.0, which `git_zhi_min_version` is above and
+`crochet:preflight` enforces.
 
 ## JSON output (field inventory)
 

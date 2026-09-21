@@ -1,0 +1,26 @@
+# One line per check that runs against the fixture. The self-test requires every
+# one of these substrings to appear in the fixture's output, so a check that
+# stops examining anything goes missing here and is named rather than passing
+# silently. Blank lines and lines starting with # are ignored.
+#
+# This exists because an exit code proved only that *some* check fired: four
+# checks were deleted outright and the runner's output was identical.
+#
+# Each line is matched with grep -F, so it is a literal substring and not a
+# pattern. Keep them short and distinctive — long enough to name one check,
+# short enough to survive a reworded message.
+
+# covers: a live document declaring covers and naming nothing
+covers is empty, so nothing watches it
+
+# decision link symmetry: supersedes with no superseded-by coming back
+has no superseded-by link back
+
+# accepted on a proposed footing: an amendment in force against an unagreed rule
+which it amends — is 'proposed'
+
+# decisions cite symbols: a file:line citation that decays silently
+cites a line number, not a symbol
+
+# git zhi docs check: a link to a file that is not there
+git zhi docs check

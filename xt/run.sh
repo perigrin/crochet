@@ -25,8 +25,17 @@ if [ ! -d "$ROOT" ]; then
     exit 1
 fi
 
-fail=0
-note() { echo "FAIL: $*"; fail=$((fail + 1)); }
+# The count lives in a file rather than a variable. A variable cannot survive a
+# subshell, and the right-hand side of a pipeline is one — so a `note` inside
+# `... | while read` printed FAIL: and incremented nothing, and the runner
+# reported ok: and exited 0. `t/git-zhi-subcommands.sh` already carried the
+# warning ("Redirect from a file, not a pipe, so the counters survive the loop")
+# and this file violated it anyway. A file-backed count removes the hazard
+# instead of asking the next author to remember.
+FAILS="${TMPDIR:-/tmp}/zhi-xt-fail-$$"
+: > "$FAILS"
+trap 'rm -f "$FAILS"' EXIT
+note() { echo "FAIL: $*"; echo x >> "$FAILS"; }
 
 # A root with nothing to check is a failure. A runner that reports success
 # while observing nothing has failed open, which is worse than being absent.
@@ -36,25 +45,14 @@ if [ ! -d "$ROOT/docs" ]; then
 fi
 
 # ---------------------------------------------------------------- product
-if [ "$SELFTEST" = yes ] && [ -f t/git-zhi-subcommands.sh ]; then
-    if ! sh t/git-zhi-subcommands.sh >/dev/null 2>&1; then
+# A check whose subject is missing is a finding, not a skip. `[ -f X ] &&` made
+# a deleted product check indistinguishable from a passing one: moving this file
+# away left the runner reporting ok: and exiting 0.
+if [ "$SELFTEST" = yes ]; then
+    if [ ! -f t/git-zhi-subcommands.sh ]; then
+        note "t/git-zhi-subcommands.sh is missing — the product check cannot run"
+    elif ! sh t/git-zhi-subcommands.sh; then
         note "t/git-zhi-subcommands.sh — a skill names a git zhi subcommand that does not exist"
-    fi
-fi
-
-# ------------------------------------------------------------- actor floor
-# The subcommand check asks whether a command exists. This asks whether it
-# behaves the way execute.md selects against, which a --help exit cannot say.
-# Report which assertion failed rather than blaming the version for all four.
-# A probe that fails for an unrelated reason and says "below the floor" sends a
-# reader to check a floor that is correct.
-if [ "$SELFTEST" = yes ] && [ -f xt/zhi-actor-probe.sh ]; then
-    if ! PROBE=$(sh xt/zhi-actor-probe.sh 2>&1); then
-        printf '%s\n' "$PROBE" | grep '^FAIL: ' | while IFS= read -r l; do
-            note "xt/zhi-actor-probe.sh — ${l#FAIL: }"
-        done
-        printf '%s\n' "$PROBE" | grep -q '^FAIL: ' ||
-            note "xt/zhi-actor-probe.sh failed without naming an assertion"
     fi
 fi
 
@@ -193,32 +191,31 @@ if [ "$SELFTEST" = yes ] && [ -d "$DEC" ]; then
     done
 fi
 
-# -------------------------------------------------------------- self-test
-# The runner must be able to fail. A guardrail that silently stopped firing
-# has failed open, and you stopped watching for what it caught.
 # ------------------------------------------- declared floor vs installed binary
 # The repository declares git_zhi_min_version and crochet:preflight compares the
 # installed binary against it at runtime. Nothing here read either value, so the
 # two criteria asserting they agree were satisfied by checks that never looked —
 # a floor raised past the installed binary was invisible to everything in xt/.
 #
-# A missing binary is preflight's business, not this runner's: xt/ runs on
-# machines with no git-zhi, and failing there would report an environment
-# problem as a repository defect.
-if [ "$SELFTEST" = yes ] && [ -f .claude-plugin/plugin.json ]; then
-    floor=$(sed -n 's/.*"git_zhi_min_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
-            .claude-plugin/plugin.json | head -1)
-    if [ -z "$floor" ]; then
-        note "plugin.json declares no git_zhi_min_version — preflight has no floor to enforce"
-    elif command -v git-zhi >/dev/null 2>&1; then
+# git-zhi is required, not optional: the product check and `docs check` above
+# both fail without it, so the earlier claim that this runner tolerates a
+# machine without the binary was never true.
+if [ "$SELFTEST" = yes ]; then
+    if [ ! -f .claude-plugin/plugin.json ]; then
+        note ".claude-plugin/plugin.json is missing — nothing declares a git-zhi floor"
+    else
+        floor=$(sed -n 's/.*"git_zhi_min_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+                .claude-plugin/plugin.json | head -1)
         installed=$(git zhi version 2>/dev/null | head -1 | awk '{print $2}')
-        if [ -z "$installed" ]; then
+        if [ -z "$floor" ]; then
+            note "plugin.json declares no git_zhi_min_version — preflight has no floor to enforce"
+        elif [ -z "$installed" ]; then
             note "could not read a version from git zhi version — the floor is unverifiable"
         else
-            # Numeric per field, so 1.10.0 sorts above 1.2.3 where a string compare
-            # would not.
-            lowest=$(printf '%s\n%s\n' "$installed" "$floor" |
-                     sort -t. -k1,1n -k2,2n -k3,3n | head -1)
+            # sort -V understands versions, so 1.10.0 sorts above 1.2.3, a
+            # four-field version works, and a floor that is not a version at all
+            # sorts last and is reported rather than silently passing.
+            lowest=$(printf '%s\n%s\n' "$installed" "$floor" | sort -V | head -1)
             if [ "$installed" != "$floor" ] && [ "$lowest" = "$installed" ]; then
                 note "installed git-zhi $installed is below the declared floor $floor"
             fi
@@ -226,25 +223,62 @@ if [ "$SELFTEST" = yes ] && [ -f .claude-plugin/plugin.json ]; then
     fi
 fi
 
+# -------------------------------------------------------------- self-test
+# The runner must be able to fail. A guardrail that silently stopped firing
+# has failed open, and you stopped watching for what it caught.
+#
+# One exit code is not enough to say that. It only proves *some* check fired,
+# and it stayed green while four checks were deleted outright — link symmetry,
+# accepted-on-a-proposed-footing, cite-symbols and Implements, 106 lines, with
+# output identical to a full run. So the fixture declares what every check must
+# report, in xt/fixture/expected, and a check that stops examining goes missing
+# from the fixture's output and is named here.
 if [ "$SELFTEST" = yes ]; then
     if [ ! -d xt/fixture ]; then
         note "xt/fixture is missing — the runner cannot demonstrate that it fails"
+    elif [ ! -s xt/fixture/expected ]; then
+        note "xt/fixture/expected is missing or empty — nothing says which checks must fire"
     else
         TMP="${TMPDIR:-/tmp}/zhi-xt-self-$$"
         rm -rf "$TMP"
         mkdir -p "$TMP"
         cp -R xt/fixture "$TMP/fixture"
-        if sh "$0" "$TMP/fixture" >/dev/null 2>&1; then
+
+        # `git zhi docs check` reports every tree clean when it is not a git
+        # repository, so without this the fixture could never prove that check
+        # still fires.
+        ( cd "$TMP/fixture" && git init -q . &&
+          git -c user.email=xt@fixture -c user.name=xt add -A &&
+          git -c user.email=xt@fixture -c user.name=xt commit -qm fixture
+        ) >/dev/null 2>&1
+
+        OUT=$(sh "$0" "$TMP/fixture" 2>&1) || true
+        if printf '%s\n' "$OUT" | grep -q '^ok:'; then
             note "the runner passed its own broken fixture — it can no longer fail"
         fi
+        while IFS= read -r want; do
+            [ -n "$want" ] || continue
+            case "$want" in \#*) continue ;; esac
+            printf '%s\n' "$OUT" | grep -qF "$want" ||
+                note "no check reported \"$want\" against the fixture — that check has gone quiet"
+        done < xt/fixture/expected
+
         rm -rf "$TMP"
     fi
 fi
+
+fail=$(wc -l < "$FAILS" | tr -d ' ')
 
 if [ "$fail" -gt 0 ]; then
     echo "$fail check(s) failed in $ROOT" >&2
     exit 1
 fi
 
-echo "ok: xt checks pass in $ROOT"
+# Name the mode. A partial run and a full one reported the same success text,
+# so "ok" carried no information about how much was examined.
+if [ "$SELFTEST" = yes ]; then
+    echo "ok: xt checks pass in $ROOT (full run)"
+else
+    echo "ok: xt checks pass in $ROOT (structural checks only)"
+fi
 exit 0

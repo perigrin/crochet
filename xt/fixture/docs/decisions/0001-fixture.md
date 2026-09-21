@@ -5,6 +5,7 @@ author: fixture
 date: 2026-09-18
 supersedes: []
 superseded-by: []
+amended-by: [0002]
 ---
 
 # 0001: Fixture decision
