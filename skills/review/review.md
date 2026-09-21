@@ -138,10 +138,12 @@ appear in their own `Milestone Acceptance Criteria:` section above the issue
 rows, so run it rather than extracting by hand. `--dry-run` lists what would run,
 across every issue regardless of state.
 
-This needs git-zhi 0.7.1 or later, which `git_zhi_min_version` requires and
-`crochet:preflight` enforces. Below that floor the milestone body was invisible
-to `verify` and this step hand-extracted; a reviewer meeting an older binary
-should trust preflight's warning over this paragraph.
+`git_zhi_min_version` requires 0.7.1 and `crochet:preflight` enforces it, so
+every supported environment has this. The floor is 0.7.1 rather than the release
+that first carried the capability, because 0.7.1 is where `--help` began saying
+so, and `crochet:how-to-use-git-zhi` tells agents that `--help` wins where it and
+the reference disagree. A reviewer meeting an older binary should trust
+preflight's warning over this paragraph.
 
 **Confirm it ran rather than that it exited 0.** A milestone body carrying no
 paren-wrapped command yields nothing to run, and a `verify` that extracted
