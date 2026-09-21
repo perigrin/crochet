@@ -83,6 +83,21 @@ never became a synthesis.
 What this decision needs from it is one guarantee: **that something reads the
 synthesis against the archive, and that it is a judgment rather than a count.**
 
+**0008 is `proposed`, and that dependency is in prose where no check reaches
+it.** `xt/run.sh` verifies `supersedes` and `amends` symmetry; there is no
+frontmatter relation for "needs", and inventing one to satisfy a check would be
+worse than saying this plainly. So: if 0008 is declined or does not land, this
+decision ships with eight placement criteria and nothing that reads the
+document — the synthesis would be in the right place, imported everywhere, and
+judged by nobody. That is a worse state than `plugin-structure.md` is in today,
+because a directory tree that nobody checks makes no claims, and a synthesis
+that nobody checks makes one per line.
+
+**0004 should not be accepted before 0008 is.** Not because it depends on 0008's
+implementation — the synthesis can be written and land first — but because its
+answer to "what keeps this honest" is otherwise a forward reference to a
+decision that might not exist.
+
 ### Sections
 
 Seven. Sections carry synthesis where a decision governs them and description
@@ -110,10 +125,7 @@ is exactly what belongs in it. The refusal is absorbed as superseded rather than
 carried forward, and it is named here because absorbing a paragraph that
 contradicts the absorbing decision is how a contradiction arrives unnoticed.
 
-Without this, the check and the section plan disagree on the day they land:
-0003 is accepted and built, so the check demands it, and no section had it.
-
-Three of the specification's sections are omitted because nothing in this
+Two of the specification's sections are omitted because nothing in this
 repository fills them. Project Identification is the README's first paragraph.
 Deployment is one pointer, folded into Development and Testing. A section
 carrying neither a decided claim nor a description a reader needs is scaffolding.
@@ -123,6 +135,20 @@ list is somewhere a decision can sit while being cited nowhere, which is exactly
 the state worth surfacing: an accepted decision that appears in no claim was
 forgotten when the synthesis was written, and the document needs revising rather
 than an entry.
+
+**The seven sections discharge the Problem Statement's table, and four rows
+need saying where.** The ladder, doc-first and `Implements:` trailers are how
+this repository decides and records things rather than how its parts fit, so
+they land in Development and Testing beside `t/` and `xt/` — the section that
+already carries where *how* lives. Compiler-not-runtime belongs in Project
+Structure, since it is the reason there is no build output and the files in the
+tree are the files that ship.
+
+That mapping is stated because the table is the only specification of
+completeness this decision offers, and a Proposal that leaves four of ten rows
+unplaced invites a synthesis that satisfies every criterion while closing 60% of
+the gap it was written to close. Nothing checks it. The section plan naming
+where each row goes is what a reviewer reads it against.
 
 ### `plugin-structure.md` is absorbed, not moved
 
@@ -159,12 +185,19 @@ layer a free-standing description. It becomes a synthesis of the accepted
 decisions, carrying citations into the archive.
 
 **How stingy the live layer is.** 0001 says "stingy with live, generous with
-archive... almost nothing is promoted out of it, and that asymmetry, not a
-threshold, is what damps the feedback loop." This decision institutes systematic
-promotion and makes it obligatory, removing the damping 0001 named as its
-mechanism.
+archive. The postmortem is already written every time; almost nothing is
+promoted out of it, and that asymmetry, not a threshold, is what damps the
+feedback loop." The thing almost nothing is promoted out of, in 0001, is the
+postmortem.
 
-That trade is deliberate. What 0001 guarded against is a live layer that grows
+So this decision does not remove the damping 0001 named — it opens a promotion
+path 0001 never discussed, from the decision series rather than from
+postmortems. The principle still bears on it, and the trade still needs
+arguing, but the claim that a named mechanism is being taken away was an
+artefact of quoting the sentence with its subject cut out.
+
+What the principle costs either way is the same, and the trade is deliberate.
+What 0001 guarded against is a live layer that grows
 until nobody keeps it true; the cost of its guard is that ten decided rules
 reach no agent, which is the Problem Statement above. The synthesis promotes
 claims with citations, not arguments — a decision's reasoning stays in the
@@ -184,16 +217,16 @@ took. The rule it checked survives as `test -f docs/ARCHITECTURE.md`.
 That footing does not exist yet and this decision lands it:
 `docs/contributing/coding-conventions.md` carries two constraints on what a
 criterion may be, and path-pinning is neither, so the third constraint goes in
-with this change. Removing a criterion under a rule that arrives in the same
-pull request is the honest order.
+with this change.
 
 **The move touches seven sites in 0001**, and a reader who finds seven mentions
-of a path said to move needs to know which are deliberate. Two are rules changed
-here — where covers-bearing live documents sit, and the doc-first rule's scope.
-One is the acceptance criterion, removed. The remaining four — the referent
-table's live-layer cell, the definition of what `t/` tests, and the Scope and
-`xt/` bullets — are archive prose, left stale by design under 0001's own "true
-as of its date".
+of a path said to move needs to know which are deliberate. One is the rule
+placing covers-bearing live documents, changed here. One is the acceptance
+criterion, removed here. The doc-first rule's scope names the path too and is
+**not** changed by this decision — `0008-doc-first-enforcement.md` is where
+doc-first is touched. The remaining four — the referent table's live-layer cell,
+the definition of what `t/` tests, and the Scope and `xt/` bullets — are archive
+prose, left stale by design under 0001's own "true as of its date".
 
 ## Scope of Change
 
@@ -234,41 +267,66 @@ is the footing for the criterion this decision removes from 0001, and removing a
 criterion under a rule that arrives in the same pull request is the honest
 order.
 
-**`docs/decisions/0003` and `docs/decisions/0006`.** Three by-path citations to
-the absorbed document are retargeted. Nothing detects these: the runner's
-cite-symbols check rejects a `file:line` reference, not a filename that stopped
-existing.
+**`docs/decisions/0006`.** Its by-path citation to the absorbed document is
+retargeted. Nothing detects these: the runner's cite-symbols check rejects a
+`file:line` reference, not a filename that stopped existing.
 
-Two of the three sit in 0003, which is accepted, and 0001 says an accepted entry
-is "immutable in content, append-only in status". **Retargeting a citation into
-a file that no longer exists is a repair, not a revision** — it changes where a
-reference points, not what the decision holds, and leaving it would make an
-accepted decision cite a path the same pull request deletes.
+**Retargeting a citation into a file that no longer exists is a repair, not a
+revision** — it changes where a reference points, not what the decision holds.
+That is why 0006's is repaired and 0003's two are not: one of them names the old
+path in order to say this decision will absorb it, and the other is a dated
+claim about where the ordering appeared. Changing either alters what 0003 says,
+and 0001 holds an accepted entry "immutable in content, append-only in status".
 
 ## Acceptance Criteria
 
-**These check placement, not the synthesis.** Every one is satisfied by a
-`docs/ARCHITECTURE.md` containing nothing but its citations, which is the straw
-man above. What they prove is that the document is where it should be and wired
-to the tools that reach it. `crochet:review` judges whether it reflects what was
-decided, and `0008-doc-first-enforcement.md` is what gives review the step to do
-that with.
+**These check placement, not the synthesis.** A `docs/ARCHITECTURE.md`
+containing nothing but its citations satisfies all but one of them — the
+exception being the listing check, which additionally requires a present,
+non-empty `covers:`, because a document without one is not emitted among
+`documents` at all. What they prove is that the document is where it should be
+and wired to the tools that reach it. `crochet:review` judges whether it
+reflects what was decided, and `0008-doc-first-enforcement.md` is what gives
+review the step to do that with.
+
+**Every negated criterion is guarded.** A negation over an absent subject
+succeeds: `! grep` on a missing file reports the same thing it reports on a
+clean one. Each therefore establishes that its subject exists before asserting
+anything about it.
 
 - [ ] the synthesis is at docs/ARCHITECTURE.md (`test -f docs/ARCHITECTURE.md`)
 - [ ] the installed binary lists it as a document (`git zhi docs health --format json | grep -q '"file": "docs/ARCHITECTURE.md"'`)
-- [ ] its covers entries carry no trailing slash (`! sed -n '/^covers:/,/^[a-z]/p' docs/ARCHITECTURE.md | grep -qE '^ *- .*/$'`)
-- [ ] the absorbed document and its directory are gone (`! test -e docs/architecture`)
+- [ ] its covers entries carry no trailing slash (`test -f docs/ARCHITECTURE.md && ! sed -n '/^covers:/,/^---$/p' docs/ARCHITECTURE.md | grep -qE '^ *- .*/$'`)
+- [ ] the absorbed document and its directory are gone (`test -f docs/ARCHITECTURE.md && ! test -e docs/architecture`)
 - [ ] CLAUDE.md imports it (`grep -q '^@docs/ARCHITECTURE.md' CLAUDE.md`)
 - [ ] CONTRIBUTING.md links to it (`grep -q 'docs/ARCHITECTURE.md' CONTRIBUTING.md`)
-- [ ] CONTRIBUTING.md no longer claims every short link is a directory (`! grep -q 'Every link here points at a directory' CONTRIBUTING.md`)
-- [ ] the other decisions no longer cite the absorbed document by path (`ls docs/decisions/0003-*.md docs/decisions/0006-*.md && ! grep -q 'architecture/plugin-structure.md' docs/decisions/0003-*.md docs/decisions/0006-*.md`)
+- [ ] CONTRIBUTING.md no longer claims every short link is a directory (`test -f CONTRIBUTING.md && ! grep -q 'Every link here points at a directory' CONTRIBUTING.md`)
+- [ ] 0006 no longer cites the absorbed document by path (`ls docs/decisions/0006-*.md && ! grep -q 'architecture/plugin-structure.md' docs/decisions/0006-*.md`)
+
+**0003's two citations are not retargeted, and the criterion does not ask for
+it.** One of them reads "`docs/architecture/plugin-structure.md` states the
+ordering too, but 0004 proposes absorbing it into `docs/ARCHITECTURE.md`" —
+it names the old path deliberately, anticipating this decision, and retargeting
+it yields a sentence saying the document is absorbed into itself. The other is a
+dated factual claim about where the pipeline ordering appeared when 0003 was
+written. Both are true as of their date, which is what an accepted decision is
+allowed to be; editing either is a revision rather than a repair, and this
+decision's own rule forbids that. Only `0006`'s citation is a repair.
+
+So two by-path references to a deleted file survive in the archive on purpose.
+Nothing detects them, and that is recorded here rather than fixed.
 
 ## Open Questions
 
-- What `covers:` paths the synthesis declares. `plugin-structure.md` declares
-  `skills/`, `commands/` and the manifest; a synthesis of decisions arguably
-  also covers `t/` and `xt/`. Editorial, now that the trailing-slash defect is
-  understood and avoidable.
+- Whether the synthesis's `covers:` should reach `t/` and `xt/` as well as
+  `skills`, `commands` and the manifest. It states what the test kinds are for,
+  which is an argument for including them.
+
+  **This is narrower than it was.** That `covers:` is present and non-empty is
+  settled here rather than left open, because a document without one is not
+  emitted among `documents` by `docs health` at all — so the listing criterion
+  above silently depends on it. Which paths it names is editorial; that it names
+  some is not.
 
 - What `stability:` value the synthesis carries. `docs health` reads it and
   nothing here specifies it.
