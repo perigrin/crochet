@@ -12,7 +12,7 @@ amends: []
 
 Doc-first is a rule in the live layer that no gate enforces. `0001` requires a
 live document to be updated in the pull request that changes what it describes,
-`CLAUDE.md` repeats it, and nothing reads a live document at any point in the
+`CLAUDE.md` states it more strictly still, and nothing reads a live document at any point in the
 pipeline.
 
 ## Problem Statement
@@ -38,7 +38,7 @@ of its own rules in that position.
 
 **The nearest thing to an enforcement point does not work.** `git zhi docs
 health` reports drift when commits touch a document's `covers:` paths since the
-document last changed. Two things make it unusable as a gate, both measured on
+document last changed. Three things make it unusable as a gate, all measured on
 0.7.2 and recorded in `docs/requests/git-zhi-docs-health-silent-passes.md`: a
 `covers:` entry written with a trailing slash matches no churn; a repository
 whose history is truncated — a shallow clone, which `actions/checkout` produces
@@ -222,9 +222,29 @@ document is complete.
 
 **`xt/run.sh` and `xt/fixture/`.** The backstop check, with a fixture case that
 fails on purpose for each way it can fail — reflected nowhere, subject absent,
-population untrustworthy. How the fixture supplies an untrustworthy population,
-and which `expected` entries account for the new notes, belong to the
-implementing issue.
+population untrustworthy.
+
+**Two of those cases need the runner's self-test setup, not fixture files**, and
+an implementing issue that reads "add a fixture case" will not reach for it. The
+untrustworthy-population arm is cheap: the setup already builds a repository
+with `git init` and one commit, and writing `HEAD` into `.git/shallow` makes
+`git rev-parse --is-shallow-repository` report true there while it reports false
+here — which is the red-in-the-fixture, green-in-the-repository pairing
+`docs/contributing/development-workflow.md` asks every check to have.
+
+The reflected-nowhere arm is harder and this decision should not pretend
+otherwise. Under the definition above the fixture has **no live documents at
+all**, because it has no `CLAUDE.md`; and its only accepted decision is not one
+the self-test's commit trailers. So the backstop's population there is empty,
+and an empty population is exactly what this check must not read as a pass.
+Giving it a subject means a `CLAUDE.md` in the fixture importing a document, and
+a trailer in the setup naming an accepted fixture decision whose number that
+document does not cite.
+
+**Whatever the check does on an empty population, it does on a shallow one:
+report.** If empty reads as clean, the fixture passes with no subject and the
+criterion goes green having proved nothing — the same failure as a criterion
+that passes before its work, wearing the fixture's clothes.
 
 **`docs/contributing/development-workflow.md`.** It sets the cheapest-first
 validation order and does not cover live documents; the order gains review.
@@ -243,7 +263,7 @@ one clause in each brings them back.
 ## Acceptance Criteria
 
 - [ ] review's coverage lens reads live documents against the diff (`grep -q 'read the document against the diff' skills/review/review.md`)
-- [ ] the lens knows what a live document is (`grep -q 'CLAUDE.md imports' skills/review/review.md`)
+- [ ] the lens knows what a live document is (`grep -q 'is live when' skills/review/review.md`)
 - [ ] the backstop reports a decision reflected nowhere (`grep -q 'cited nowhere' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the backstop reports rather than skips when it cannot see its subject (`grep -q 'cannot see' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the checks are in the runner and the repository passes them (`grep -q 'cited nowhere' xt/run.sh && grep -q 'cannot see' xt/run.sh && sh xt/run.sh`)
