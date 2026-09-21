@@ -290,7 +290,13 @@ order.
 `docs/contributing`, guarded by `[ -d ] || continue`, and this decision deletes
 the first. The synthesis would sit in neither, so the loop would skip a deleted
 directory in silence and the runner would stay green over a document with no
-`covers:` at all. The loop is retargeted to the live set.
+`covers:` at all.
+
+The loop is retargeted to **the documents `CLAUDE.md` imports**, which is the
+live layer by 0001's own account and is one grep. `0008-doc-first-enforcement.md`
+adopts the same definition for its lens and argues it at length; this decision
+does not depend on that argument landing, because the loop needs a set of paths
+and `CLAUDE.md`'s imports are that set whether or not 0008 is accepted.
 
 **This is the one change that must not be left to the implementing issue.** The
 same revision that settles `covers:` must be present and non-empty would
