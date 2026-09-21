@@ -72,7 +72,7 @@ pipe the full revised body back via stdin:
 ```bash
 git zhi issue show <id> --format json   # read current body
 # ...construct revised body with ### Negative Scenarios added...
-git zhi issue edit <id> --body <<'EOF'
+git zhi issue edit <id> --body - <<'EOF'
 <full revised body, including the original content and the new negative scenarios>
 EOF
 ```
