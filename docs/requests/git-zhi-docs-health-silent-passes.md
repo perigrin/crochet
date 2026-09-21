@@ -125,7 +125,13 @@ Measured on 0.7.2 against a tree whose full clone reports `10 docs checked,
 |---|---|
 | `git clone --depth 1` | `10 docs checked, all current` |
 | a worktree of a shallow clone | `10 docs checked, all current` |
-| no git repository at all | `1 docs checked, all current` |
+
+A third row stood here — a tree that is not a git repository at all, reported as
+`1 docs checked, all current`. **It is struck because nobody measured it.** It
+was carried from an early draft, and the participant whose reproductions produced
+the two rows above said plainly that it was on its untested list. A section
+headed "measured on 0.7.2" that carries one unmeasured row is the defect this
+report is about, committed by the report.
 
 These matter because `actions/checkout` is shallow by default, so the
 configuration most likely to run this command is the one that silences it across

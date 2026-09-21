@@ -57,10 +57,27 @@ on an API error; the rule added during `rfc-0003` — say so and proceed — was
 already written and worked. Fourth recorded instance, first where the rule
 pre-existed the failure.
 
-**Two real defects in a dependency were found and filed.** `git zhi docs health`
-reports health it has not established, in two independent ways, both failing
-toward clean. Neither would have surfaced without a participant being forced to
-re-derive a claim rather than check it.
+**Three real defects in a dependency were found and filed.** `git zhi docs
+health` reports health it has not established in three independent ways, all
+failing toward clean. None would have surfaced without a participant being
+forced to re-derive a claim rather than check it.
+
+**The third was found twice and kept once**, which is the more useful story. A
+round-seven participant's probe returned zero churn for a file path that should
+have counted; it diagnosed the cause correctly in passing — "the comparison is
+likely at second granularity and the commits were in the same second" — decided
+this was an artefact of its own harness, rebuilt with dates a day apart, and
+moved on. A round-nine participant hit the same result, refused to conclude from
+it, separated the dates, and reported the discrepancy as a defect.
+
+The first participant volunteered this against itself when it had already
+released everything:
+
+> That is worth more to you than the four releases.
+
+The difference was not care; both were careful. It was that one treated an
+unexpected result as noise from its instrument and the other treated it as
+evidence about its subject, and nothing in the brief distinguished those.
 
 ## What Didn't Work
 
