@@ -56,9 +56,16 @@ reason survives both being fixed**, and it is narrower than it first looks.
 Under doc-first the document and the code land in the same pull request, which
 is not the same as the same commit. `development-workflow.md` states the rule as
 "update the document first, then build to match, in the same pull request" — and
-measured on a linear history doing exactly that, the document reports `churn 1,
-drift LOW`. Compliant work does accumulate drift when the document commit
-precedes the code commit.
+measured in a scratch repository with a linear history doing exactly that, the
+document reports `churn 1, drift LOW`. Compliant work does accumulate drift when
+the document commit precedes the code commit.
+
+The measurement is from a scratch repository on purpose. This repository's
+history is not linear and its reported churn does not reproduce from commit
+counts — `docs/assessments/walkthrough-review.md` covers one file with one
+commit since its `doc_modified` and reports three. A reader who tries to
+reproduce these figures here will fail, which is how four earlier versions of
+this passage went wrong.
 
 It reports zero in four other cases, every one of them compliant: when document
 and code land in one commit, which is what `CLAUDE.md` requires; when a merge
@@ -139,8 +146,16 @@ of the decision that removed it. A lens for doc-first that could not read
 `CLAUDE.md` would miss the one failure of doc-first this repository has actually
 recorded.
 
-Its `covers:` is the whole repository, since it makes claims about the pipeline,
-the skills and the conventions alike.
+**`CLAUDE.md` is read on every diff, without a `covers:` trigger.** It has no
+frontmatter and gains none: it is not a fourth live document but the door to the
+other three, as 0001 says, and a door does not need a covered set to be worth
+reading. Its claims are about the pipeline, the skills and the conventions
+alike, so any `covers:` honest enough to trigger the lens would name the whole
+repository — at which point the trigger is doing no work and the frontmatter is
+bytes in every session's context for nothing.
+
+An earlier revision of this decision asserted that `CLAUDE.md` carries such a
+`covers:`. It does not, and nothing here was making it true.
 
 ### A mechanical backstop, stated as weak
 
@@ -148,8 +163,22 @@ Review is a judgment and judgments are not run on every commit. A check catches
 the coarsest failure — a decision reflected nowhere at all.
 
 **Its subject is every accepted decision with at least one commit carrying its
-`Implements:` trailer**, which is the population doc-first obliges, derived the
-same way, so rule and check cannot disagree about scope. Both are therefore
+`Implements:` trailer**, which **overlaps** the population doc-first obliges
+without matching it. Doc-first binds a pull request that changes what a live
+document describes; the backstop asks after every implemented decision, and the
+lens rules explicitly that a covered diff the document never claimed anything
+about is not a finding.
+
+So the check is stricter than the rule it backs, and the gap has a bad cure: a
+decision implemented where no live document makes a claim can only satisfy the
+check by gaining a line in the live layer whose sole purpose is to satisfy it.
+0001 is stingy with live precisely because every line there is one someone must
+keep true forever. **Where the two disagree, the rule governs and the check is
+noise** — and the reviewer, not the check, decides which it is.
+
+Under 0004 the two become nearly coextensive, since a synthesis of accepted
+decisions makes a claim from each. Until then the gap is real and is recorded
+rather than closed. Both are therefore
 blind to the same thing: the commit somebody wrote and forgot to label. That is
 one failure mode held twice rather than two mechanisms covering each other.
 
@@ -177,8 +206,9 @@ an unrelated defect. The check matches a decision *citation*, not a number.
 
 It also cannot tell a claim from a criticism. **On the day this lands the
 backstop is green for 0002, and for the wrong reason**: 0002's only two
-appearances in the live layer are `coding-conventions.md` citing it as a
-decision that carried criteria it should not have. Worker identity and
+appearances in the live layer are `coding-conventions.md` faulting it twice —
+once for carrying runnable acceptance criteria it should not have, once for
+stale cross-repository citations. Worker identity and
 `ZHI_ACTOR`, which are what 0002 decided, appear nowhere live — 0004's gap table
 says as much. So the first run of this check passes on two hostile citations,
 and nobody should read that as compliance.
@@ -199,6 +229,17 @@ implementing issue.
 **`docs/contributing/development-workflow.md`.** It sets the cheapest-first
 validation order and does not cover live documents; the order gains review.
 
+**`CLAUDE.md` and `docs/contributing/development-workflow.md`, again: doc-first
+is stated once.** Both are brought to 0001's wording — "in one PR". This
+decision makes the gap load-bearing, so it closes it rather than only reporting
+it: a mandatory gate that judges compliance with doc-first has to know which
+rule it judges against, and an agent reading `CLAUDE.md` today holds a stricter
+one than 0001 ever took, arrived at by drift rather than by decision.
+
+No new decision is opened for this. There is nothing to decide — 0001 is
+accepted and says "in one PR"; the other two are restatements that drifted, and
+one clause in each brings them back.
+
 ## Acceptance Criteria
 
 - [ ] review's coverage lens reads live documents against the diff (`grep -q 'read the document against the diff' skills/review/review.md`)
@@ -206,8 +247,16 @@ validation order and does not cover live documents; the order gains review.
 - [ ] the backstop reports a decision reflected nowhere (`grep -q 'cited nowhere' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the backstop reports rather than skips when it cannot see its subject (`grep -q 'cannot see' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the checks are in the runner and the repository passes them (`grep -q 'cited nowhere' xt/run.sh && grep -q 'cannot see' xt/run.sh && sh xt/run.sh`)
+- [ ] doc-first is stated once, in 0001's words (`grep -q 'in one PR' CLAUDE.md && grep -q 'in one PR' docs/contributing/development-workflow.md`)
 
-These name four distinct prose strings across five criteria, and each will
+**The doc-first criterion asserts the new wording rather than the absence of the
+old.** A negated grep for the wording being removed passed before any work,
+because `CLAUDE.md` wraps the phrase across a line break and the search found
+nothing — the same shape as a negation over an absent subject, arrived at by
+line-wrapping instead. Asking for the replacement text is not vulnerable to how
+the file happens to be filled.
+
+These name five distinct prose strings across six criteria, and each will
 redden when its wording changes. That is the decay
 `docs/contributing/coding-conventions.md`'s first constraint describes, in its
 mildest form, and the alternative is a criterion that cannot tell a step from
