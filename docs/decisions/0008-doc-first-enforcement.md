@@ -267,7 +267,7 @@ one clause in each brings them back.
 - [ ] the backstop reports a decision reflected nowhere (`grep -q 'cited nowhere' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the backstop reports rather than skips when it cannot see its subject (`grep -q 'cannot see' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the checks are in the runner and the repository passes them (`grep -q 'cited nowhere' xt/run.sh && grep -q 'cannot see' xt/run.sh && sh xt/run.sh`)
-- [ ] doc-first is stated once, at 0001's strength (`grep -q 'in one pull request' CLAUDE.md && ! tr -s '[:space:]' ' ' < CLAUDE.md | grep -q 'in the same commit' && grep -q 'in one pull request' docs/contributing/development-workflow.md && ! tr -s '[:space:]' ' ' < docs/contributing/development-workflow.md | grep -q 'in the same pull request'`)
+- [ ] doc-first is stated once, at 0001's strength (`tr -s '[:space:]' ' ' < CLAUDE.md | grep -q 'in one pull request' && ! tr -s '[:space:]' ' ' < CLAUDE.md | grep -q 'in the same commit' && tr -s '[:space:]' ' ' < docs/contributing/development-workflow.md | grep -q 'in one pull request' && ! tr -s '[:space:]' ' ' < docs/contributing/development-workflow.md | grep -q 'in the same pull request'`)
 
 **The doc-first criterion asserts the new wording and the absence of the old**,
 per file, because either half alone is satisfiable while the entry it checks is
@@ -296,11 +296,22 @@ earlier, arriving from the other direction. What the entry reconciles is the
 *strength* of the three statements, not their wording, and 0001 is archive and
 keeps its own.
 
-The remaining exposure is markup rather than wrapping. This repository bolds its
-rules and the doc-first bullet is already bold, so `in **one** pull request`
-would not match while `**in one pull request**` would. A markup character inside
-an asserted phrase is the same hazard as a backtick inside one, and it is likelier
-here than a wrap because the surrounding text already carries emphasis.
+**All four conjuncts squeeze, including the two asserting presence.** The
+asymmetry that stood here first was not cosmetic: `CLAUDE.md`'s doc-first bullet
+is 72 characters and becomes 81 with the corrected phrase, against a file that
+wraps in the high seventies. So the implementer writes the right sentence,
+reflows to house width, the break lands inside "pull request", and the presence
+half fails while the absence half beside it passes — three conjuncts green, the
+one that matters red, and nothing saying why. The direction is safe and the
+decay was near-certain rather than eventual.
+
+**Two limits no grep escapes, named rather than fixed.** This repository bolds
+its rules and the doc-first bullet is already bold, so `in **one** pull request`
+would not match while `**in one pull request**` would. And a negated literal
+cannot tell removal from rewording: "in a single commit" satisfies the absence
+half while leaving a statement stricter than 0001 standing in the file every
+agent loads. Enumerating the rewordings is not worth attempting; naming the
+class is what the check can honestly carry.
 
 These name five distinct prose strings across six criteria, and each will
 redden when its wording changes. That is the decay
