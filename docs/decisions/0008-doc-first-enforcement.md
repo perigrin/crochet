@@ -287,7 +287,9 @@ misses. That near-miss is the same trap one step over, and it is why the
 criterion squeezes rather than unwraps.
 
 **It asks for "in one pull request", not 0001's "in one PR".** The abbreviation
-appears nowhere in the live layer, while "pull request" appears six times, so a
+appears nowhere in the live layer, while "pull request" appears seven times
+across it — six in the imported documents and once in `CLAUDE.md`, in the
+doc-first bullet this criterion is about — so a
 criterion demanding `PR` would force both documents to adopt a form neither uses
 in order to satisfy a grep — the trade this decision declined one criterion
 earlier, arriving from the other direction. What the entry reconciles is the
