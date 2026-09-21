@@ -1,7 +1,15 @@
-# One line per check that runs against the fixture. The self-test requires every
-# one of these substrings to appear in the fixture's output, so a check that
-# stops examining anything goes missing here and is named rather than passing
+# count: 9
+#
+# One line per finding site the fixture proves. The self-test requires every
+# substring below to appear in the fixture's output, so a check that stops
+# examining anything goes missing here and is named rather than passing
 # silently. Blank lines and lines starting with # are ignored.
+#
+# `# count:` above is the number of entries and is checked. An empty file was
+# already caught; a file one line shorter was not, and deleting a single line
+# is the cheapest way to disarm one check without anything noticing. Adding an
+# entry means bumping the count, which is a deliberate edit rather than a
+# silent one.
 #
 # This exists because an exit code proved only that *some* check fired: four
 # checks were deleted outright and the runner's output was identical.
@@ -13,8 +21,18 @@
 # covers: a live document declaring covers and naming nothing
 covers is empty, so nothing watches it
 
-# decision link symmetry: supersedes with no superseded-by coming back
+# decision link symmetry, supersedes direction: a supersedes with nothing back
 has no superseded-by link back
+
+# decision link symmetry, amends direction. link_check is invoked twice and
+# only the supersedes call had a witness, so the amends call could have been
+# deleted or its arguments typoed with nothing noticing.
+amends 0004, but 0004 has no amended-by link back
+
+# a forward reference to a decision that was never written. A different site
+# from the missing-back-link note above: one says the target is absent, the
+# other says a present target does not point back.
+supersedes 0099, which does not exist
 
 # accepted on a proposed footing: an amendment in force against an unagreed rule
 which it amends — is 'proposed'
@@ -34,11 +52,31 @@ the refinement gate was skipped
 # was itself unreachable from the fixture until it learned to read $ROOT.
 below the declared floor
 
-# NOT COVERED, and this is the honest limit of this file.
+# ---------------------------------------------------------------------------
+# NOT COVERED — the honest ledger.
 #
-# The product check runs `sh t/git-zhi-subcommands.sh`, which reads this
-# repository's own skills/ rather than $ROOT's, so pointing it at the fixture
-# would not test the fixture. It stays gated behind SELFTEST and is the one
-# check that can still be deleted without the self-test noticing. Its absence
-# is at least loud — a missing t/git-zhi-subcommands.sh is reported rather than
-# skipped — but a neutered one is not.
+# An earlier version of this file claimed the product check was the only
+# uncovered one. That was false by a factor of six, and a false coverage claim
+# in the file whose job is coverage is this runner's own defect class one level
+# up. Each site below was confirmed uncovered by deleting it and observing the
+# runner still report a full run and exit 0.
+#
+# 9 of 22 finding sites are covered. The uncovered ones:
+#
+#   product check failing       reads this repository's own skills/ rather than
+#                               $ROOT's, so aiming it at the fixture would not
+#                               test the fixture
+#   no docs/ under $ROOT        a hard exit before the counter exists; the
+#                               fixture has docs/, so it has no witness
+#   cycle detection             no fixture pair supersedes or amends each other
+#   Implements not in series    no fixture commit names a decision that is not
+#                               a file
+#   three floor sub-notes       missing plugin.json, absent
+#                               git_zhi_min_version, unreadable installed
+#                               version — the fixture exercises only the fourth
+#                               arm
+#   the self-test itself        delete the whole block and the runner still
+#                               claims a full run. Nothing guards the guard.
+#
+# The last one is the deepest and is not fixed here: a mechanism that proves
+# other checks can fail cannot prove itself the same way without recursing.

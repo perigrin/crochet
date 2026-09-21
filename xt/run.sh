@@ -1,6 +1,6 @@
 #!/bin/sh
 # ABOUTME: Author tests — does the repo do what CONTRIBUTING.md claims of it?
-# ABOUTME: Runs the product check, doc structure, covers, and decision-link symmetry.
+# ABOUTME: Eight check families; xt/fixture/expected names which ones it proves.
 #
 # Usage:
 #   sh xt/run.sh              run every check against this repo, then self-test
@@ -245,19 +245,24 @@ if [ "$SELFTEST" = yes ]; then
         note "xt/fixture is missing — the runner cannot demonstrate that it fails"
     elif [ ! -s xt/fixture/expected ]; then
         note "xt/fixture/expected is missing or empty — nothing says which checks must fire"
+    elif [ "$(grep -cvE '^[[:space:]]*(#|$)' xt/fixture/expected)" != \
+           "$(sed -n 's/^# count: *//p' xt/fixture/expected | head -1)" ]; then
+        # An empty list is caught above, a shortened one was not: deleting a
+        # single line disarmed one check silently, which is the cheapest
+        # possible attack on this whole mechanism. The list declares its own
+        # length, so removing an entry is a finding and adding one is a
+        # deliberate edit in two places.
+        note "xt/fixture/expected has $(grep -cvE '^[[:space:]]*(#|$)' xt/fixture/expected) entries but declares $(sed -n 's/^# count: *//p' xt/fixture/expected | head -1)"
     else
         TMP="${TMPDIR:-/tmp}/zhi-xt-self-$$"
         rm -rf "$TMP"
         mkdir -p "$TMP"
         cp -R xt/fixture "$TMP/fixture"
 
-        # `git zhi docs check` reports every tree clean when it is not a git
-        # repository, so without this the fixture could never prove that check
-        # still fires.
-        # The commit trailer names 0004, which the fixture keeps `proposed`, so
-        # the Implements check has something to report. And `git zhi docs check`
-        # reports every tree clean when it is not a git repository, so without
-        # the init that check could never be proven by the fixture either.
+        # Two checks need this copy to be a git repository. `git zhi docs check`
+        # reports every tree clean when it is not one, and the Implements check
+        # reads commit trailers — so the trailer names 0004, which the fixture
+        # keeps `proposed`, giving that check something to report.
         ( cd "$TMP/fixture" && git init -q . &&
           git -c user.email=xt@fixture -c user.name=xt add -A &&
           git -c user.email=xt@fixture -c user.name=xt commit -qm "fixture
