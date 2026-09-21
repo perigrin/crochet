@@ -5,17 +5,21 @@ covers:
   - skills/assess/assess.md
 ---
 
-# Postmortem: the 0004 assessment
+# Interim postmortem: the 0004 assessment, six rounds in
 
-**A postmortem on a gate rather than on a milestone.** `crochet:postmortem` runs
-at milestone completion and there is no milestone here — 0004 is still
-`proposed` and nothing implements it. What concluded was six rounds of
-`crochet:assess`, which produced findings about the machinery that are worth
-more than the findings about the decision, and which nothing else in the
-pipeline would record.
+**On a gate rather than a milestone, and written while the gate is still
+running.** `crochet:postmortem` runs at milestone completion; there is no
+milestone here, 0004 is `proposed`, and the assessment has not concluded — a
+seventh round is owed. This is an interim record, written at six rounds because
+the findings about the machinery are actionable now, in the round that follows
+rather than after it.
 
-Six rounds, three participants, 82 minutes of wall clock. The gate stopped by
-choice rather than by convergence. The full minute is in
+It was first written as though the gate had closed. It had not: the drafter
+proposed stopping and treated the proposal as the decision, which is the shape
+of error this document's own second recommendation is about. What follows is
+true of the first six rounds and claims nothing about the gate's outcome.
+
+Six rounds, three participants, 82 minutes of wall clock. The full minute is in
 `docs/assessments/0004.md`.
 
 ## What Worked Well
@@ -157,3 +161,11 @@ that a fourth entry in the list was a corpse.
 5. **Reap a failed dispatch when reporting it.** The rule to say so and proceed
    is written; the cleanup is not, and a corpse in a task list is indistinguishable
    from work in progress to the person reading it.
+
+6. **Do not stop participants on a proposal to stop.** The drafter proposed
+   ending the gate and then reaped all four participants, so the six rounds of
+   findings can no longer be released by the participants who raised them —
+   `crochet:discernment` requires exactly that, which is why it says participants
+   persist and are added rather than substituted. Killing them converted every
+   outstanding finding into one nobody can now discharge. A gate is stopped when
+   it is stopped, not when stopping is suggested.
