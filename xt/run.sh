@@ -196,6 +196,36 @@ fi
 # -------------------------------------------------------------- self-test
 # The runner must be able to fail. A guardrail that silently stopped firing
 # has failed open, and you stopped watching for what it caught.
+# ------------------------------------------- declared floor vs installed binary
+# The repository declares git_zhi_min_version and crochet:preflight compares the
+# installed binary against it at runtime. Nothing here read either value, so the
+# two criteria asserting they agree were satisfied by checks that never looked —
+# a floor raised past the installed binary was invisible to everything in xt/.
+#
+# A missing binary is preflight's business, not this runner's: xt/ runs on
+# machines with no git-zhi, and failing there would report an environment
+# problem as a repository defect.
+if [ "$SELFTEST" = yes ] && [ -f .claude-plugin/plugin.json ]; then
+    floor=$(sed -n 's/.*"git_zhi_min_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+            .claude-plugin/plugin.json | head -1)
+    if [ -z "$floor" ]; then
+        note "plugin.json declares no git_zhi_min_version — preflight has no floor to enforce"
+    elif command -v git-zhi >/dev/null 2>&1; then
+        installed=$(git zhi version 2>/dev/null | head -1 | awk '{print $2}')
+        if [ -z "$installed" ]; then
+            note "could not read a version from git zhi version — the floor is unverifiable"
+        else
+            # Numeric per field, so 1.10.0 sorts above 1.2.3 where a string compare
+            # would not.
+            lowest=$(printf '%s\n%s\n' "$installed" "$floor" |
+                     sort -t. -k1,1n -k2,2n -k3,3n | head -1)
+            if [ "$installed" != "$floor" ] && [ "$lowest" = "$installed" ]; then
+                note "installed git-zhi $installed is below the declared floor $floor"
+            fi
+        fi
+    fi
+fi
+
 if [ "$SELFTEST" = yes ]; then
     if [ ! -d xt/fixture ]; then
         note "xt/fixture is missing — the runner cannot demonstrate that it fails"
