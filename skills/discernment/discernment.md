@@ -81,6 +81,29 @@ plus a note-taker satisfies a looser rule while containing no assessment at all.
 Nothing tracks who failed to participate. Participants are dispatched, so one
 that does not report is a failed dispatch rather than a silent abstention.
 
+**A dispatch that does not return is the caller's problem to detect, and this
+skill previously said so and then gave no way to do it.** "Collect every
+participant before drafting" and "never infer a release" are both correct and
+both unbounded: with a bound counted in rounds rather than time, a caller
+waiting on a participant that will never report waits forever.
+
+So: **if a participant does not return, say so and proceed without it.** Record
+in the minute which participants were dispatched, which reported, and that the
+round ran short. A round with a missing participant is a weaker round and the
+minute says which one was missing — that is a finding about the session, not a
+reason to abandon it.
+
+**Where a lens can only be administered by the caller, that is a legal
+outcome and not a failure**, provided it is labelled. Load its taxonomy, apply
+it in a pass of its own, and record that it ran inline rather than dispatched.
+The independence is genuinely weaker — a lens primed by the caller's reasoning
+stops looking sooner — and naming that is what keeps the record honest.
+
+This is not hypothetical. Three review attempts on one branch dispatched
+specialists that never returned; two stalled waiting, and the third produced
+findings only after falling back to sequential inline passes. The fallback found
+a critical defect the dispatched attempts never reached.
+
 ## What a round produces
 
 *Participant-facing. If you were dispatched into a session, this section and the release rule in The loop are what is being asked of you; the rest describes the caller's job.*

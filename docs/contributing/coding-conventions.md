@@ -39,9 +39,11 @@ description: ...
 <!-- ABOUTME: A second line naming what it covers or depends on. -->
 ```
 
-The HTML-comment form is the practice ten of the twelve ABOUTME-bearing files
-already follow. It is recorded here because it was previously settled by
-imitation, which meant every agent that met it decided again.
+The HTML-comment form is what every ABOUTME-bearing file in this document's
+scope already uses. It is recorded here because it was previously settled by
+imitation, which meant every agent that met it decided again — and because the
+count that stood here before ("ten of the twelve") was true of no scope in the
+repository on the day it was written.
 
 ## Conventions the skills must hold to
 

@@ -61,20 +61,33 @@ below the declared floor
 # up. Each site below was confirmed uncovered by deleting it and observing the
 # runner still report a full run and exit 0.
 #
-# 9 of 22 finding sites are covered. The uncovered ones:
+# 9 of 26 finding sites are covered — 24 `note` calls and 2 hard exits, counted
+# mechanically rather than estimated. An earlier count of 22 omitted the two
+# README sites this file itself gained, which is the ledger reproducing the
+# defect it exists to record. Recount when a site is added.
+#
+# The uncovered ones:
 #
 #   product check failing       reads this repository's own skills/ rather than
 #                               $ROOT's, so aiming it at the fixture would not
 #                               test the fixture
+#   product check missing       the file absent rather than failing
 #   no docs/ under $ROOT        a hard exit before the counter exists; the
 #                               fixture has docs/, so it has no witness
+#   git-zhi absent              also a hard exit, and the fixture cannot make
+#                               the binary disappear for one run
+#   README to commands          a stub with no row, and a row with no stub —
+#                               both fire, both proven by hand, neither has a
+#                               fixture witness because the fixture has no
+#                               README.md or commands/ of its own
 #   cycle detection             no fixture pair supersedes or amends each other
 #   Implements not in series    no fixture commit names a decision that is not
 #                               a file
-#   three floor sub-notes       missing plugin.json, absent
-#                               git_zhi_min_version, unreadable installed
-#                               version — the fixture exercises only the fourth
-#                               arm
+#   five floor sub-notes        missing plugin.json, absent
+#                               git_zhi_min_version, a floor that is not a
+#                               version, an unreadable installed version, and an
+#                               installed value that is not a version — the
+#                               fixture exercises only the below-floor arm
 #   the self-test itself        delete the whole block and the runner still
 #                               claims a full run. Nothing guards the guard.
 #

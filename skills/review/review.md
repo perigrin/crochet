@@ -123,15 +123,36 @@ from the decision document directly.
 
 **Quality — is the code sound?**
 
-**If `paad:agentic-review` is available** (check preflight capabilities):
-  Delegate to it over the branch diff.
-**Otherwise:**
-  Read the diff for debt, security and coverage gaps inline.
+**Availability is not the only question — a lens can be present and still not
+run.** These arms were keyed on availability alone, and the case that actually
+happens matched neither: `paad:agentic-review` is installed, refuses a session
+carrying substantive history, and Steps 0 and 1 guarantee this session has some.
+A gate can then complete having run no quality lens at all while reporting a
+pass — the review of the empty set that Step 0 exists to prevent, one level up
+in the same file.
 
-**If `ponytail:ponytail-review` is available** (check preflight capabilities):
-  Delegate to it — over-engineering is the lens it exists for.
-**Otherwise:**
+So each lens has three outcomes, and the minute names which one occurred.
+
+**If `paad:agentic-review` is available:**
+  Dispatch it to a fresh session — not this one, which it will refuse.
+**If it is available and declines, or its specialists do not return:**
+  Load its taxonomy and run its lenses yourself, **sequentially**, one at a time.
+  Record the result as inline rather than dispatched. This is a legal outcome
+  and a weaker one; on this repository's own branch it is also the only one that
+  ever produced findings.
+**If it is absent:**
+  Read the diff for debt, security and coverage gaps inline, and say so.
+
+**If `ponytail:ponytail-review` is available:**
+  Dispatch it — over-engineering is the lens it exists for.
+**If it declines or does not return:**
+  Apply it inline and label it inline.
+**If it is absent:**
   Skip it and say so in the minute.
+
+**A lens that declined is a gap in the review, not a pass.** Saying which of the
+three happened, for each lens, is the difference between one lens looking and
+two.
 
 ## Step 3: Run to a bounded fixed point
 

@@ -37,6 +37,17 @@ FAILS="${TMPDIR:-/tmp}/zhi-xt-fail-$$"
 trap 'rm -f "$FAILS"' EXIT
 note() { echo "FAIL: $*"; echo x >> "$FAILS"; }
 
+# One missing binary produced four failure messages, none of which named it:
+# a skill supposedly naming a subcommand that does not exist, unreachable files
+# and dead links, and a working check accused of having gone quiet. The rule
+# this repository already states is to read the failure text rather than the
+# exit code, and a check that fails for the wrong reason has told you nothing.
+# `t/git-zhi-subcommands.sh` learned this and guards itself; the caller did not.
+if [ "$SELFTEST" = yes ] && ! command -v git-zhi >/dev/null 2>&1; then
+    echo "FAIL: git-zhi is not on \$PATH — most of these checks cannot run" >&2
+    exit 1
+fi
+
 # A root with nothing to check is a failure. A runner that reports success
 # while observing nothing has failed open, which is worse than being absent.
 if [ ! -d "$ROOT/docs" ]; then
@@ -223,11 +234,21 @@ if [ "$SELFTEST" = yes ] && [ -f "$ROOT/README.md" ] && [ -d "$ROOT/commands" ];
         grep -q "crochet:$name" "$ROOT/README.md" ||
             note "commands/$name.md has no row in README.md"
     done
-    # And the other direction: a documented command with no stub.
+    # And the other direction. The guard must be about the name under test: an
+    # earlier version asked whether the README contained "internal" anywhere,
+    # which is true of the whole file on every iteration, so this loop never
+    # reported anything and the "both directions" claim stayed false.
+    #
+    # A skill named on the internal-skills line has no stub by design. Read that
+    # one line and exempt only the names on it.
+    # tr, because the case below matches space-delimited words and sort emits
+    # newlines: without it only the first and last name were ever exempt.
+    internal=$(grep -i 'internal' "$ROOT/README.md" | grep -oE 'crochet:[a-z-]+' |
+               sed 's/^crochet://' | sort -u | tr '\n' ' ')
     for name in $(grep -oE 'crochet:[a-z-]+' "$ROOT/README.md" | sed 's/^crochet://' | sort -u); do
-        [ -f "$ROOT/commands/$name.md" ] ||
-            grep -q "internal" "$ROOT/README.md" ||
-            note "README.md names crochet:$name with no commands/$name.md"
+        [ -f "$ROOT/commands/$name.md" ] && continue
+        case " $internal " in *" $name "*) continue ;; esac
+        note "README.md names crochet:$name with no commands/$name.md"
     done
 fi
 
@@ -251,10 +272,21 @@ if [ -f "$ROOT/.claude-plugin/plugin.json" ] || [ "$SELFTEST" = yes ]; then
         floor=$(sed -n 's/.*"git_zhi_min_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
                 "$ROOT/.claude-plugin/plugin.json" | head -1)
         installed=$(git zhi version 2>/dev/null | head -1 | awk '{print $2}')
+        # Both operands must be versions, not just non-empty. An earlier
+        # version guarded the floor against a non-version and never applied the
+        # same reasoning to the installed side, so `v0.7.1`, `garbage` and
+        # `git-zhi` all sorted above a 0.7.2 floor and passed in silence — the
+        # check discriminated only because both values happened to be identical.
+        is_version() { case "$1" in ''|*[!0-9.]*) return 1 ;; *) return 0 ;; esac; }
+
         if [ -z "$floor" ]; then
             note "plugin.json declares no git_zhi_min_version — preflight has no floor to enforce"
+        elif ! is_version "$floor"; then
+            note "git_zhi_min_version is '$floor', which is not a version — the floor cannot be compared"
         elif [ -z "$installed" ]; then
             note "could not read a version from git zhi version — the floor is unverifiable"
+        elif ! is_version "$installed"; then
+            note "git zhi version reported '$installed', which is not a version — the floor is unverifiable"
         else
             # sort -V understands versions, so 1.10.0 sorts above 1.2.3, a
             # four-field version works, and a floor that is not a version at all
