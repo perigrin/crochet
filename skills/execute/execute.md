@@ -371,7 +371,9 @@ distinguishes done from done-and-reviewed.
 When all issues are closed, the order matters: verify, review, then write the
 postmortem, then complete. Completing first would gate the postmortem behind
 the thing it is meant to explain, and completing the milestone runs the
-verify gate over every done issue's acceptance criteria.
+verify gate over every done issue's acceptance criteria **and over the
+milestone body's own**. Both are in scope at completion, which is what makes a
+criterion written into the milestone body worth writing.
 
 **Record a checklist entry in the milestone body** carrying **when execute was
 satisfied, by whom, and whether it was backfilled**. Execute's derived signal is

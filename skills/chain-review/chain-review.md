@@ -59,6 +59,11 @@ git-zhi verify <milestone> --dry-run
 
 Cross-check the listed commands against the chain:
 
+- **Rows labelled `milestone body` belong to no issue.** From git-zhi 0.7.1 the
+  extractor reads the milestone body as well, and those rows are the decision's
+  own criteria rather than any issue's. Check them as commands — the runnability
+  rules below apply — and do not count them against an issue when applying the
+  rule above them.
 - **Every done-able issue has ≥1 extracted command.** An issue that produces no
   command from `--dry-run` has no paren-wrapped AC; it will be "unverifiable" at
   completion. Flag it.
