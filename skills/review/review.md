@@ -133,9 +133,19 @@ that will not converge is itself a finding about the delivery.
 
 The decision's criteria are the milestone's. Run them and record which pass.
 
-`git zhi verify <milestone> --dry-run` extracts from *done issues*, not from the
-milestone body, so it does not see milestone-level criteria. Until it does,
-extract and run them here.
+**`git zhi verify <milestone>` runs the milestone body's criteria itself.** They
+appear in their own `Milestone Acceptance Criteria:` section above the issue
+rows, so run it rather than extracting by hand. `--dry-run` lists what would run,
+across every issue regardless of state.
+
+This needs git-zhi 0.7.1 or later, which `git_zhi_min_version` requires and
+`crochet:preflight` enforces. Below that floor the milestone body was invisible
+to `verify` and this step hand-extracted; a reviewer meeting an older binary
+should trust preflight's warning over this paragraph.
+
+**Confirm it ran rather than that it exited 0.** A milestone body carrying no
+paren-wrapped command yields nothing to run, and a `verify` that extracted
+nothing is not a milestone whose criteria passed. Read the count.
 
 ## Step 5: Record the outcome
 
