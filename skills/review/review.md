@@ -34,23 +34,50 @@ crochet:review <milestone>
 
 ## Step 0: Refuse to review nothing
 
+**Resolve the base branch; do not assume it.** Crochet is installed into other
+repositories, where the default is usually `main`. This skill hardcoded `pu` —
+crochet's own default — so everywhere else `git diff pu...HEAD` wrote
+`fatal: ambiguous argument 'pu'` to stderr and nothing to stdout, and the rule
+below read that as a branch with nothing to review.
+
 ```bash
-git diff --stat pu...HEAD
+BASE=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null)
+BASE=${BASE#origin/}
+for b in "$BASE" main master trunk pu; do
+    [ -n "$b" ] && git rev-parse --verify --quiet "$b^{commit}" >/dev/null && { BASE=$b; break; }
+done
+git rev-parse --verify --quiet "$BASE^{commit}" >/dev/null ||
+    { echo "cannot resolve a base branch"; exit 1; }
+git diff --stat "$BASE...HEAD"
 ```
+
+**Key the guard on the exit status, never on the output being empty.** An
+unresolvable ref and a branch with nothing on it produce the same blank stdout,
+and only one of them means "nothing to review". Verify the base resolves first,
+then read the diff.
 
 **If the diff is empty, stop and say so.** Do not proceed to the lenses.
 
-This is the one guard the gate cannot do without. `pu...HEAD` resolves cleanly
-on a repository where `pu` *is* the current branch — empty output, exit 0 — so
-without this check every downstream step runs normally over nothing and reports a
-clean pass. A review of the empty set and a review that examined a branch and
-found it sound are indistinguishable in the output, and the first is worthless.
-`paad:agentic-review` guards this explicitly; so does this.
+This is the one guard the gate cannot do without. A base that resolves to the
+current branch gives empty output and exit 0, so without this check every
+downstream step runs normally over nothing and reports a clean pass. A review of
+the empty set and a review that examined a branch and found it sound are
+indistinguishable in the output, and the first is worthless.
+`paad:agentic-review` guards this explicitly — including the exit-status half,
+which this skill cited and then did not do.
 
-**If no milestone was named**, say so and stop. The invocation contract is
-`crochet:review <milestone>`; the command stub passes no argument, so an
-unattended invocation arrives without one. Reviewing a delivery requires knowing
-which delivery.
+Everywhere below, `pu...HEAD` means `$BASE...HEAD` with the base resolved here.
+
+**If no milestone was named**, resolve the active one the way `crochet:execute`
+does — `git zhi milestone list --format json`, taking the milestone whose state
+is not completed. Stop only if that is ambiguous or empty; reviewing a delivery
+requires knowing which delivery, but the name is usually derivable rather than
+missing.
+
+This skill used to stop outright here, having observed that `commands/review.md`
+passed no argument. The stub now passes `$ARGUMENTS`, as `commands/execute.md`
+always did — diagnosing a defect in a sibling file and then halting on it left
+the only entry point to a mandatory gate unable to run unattended.
 
 **If preflight reported that there is no chain**, believe it. Orientation is
 advisory and never blocks, which means it cannot stop this gate — so read its
@@ -125,9 +152,11 @@ the marketplace's, then confirm what you actually got — not a capability check
 that cannot pass.
 
 A single pass reports what one look caught; a fixed point reports that nothing
-further is visible. **Bound it** at three iterations, as `crochet:execute` bounds
-its analogous loop, then report non-convergence rather than spinning. A review
-that will not converge is itself a finding about the delivery.
+further is visible. **`crochet:discernment` owns the bound** — do not restate it
+here. This skill said three, copying `crochet:execute`'s number, while
+discernment argues at length that three is the wrong bound and would have
+declared both of the sessions that produced it non-convergent. Restating a
+callee's parameter is how it drifts.
 
 ## Step 4: Verify the milestone's acceptance criteria
 
@@ -138,12 +167,9 @@ appear in their own `Milestone Acceptance Criteria:` section above the issue
 rows, so run it rather than extracting by hand. `--dry-run` lists what would run,
 across every issue regardless of state.
 
-`git_zhi_min_version` requires 0.7.1 and `crochet:preflight` enforces it, so
-every supported environment has this. The floor is 0.7.1 rather than the release
-that first carried the capability, because 0.7.1 is where `--help` began saying
-so, and `crochet:how-to-use-git-zhi` tells agents that `--help` wins where it and
-the reference disagree. A reviewer meeting an older binary should trust
-preflight's warning over this paragraph.
+`crochet:preflight` reports the installed version against the declared floor.
+It warns rather than blocking, so a reviewer on an older binary is told and is
+not stopped — read the warning before trusting what `verify` extracted.
 
 **The body's heading must be exactly `## Acceptance Criteria`.** The extractor
 uses the same parser as an issue body, so a milestone headed

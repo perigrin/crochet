@@ -99,7 +99,24 @@ link_check() {
     for f in "$DEC"/*.md; do
         [ -f "$f" ] || continue
         me=$(num_of "$f")
-        entries=$(sed -n '2,/^---$/p' "$f" | grep -E "^$forward:" | sed -E "s/^$forward:[[:space:]]*//; s/[][]//g; s/,/ /g")
+        # Both YAML sequence styles. Flow (`supersedes: [0001, 0002]`) is what
+        # every decision here uses; block (`supersedes:` then `  - 0001`) is
+        # what `git zhi docs init` templates and a human writing several links
+        # produce, and it parsed to nothing — so the obligation this check
+        # exists to discharge mechanically was silently undischarged for it.
+        # The covers: check fifteen lines above already handled both.
+        entries=$(sed -n '2,/^---$/p' "$f" | awk -v key="$forward" '
+            $0 ~ "^" key ":" {
+                rest = $0; sub("^" key ":[[:space:]]*", "", rest)
+                gsub(/[][,]/, " ", rest)
+                if (rest ~ /[^[:space:]]/) { print rest; next }
+                block = 1; next
+            }
+            block && /^[[:space:]]*-[[:space:]]/ {
+                item = $0; sub(/^[[:space:]]*-[[:space:]]*/, "", item); print item; next
+            }
+            block { block = 0 }
+        ')
         for e in $entries; do
             case "$e" in
                 ""|"[]") continue ;;
@@ -191,6 +208,26 @@ if [ -d "$DEC" ]; then
             accepted|superseded) : ;;
             *) note "commits implement $n while it is '$state' — the refinement gate was skipped" ;;
         esac
+    done
+fi
+
+# ------------------------------------------------- README against commands/
+# development-workflow.md claimed this check existed and it did not, in a
+# document imported into every agent's context — a false coverage claim inside
+# the coverage layer, which is this runner's own defect class. Written rather
+# than the sentence deleted, because the claim is worth making true.
+if [ "$SELFTEST" = yes ] && [ -f "$ROOT/README.md" ] && [ -d "$ROOT/commands" ]; then
+    for c in "$ROOT"/commands/*.md; do
+        [ -f "$c" ] || continue
+        name=$(basename "$c" .md)
+        grep -q "crochet:$name" "$ROOT/README.md" ||
+            note "commands/$name.md has no row in README.md"
+    done
+    # And the other direction: a documented command with no stub.
+    for name in $(grep -oE 'crochet:[a-z-]+' "$ROOT/README.md" | sed 's/^crochet://' | sort -u); do
+        [ -f "$ROOT/commands/$name.md" ] ||
+            grep -q "internal" "$ROOT/README.md" ||
+            note "README.md names crochet:$name with no commands/$name.md"
     done
 fi
 

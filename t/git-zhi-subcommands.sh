@@ -21,6 +21,16 @@
 
 DIR="${1:-skills}"
 
+# Without the binary every probe fails, and this reported "30 of 30 subcommands
+# named in skills do not exist" — thirty false statements, none naming the real
+# problem. The repository's own rule is to read the failure text rather than the
+# exit code; a check that exits non-zero for the wrong reason has told you
+# nothing.
+if ! command -v git-zhi >/dev/null 2>&1; then
+    echo "FAIL: git-zhi is not on \$PATH — this check cannot run" >&2
+    exit 1
+fi
+
 if [ ! -d "$DIR" ]; then
     echo "FAIL: not a directory: $DIR" >&2
     exit 1
@@ -28,6 +38,7 @@ fi
 
 # Code contexts only: lines inside ``` fences, plus the contents of `spans`.
 CODE=$(find "$DIR" -name '*.md' -type f -exec awk '
+    FNR == 1     { fence = 0 }
     /^[ \t]*```/ { fence = !fence; next }
     fence        { print; next }
     {
@@ -61,6 +72,7 @@ fi
 # Fenced blocks only. An inline `git-zhi-verify` usually names the component
 # under discussion; a fenced line is something to run. Naming is not calling.
 FENCED=$(find "$DIR" -name '*.md' -type f -exec awk '
+    FNR == 1     { fence = 0 }
     /^[ \t]*```/ { fence = !fence; next }
     fence        { print }
 ' {} +)

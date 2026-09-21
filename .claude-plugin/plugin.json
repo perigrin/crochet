@@ -1,6 +1,6 @@
 {
   "name": "crochet",
-  "description": "Intelligence layer for git-zhi — SDLC pipeline skills (assess, refinement, chain-review, execute, postmortem) with superpowers and PAAD integration",
+  "description": "Intelligence layer for git-zhi — SDLC pipeline skills (assess, refinement, chain-review, execute, review, postmortem) with superpowers and PAAD integration",
   "version": "0.6.0",
   "git_zhi_min_version": "0.7.2",
   "author": {

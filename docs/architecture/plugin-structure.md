@@ -38,8 +38,15 @@ superpowers:brainstorming → crochet:assess → crochet:refinement →
 crochet:chain-review → crochet:execute → crochet:review → crochet:postmortem
 ```
 
-Each step is a gate; do not proceed until the current one passes. The pipeline
-runs in strict order.
+Each step is a gate. **Which gates are mandatory, and what happens when the loop
+is entered somewhere other than the start, is policy rather than architecture:**
+`docs/decisions/0003-acceptance-by-refinement.md` settles it and `CLAUDE.md`
+summarises it. This document carries the pipeline's shape and stops there.
+
+It previously said the pipeline runs in strict order and that no step proceeds
+until the current one passes, which contradicts the backfill rule one import
+away — an agent reviewing a finished pull request was told both to enter at
+review and not to proceed past brainstorming.
 
 ## Skills
 

@@ -3,6 +3,8 @@ stability: 2
 covers:
   - skills/
   - .claude-plugin/plugin.json
+  - xt/
+  - t/
 ---
 
 <!-- ABOUTME: How work gets done on crochet — validating changes, branching, adding a skill. -->
@@ -22,7 +24,7 @@ tree are the files that ship.
 
 ## Validating a change
 
-Crochet has no compiler to catch a mistake, so validation is three things in
+Crochet has no compiler to catch a mistake, so validation is five things in
 order, cheapest first:
 
 1. **Read the skill for internal consistency.** Do its steps reference `git zhi`

@@ -21,7 +21,9 @@ and why it is written to an archive rather than presented and lost.
 
 ## Trigger
 
-`crochet:assess` is the required entry point for the SDLC pipeline. Run it when a user provides a PRD file path, invokes it after brainstorming produces a spec, or initiates any structured feature development. No pipeline step should begin before assess has run.
+`crochet:assess` is required before refinement. Run it when a user provides a PRD file path, invokes it after brainstorming produces a spec, or initiates any structured feature development.
+
+**It is not the only entry point.** Work can arrive at a later gate — a finished pull request enters at `crochet:review` — and a gate backfills what is missing rather than refusing to start, which is what `docs/decisions/0003-acceptance-by-refinement.md` settles. This skill previously said no pipeline step should begin before assess had run, which forbids the path the protocol calls legal.
 
 ## Inputs
 

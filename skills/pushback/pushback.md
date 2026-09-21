@@ -17,7 +17,7 @@ This skill is invoked by `crochet:chain-review` only. It is not intended for dir
 
 ## Plan Quality Lens
 
-Apply all five checks to the issue chain. Every claim must cite specific issue IDs, milestone names, or dependency references from the chain.
+Apply all eight checks to the issue chain. Every claim must cite specific issue IDs, milestone names, or dependency references from the chain.
 
 ### 1. Issue Sizing
 
@@ -79,7 +79,7 @@ Flag, per issue:
 
 The fix for a flagged AC is: paren-wrap exactly one runnable shell command (a `prove`/`perl`/`go test`/`git` invocation with real paths, runnable from repo root), and demote every code fragment or placeholder to a bare backtick (which the extractor ignores).
 
-**From git-zhi 0.7.0 `verify --dry-run` extracts regardless of issue state**, so on a fresh chain it reports the criteria this lens exists to check. Below that floor it read only *done* issues and returned nothing on the chain this lens always runs against — the check passed by producing no output, which is the failure it exists to catch wearing the shape of a pass. `crochet:preflight` enforces the floor, so trust the dry run only once it has. Either way, count criterion lines against spans found: a line yielding none is the "no extractable command" case, and it is invisible if you only count the spans you did extract.
+**From git-zhi 0.7.0 `verify --dry-run` extracts regardless of issue state**, so on a fresh chain it reports the criteria this lens exists to check. Below that floor it read only *done* issues and returned nothing on the chain this lens always runs against — the check passed by producing no output, which is the failure it exists to catch wearing the shape of a pass. `crochet:preflight` reports the installed version against the floor but does not block on it, so confirm the version before trusting the dry run. Either way, count criterion lines against spans found: a line yielding none is the "no extractable command" case, and it is invisible if you only count the spans you did extract.
 
 ### 7. Run every criterion against the tree
 

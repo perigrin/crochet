@@ -85,7 +85,7 @@ criterion was `git zhi verify --help | grep -q 'pending'` and sat red until
 git-zhi cut 0.7.1.
 
 Where crochet genuinely depends on another repository, the dependency belongs in
-`git_zhi_min_version`, which `crochet:preflight` enforces and `xt/run.sh`
+`git_zhi_min_version`, which `crochet:preflight` reports on and `xt/run.sh`
 compares against the installed binary. That is a claim this repository can check.
 
 ## Citing code from a decision

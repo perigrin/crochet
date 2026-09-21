@@ -129,8 +129,9 @@ keeps two workers off one issue excludes nothing. Identity is for coordination,
 never authorization: a declared value is unverified and is not a basis for
 deciding what a worker may do.
 
-Requires git-zhi 0.6.0, which `git_zhi_min_version` is above and
-`crochet:preflight` enforces.
+Requires git-zhi 0.6.0, which `git_zhi_min_version` is above.
+`crochet:preflight` reports the installed version against that floor and warns;
+it does not block, so an older binary runs anyway.
 
 ## JSON output (field inventory)
 
@@ -138,7 +139,8 @@ Pass `--format json` (a global flag) to get machine-readable output. For command
 an agent parses, the keys it relies on:
 
 - **`git zhi status`** — `head`, `title`, `state`, `milestone`, `ready_count` (and a `message` field with `ready_count` instead of the chain keys when no chain exists). `crochet:preflight`'s **Pipeline Orientation** section shows how these keys map to pipeline position; run `git zhi status --format json` for the live shape.
-- **`git zhi list`** — `{ "issues": [ … ] }`; each issue carries `id`, `title`, `state`, `urgency`, `milestone`, `labels`, `created`, `updated`, `body`. `crochet:preflight` uses these same keys for orientation; run `git zhi list --format json` for the live shape.
+- **`git zhi list`** — `{ "issues": [ … ] }`, an **object wrapping an array**; each issue carries `id`, `title`, `state`, `urgency`, `milestone`, `labels`, `created`, `updated`, `body`. Run `git zhi list --format json` for the live shape.
+- **`git zhi issue list`** — a **bare array**, `[ … ]`, with the same per-issue keys. The two differ at the top level and only here: code written for one returns nothing when pointed at the other, silently. `crochet:preflight` runs `issue list --all`, so an orientation step that parses `.issues[]` gets an empty result and reports no chain for a live one.
 - **`git zhi next`** — the same per-issue keys as a `list` issue plus a `description` key (it resolves the HEAD issue). Errors when the chain is empty.
 - **`git zhi issue show <ref>`** — the same per-issue keys as `next` (the `list` issue keys plus `description`).
 
@@ -147,7 +149,7 @@ To see the live shape of any of these, run `git zhi <cmd> --format json`.
 ## When this reference and the CLI disagree
 
 Confirm the current surface with `git zhi <cmd> --help`. This reference is
-verified against git-zhi 0.4.0, and the CLI evolves. **When `--help` and this
+verified against git-zhi 0.7.2, and the CLI evolves. **When `--help` and this
 reference disagree, `--help` wins** — proceed using `--help`'s current surface
 and do not treat this reference as authoritative for that command.
 

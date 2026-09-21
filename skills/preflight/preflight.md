@@ -106,12 +106,20 @@ next` as the primary signal — it errors on an empty chain where `status` degra
 gracefully.
 
 **Use `issue list --all`, not `list`.** A completed milestone lists nothing
-without `--all`, and `--all` is inert for `list` — it returns `{"issues": []}`
-either way. Observed on 0.6.0 against a repository with three completed
-milestones and twenty closed issues: `list --all` returned nothing and `issue
-list --all` returned the twenty. With the wrong command, row 1 matches first and
-reports "No chain yet" for a finished chain, and row 3 is never reached. Adding a
-flag does not fix it; the command has to change.
+without `--all`, and with the wrong command row 1 matches first and reports "No
+chain yet" for a finished chain, so row 3 is never reached.
+
+Through 0.6.0 the reason was that `--all` was inert on the top-level `list` —
+observed against a repository with three completed milestones and twenty closed
+issues, where `list --all` returned nothing and `issue list --all` returned the
+twenty. **That was fixed in 0.7.0 and both forms now return every issue**, so
+the old conclusion — "adding a flag does not fix it; the command has to change"
+— is false on every version this plugin supports.
+
+The reason to keep `issue list --all` is now shape, not coverage: it returns a
+bare JSON array, where `list` returns `{"issues": [...]}`. An orientation step
+written against one and run against the other parses nothing and reports an
+empty chain — the same row-1 misdiagnosis by a different route.
 
 Evaluate these rows **in order** and report the first that matches:
 

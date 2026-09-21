@@ -141,7 +141,7 @@ no pressure to converge.
      where coasting happens — and a finding released because an *earlier* finding
      was fixed is the most common way a live objection disappears unexamined.
 
-   Four techniques, all of which caught something in the session that produced
+   Six techniques, all of which caught something in the session that produced
    this section:
 
    - **Read the diff last.** A diff tells you where to look, so reading it first
