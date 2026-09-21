@@ -62,11 +62,19 @@ halves of their `covers:` lists have never been watched.
 Three explanations were proposed and each was tested and rejected. They are
 recorded because each looks right and costs a day.
 
-**Not mtime.** `doc_modified` is the committer date of the last commit touching
-the document, not a filesystem timestamp. Backdating a document's mtime by one
-day and then by one year changed nothing in the report. And for a file committed
-at `2026-09-21T15:45:37-04:00`, `doc_modified` reads exactly that, while the
-worktree's own checkout timestamp was `14:25:57`.
+**Not mtime.** Backdating a document's mtime by one day and then by one year
+changed nothing in the report, and `doc_modified` for a freshly committed file
+reads its commit date while the worktree's own checkout timestamp differs.
+
+**What `doc_modified` positively is, we do not claim.** It is commit metadata,
+but it is not simply the last commit touching the file: for
+`docs/architecture/plugin-structure.md` it reads `2026-09-21T14:24:18-04:00`,
+which is merge commit `6a18943`, while the last commit to touch that file is
+`46acc60` at `2026-09-20T23:47:59-04:00`. A merge appears to reset the window.
+We could not reproduce the reported churn counts from `rev-list --count` or its
+`--first-parent` variant over any window tried, so the formula is recorded as
+unexplained rather than guessed at — every claim above was settled in controlled
+repositories instead.
 
 **Not clone freshness.** Because `doc_modified` is commit metadata, it is
 identical in every clone, and a fresh clone computes the same drift as a tree

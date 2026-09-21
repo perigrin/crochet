@@ -34,11 +34,23 @@ document last changed. Two things make it unusable as a gate, both measured on
 `covers:` entry written with a trailing slash matches no churn, and a document
 whose commit date cannot be resolved is reported as current rather than unknown.
 
-Those are defects and the first has a one-character workaround. **But the
-structural reason is the one that would survive both being fixed:** under
-doc-first the document and the code land in the same pull request, so a
-compliant repository never accumulates drift. A signal that is structurally
-silent for compliant work cannot schedule work on it.
+Those are defects and the first has a one-character workaround. **The structural
+reason survives both being fixed**, and it is narrower than it first looks.
+
+Under doc-first the document and the code land in the same pull request, which
+is not the same as the same commit. `development-workflow.md` states the rule as
+"update the document first, then build to match, in the same pull request" — and
+measured on a linear history doing exactly that, the document reports `churn 1,
+drift LOW`. Compliant work does accumulate drift when the document commit
+precedes the code commit. It reports zero when both land in one commit, and
+zero again when a merge resets the window, which is why every measurement taken
+in this repository was unreadable: `doc_modified` for `plugin-structure.md` is
+the date of merge `6a18943`, not of `46acc60`, the last commit to touch it.
+
+So the signal is silent for some compliant orderings and noisy for others, and
+which one you get depends on a merge strategy no document here names. **That is
+enough to disqualify it as a scheduler** without needing the stronger claim that
+compliant work never drifts, which is false.
 
 ## Proposal
 
@@ -46,8 +58,24 @@ silent for compliant work cannot schedule work on it.
 
 For each live document whose `covers:` paths the diff touches, read the document
 against the diff. That is a judgment, produced by a mandatory gate, at an
-operation nobody can skip — which is what `0001`'s ladder asks and what three
-prose statements of doc-first have not delivered.
+operation nobody can skip.
+
+**This does not climb the ladder, and saying it does would be dishonest.** A
+step in a skill file is instructions an agent follows, which is rung 3 — the
+same rung as the prose statements of doc-first it replaces. 0001 asks for a
+machine check at an unskippable operation, and this supplies the operation while
+substituting a judgment for the check.
+
+What changes is not the rung but the reliability at it. A rule in a document
+some agent may read is rung 3 conditioned on someone reading it; a step in the
+coverage lens of a gate 0003 makes mandatory is rung 3 that runs every time the
+gate runs. That is a real improvement and it is the whole of the claim.
+
+**A check is unavailable here, not merely unchosen.** Whether a document still
+describes the code is a judgment, and `0004` argues at length that the
+completeness of a synthesis cannot be counted. A mechanism that must read cannot
+be moved to rung 2 by wanting it there. The backstop below is what rung 2 can
+carry, and it is deliberately coarse.
 
 **A finding requires one of two things**: the diff falsifies a claim the
 document makes, or the diff completes work the document describes as pending. An
@@ -61,14 +89,14 @@ nothing. A trigger that fires on everything is ignored the way one that fires on
 nothing is, and a diff under a covered path that the document never claimed
 anything about is not a finding.
 
-It is a lens rather than a check on purpose. Whether a document still describes
-the code is a judgment, and a mechanism that judges must be one that reads.
-
 ### A live document is one `CLAUDE.md` imports
 
 The lens needs to know its subject and nothing currently answers that. `covers:`
-does not: eleven documents under `docs/` carry it and eight are archive,
-including assessments covering the very skills a change touches. The
+does not: thirteen documents under `docs/` carry it in frontmatter and ten are
+archive, including assessments covering the very skills a change touches. Only
+eleven are *listed* by `docs health`, because postmortems carry the field and
+are exempt from staleness checks — so counting what the tool prints undercounts
+what carries the field, and the field is the thing a lens would key on. The
 discriminator in force is location — `xt/run.sh` reads `docs/architecture` and
 `docs/contributing` — which `0004` removes half of.
 

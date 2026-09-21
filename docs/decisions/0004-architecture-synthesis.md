@@ -105,13 +105,13 @@ where none does:
 
 | section | source |
 |---|---|
-| Project Structure | `[0001]` — three referents, live and archive |
+| Project Structure | `[0001]` — three referents, live and archive; compiler, not runtime |
 | High-Level System Diagram | `[0003]` — the pipeline, which gates are mandatory, and backfill |
 | Core Components | skills; refinement's roles; execute's loops `[0002]` |
 | Data Stores | `[0002]` — the chain is git-zhi's, reached only through the CLI |
 | External Integrations | git-zhi, superpowers, paad |
 | Security Considerations | `[0002]` — identity coordinates, it never authorises |
-| Development and Testing | `[0001]` — `t/` and `xt/`; and where *how* lives |
+| Development and Testing | `[0001]` — `t/` and `xt/`; the enforcement ladder, doc-first, `Implements:` trailers; and where *how* lives |
 
 Data Stores and Security look like shape-filling and are not. Each carries a
 decided negative constraint, and a file-layout framing loses both.
@@ -125,10 +125,24 @@ is exactly what belongs in it. The refusal is absorbed as superseded rather than
 carried forward, and it is named here because absorbing a paragraph that
 contradicts the absorbing decision is how a contradiction arrives unnoticed.
 
-Two of the specification's sections are omitted because nothing in this
-repository fills them. Project Identification is the README's first paragraph.
-Deployment is one pointer, folded into Development and Testing. A section
-carrying neither a decided claim nor a description a reader needs is scaffolding.
+Five of the specification's sections are omitted, and each is named because a
+count without names is how three of them went unmentioned through two
+revisions. Project Identification is the README's first paragraph. Deployment is
+one pointer, folded into Development and Testing. Architecture Overview and
+Future Considerations carry neither a decided claim nor a description a reader
+needs, which is scaffolding.
+
+**The fifth is the glossary, and dropping it settles an open question in 0001.**
+0001 asks "whether the glossary is the one hand-maintained section of the
+architecture doc or whether terms get defined in the decisions that introduce
+them". This decision answers the second way: a synthesis whose every claim cites
+the decision it came from puts each term one link from where it was defined, and
+a hand-maintained glossary in the always-imported document is a second place to
+keep the same definitions true.
+
+That is recorded here because nothing links an open question to the decision
+that closes it — 0001's list will still read as open, and this sentence is the
+only thing saying otherwise.
 
 **There is no list of decisions.** The citations are the bibliography. A separate
 list is somewhere a decision can sit while being cited nowhere, which is exactly
@@ -136,19 +150,17 @@ the state worth surfacing: an accepted decision that appears in no claim was
 forgotten when the synthesis was written, and the document needs revising rather
 than an entry.
 
-**The seven sections discharge the Problem Statement's table, and four rows
-need saying where.** The ladder, doc-first and `Implements:` trailers are how
-this repository decides and records things rather than how its parts fit, so
-they land in Development and Testing beside `t/` and `xt/` — the section that
-already carries where *how* lives. Compiler-not-runtime belongs in Project
-Structure, since it is the reason there is no build output and the files in the
-tree are the files that ship.
+**The section table above discharges every row of the Problem Statement's
+table.** Four of the ten needed placing and are placed in it: the ladder,
+doc-first and `Implements:` trailers land in Development and Testing, being how
+this repository decides and records things rather than how its parts fit;
+compiler-not-runtime lands in Project Structure, being the reason there is no
+build output and the files in the tree are the files that ship.
 
-That mapping is stated because the table is the only specification of
-completeness this decision offers, and a Proposal that leaves four of ten rows
-unplaced invites a synthesis that satisfies every criterion while closing 60% of
-the gap it was written to close. Nothing checks it. The section plan naming
-where each row goes is what a reviewer reads it against.
+That is said once, in the table, because the Problem Statement's table is the
+only specification of completeness this decision offers and nothing checks it.
+A section plan that leaves four of ten rows unplaced invites a synthesis that
+satisfies every criterion while closing 60% of the gap it was written to close.
 
 ### `plugin-structure.md` is absorbed, not moved
 
@@ -170,9 +182,10 @@ changelog into the file every agent loads.
 ### What this amends in 0001
 
 0001 is in force and this decision stands on its referent split, its layers, its
-citation form and its field test. Three of its rules change and one of its
+citation form and its field test. Two of its rules change and one of its
 acceptance criteria is removed; the rest holds, so this amends rather than
-supersedes. `amends`/`amended-by` come from 0003, which added them for this
+supersedes. A third section below discusses 0001's stinginess principle without
+changing a rule of it, and is counted accordingly. `amends`/`amended-by` come from 0003, which added them for this
 case.
 
 **Where the live architecture document lives.** 0001 places it in
@@ -222,11 +235,17 @@ with this change.
 **The move touches seven sites in 0001**, and a reader who finds seven mentions
 of a path said to move needs to know which are deliberate. One is the rule
 placing covers-bearing live documents, changed here. One is the acceptance
-criterion, removed here. The doc-first rule's scope names the path too and is
-**not** changed by this decision — `0008-doc-first-enforcement.md` is where
-doc-first is touched. The remaining four — the referent table's live-layer cell,
-the definition of what `t/` tests, and the Scope and `xt/` bullets — are archive
-prose, left stale by design under 0001's own "true as of its date".
+criterion, removed here. The remaining five — the doc-first rule's statement of
+its own scope, the referent table's live-layer cell, the definition of what `t/`
+tests, and the Scope and `xt/` bullets — are archive prose, left stale by design
+under 0001's own "true as of its date".
+
+**Doc-first's scope site is in that five deliberately.** An earlier revision
+assigned it to `0008-doc-first-enforcement.md` on the grounds that 0008 is where
+doc-first is touched. 0008 makes doc-first *enforceable*; it does not edit
+0001's text and names no decision in its scope, so a site assigned to it would
+have belonged to nobody. Staleness by design is the honest disposition, and it
+is the same one the other four get.
 
 ## Scope of Change
 
@@ -267,9 +286,30 @@ is the footing for the criterion this decision removes from 0001, and removing a
 criterion under a rule that arrives in the same pull request is the honest
 order.
 
+**`xt/run.sh`.** Its empty-`covers:` loop reads `docs/architecture` and
+`docs/contributing`, guarded by `[ -d ] || continue`, and this decision deletes
+the first. The synthesis would sit in neither, so the loop would skip a deleted
+directory in silence and the runner would stay green over a document with no
+`covers:` at all. The loop is retargeted to the live set.
+
+**This is the one change that must not be left to the implementing issue.** The
+same revision that settles `covers:` must be present and non-empty would
+otherwise move the document out from under the only thing enforcing it — taking
+the rule from a check that fails loudly to no enforcement at all, in a single
+edit, in a decision that cites 0001's ladder.
+
 **`docs/decisions/0006`.** Its by-path citation to the absorbed document is
-retargeted. Nothing detects these: the runner's cite-symbols check rejects a
-`file:line` reference, not a filename that stopped existing.
+repaired — and the repair is not a retarget to `docs/ARCHITECTURE.md`. 0006
+attributes the probe-rather-than-test rule to `plugin-structure.md`, which has
+never contained it: the rule lives in `docs/contributing/coding-conventions.md`,
+which this decision does not move. So the citation is wrong today, and pointing
+it at the synthesis would attribute the rule to a second document that will not
+contain it either.
+
+The criterion below cannot tell those two fixes apart, since both remove the
+old path. It is recorded here because the citation check catches a `file:line`
+reference and not a filename that stopped existing, and nothing at all catches a
+filename that was never right.
 
 **Retargeting a citation into a file that no longer exists is a repair, not a
 revision** — it changes where a reference points, not what the decision holds.
@@ -289,15 +329,17 @@ and wired to the tools that reach it. `crochet:review` judges whether it
 reflects what was decided, and `0008-doc-first-enforcement.md` is what gives
 review the step to do that with.
 
-**Every negated criterion is guarded.** A negation over an absent subject
-succeeds: `! grep` on a missing file reports the same thing it reports on a
-clean one. Each therefore establishes that its subject exists before asserting
-anything about it.
+**A negation over a stream is guarded; a negation over existence is not.**
+`! grep` on a missing file reports what it reports on a clean one, because the
+stream is empty either way — so those criteria establish their subject exists
+first. `! test -e` asserts absence, which is not vacuous when the subject is
+absent; guarding it would add a precondition unrelated to its claim and leave it
+reporting nothing the first criterion does not.
 
 - [ ] the synthesis is at docs/ARCHITECTURE.md (`test -f docs/ARCHITECTURE.md`)
 - [ ] the installed binary lists it as a document (`git zhi docs health --format json | grep -q '"file": "docs/ARCHITECTURE.md"'`)
 - [ ] its covers entries carry no trailing slash (`test -f docs/ARCHITECTURE.md && ! sed -n '/^covers:/,/^---$/p' docs/ARCHITECTURE.md | grep -qE '^ *- .*/$'`)
-- [ ] the absorbed document and its directory are gone (`test -f docs/ARCHITECTURE.md && ! test -e docs/architecture`)
+- [ ] the absorbed document and its directory are gone (`! test -e docs/architecture`)
 - [ ] CLAUDE.md imports it (`grep -q '^@docs/ARCHITECTURE.md' CLAUDE.md`)
 - [ ] CONTRIBUTING.md links to it (`grep -q 'docs/ARCHITECTURE.md' CONTRIBUTING.md`)
 - [ ] CONTRIBUTING.md no longer claims every short link is a directory (`test -f CONTRIBUTING.md && ! grep -q 'Every link here points at a directory' CONTRIBUTING.md`)
@@ -353,7 +395,7 @@ their recorded evidence rather than inherit them as settled.
 ## References
 
 - `0001-documentation-architecture.md`. The layers, the referent split, the
-  enforcement ladder and the field test. This amends three of its rules and
+  enforcement ladder and the field test. This amends two of its rules and
   removes one of its acceptance criteria as a defect.
 - `0002-worker-identity.md`. The source of the Data Stores and Security
   sections.
