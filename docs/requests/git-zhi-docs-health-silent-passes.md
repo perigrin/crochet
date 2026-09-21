@@ -66,15 +66,24 @@ recorded because each looks right and costs a day.
 changed nothing in the report, and `doc_modified` for a freshly committed file
 reads its commit date while the worktree's own checkout timestamp differs.
 
-**What `doc_modified` positively is, we do not claim.** It is commit metadata,
-but it is not simply the last commit touching the file: for
-`docs/architecture/plugin-structure.md` it reads `2026-09-21T14:24:18-04:00`,
-which is merge commit `6a18943`, while the last commit to touch that file is
-`46acc60` at `2026-09-20T23:47:59-04:00`. A merge appears to reset the window.
-We could not reproduce the reported churn counts from `rev-list --count` or its
-`--first-parent` variant over any window tried, so the formula is recorded as
-unexplained rather than guessed at — every claim above was settled in controlled
-repositories instead.
+**`doc_modified` follows `--full-history`.** It is not the last commit touching
+the file, which is what an earlier version of this document claimed. For
+`docs/architecture/plugin-structure.md`:
+
+```
+git log -1              -- <doc>   →  46acc60  2026-09-20T23:47:59-04:00
+git log -1 --full-history -- <doc> →  6a18943  2026-09-21T14:24:18-04:00   ← reported
+```
+
+`6a18943` is a merge commit, so a merge resets the window. Reproduced in a
+scratch repository with a month between commits, which no timezone conversion
+can bridge: doc commit Feb 1, code commit Feb 2, reported `churn 1, LOW`; then a
+`--no-ff` merge dated Mar 1 with no content change, reported
+`Doc modified: 2026-03-01, churn 0, NONE`.
+
+The churn count itself we still do not claim to explain — it matches neither
+`rev-list --count` nor its `--first-parent` variant over any window tried, and
+is recorded as unexplained rather than guessed at.
 
 **Not clone freshness.** Because `doc_modified` is commit metadata, it is
 identical in every clone, and a fresh clone computes the same drift as a tree
@@ -139,9 +148,11 @@ every document at once — and reports the silence as health.
 
 **The zero date is not itself the fault, and an earlier version of this document
 said it was.** An uncommitted document in a repository with history opens an
-unbounded window, so all of it counts and the report is `drift: HIGH` — the
-correct direction. Two untracked documents in one repository, same zero date,
-demonstrate that the shape of the `covers:` entry is what decides:
+unbounded window, so all of it counts and the report is non-zero in the correct
+direction. How much depends on the length of the history rather than on the
+defect — `HIGH` in the run below, `LOW` in a two-commit repository. Two
+untracked documents in one repository, same zero date, demonstrate that the
+shape of the `covers:` entry is what decides:
 
 ```
 docs/uncommitted-DIR.md    covers: src/          churn 0   NONE

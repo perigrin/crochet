@@ -20,7 +20,16 @@ pipeline.
 `grep -n -i 'live doc\|architecture\|synthesis\|doc-first' skills/review/review.md`
 returns nothing. Review's coverage lens finds a decision from `Implements:`
 trailers and checks the milestone's acceptance criteria; its quality lenses are
-code reviewers. Neither reads a markdown document against an archive.
+code reviewers. The coverage lens does read an archive document — the decision —
+but **nothing in the gate reads a live document against the diff.**
+
+**And the live layer does not agree with itself about the rule.** 0001 states
+doc-first as "in one PR", `development-workflow.md` as "in the same pull
+request", and `CLAUDE.md` as "in the same commit". The distinction is not
+cosmetic: the argument below turns on the gap between a pull request and a
+commit, and under `CLAUDE.md`'s stricter version `docs health` reports zero
+always. A rule stated three times in three strengths, with nothing reconciling
+them, is the condition this decision exists to end.
 
 So doc-first sits at rung 3 of `0001`'s own ladder — a rule stated in prose,
 kept by whoever remembers it. `0001` says most of the failures in its table
@@ -31,13 +40,15 @@ of its own rules in that position.
 health` reports drift when commits touch a document's `covers:` paths since the
 document last changed. Two things make it unusable as a gate, both measured on
 0.7.2 and recorded in `docs/requests/git-zhi-docs-health-silent-passes.md`: a
-`covers:` entry written with a trailing slash matches no churn, and a repository
+`covers:` entry written with a trailing slash matches no churn; a repository
 whose history is truncated — a shallow clone, which `actions/checkout` produces
-by default — reports every document current rather than unknown.
+by default — reports every document current rather than unknown; and a code
+commit sharing a second with the document's is not counted.
 
 An uncommitted document is *not* one of those cases, and an earlier version of
 this decision said it was. Its unresolvable date opens an unbounded window, so
-it reports `HIGH` unless the first defect silences it.
+it reports drift in the correct direction unless the first defect silences it.
+How much depends on how long the history is, not on the defect.
 
 Those are defects and the first has a one-character workaround. **The structural
 reason survives both being fixed**, and it is narrower than it first looks.
@@ -47,15 +58,20 @@ is not the same as the same commit. `development-workflow.md` states the rule as
 "update the document first, then build to match, in the same pull request" — and
 measured on a linear history doing exactly that, the document reports `churn 1,
 drift LOW`. Compliant work does accumulate drift when the document commit
-precedes the code commit. It reports zero when both land in one commit, and
-zero again when a merge resets the window, which is why every measurement taken
-in this repository was unreadable: `doc_modified` for `plugin-structure.md` is
-the date of merge `6a18943`, not of `46acc60`, the last commit to touch it.
+precedes the code commit.
 
-So the signal is silent for some compliant orderings and noisy for others, and
-which one you get depends on a merge strategy no document here names. **That is
-enough to disqualify it as a scheduler** without needing the stronger claim that
-compliant work never drifts, which is false.
+It reports zero in four other cases, every one of them compliant: when document
+and code land in one commit, which is what `CLAUDE.md` requires; when a merge
+resets the window; when the two commits share a second; and throughout a shallow
+clone. The merge case is why every measurement taken in this repository was
+unreadable — `doc_modified` for `plugin-structure.md` is the date of merge
+`6a18943`, not of `46acc60`, the last commit to touch it, because the lookup
+follows `--full-history`.
+
+So the same compliant work reports drift or does not, depending on which of the
+three statements of doc-first its author followed and how the branch was merged.
+**That is enough to disqualify it as a scheduler** without needing the stronger
+claim that compliant work never drifts, which is false.
 
 ## Proposal
 
@@ -67,20 +83,24 @@ operation nobody can skip.
 
 **This does not climb the ladder, and saying it does would be dishonest.** A
 step in a skill file is instructions an agent follows, which is rung 3 — the
-same rung as the prose statements of doc-first it replaces. 0001 asks for a
-machine check at an unskippable operation, and this supplies the operation while
-substituting a judgment for the check.
+same rung as the prose statements of doc-first it replaces.
 
-What changes is not the rung but the reliability at it. A rule in a document
-some agent may read is rung 3 conditioned on someone reading it; a step in the
-coverage lens of a gate 0003 makes mandatory is rung 3 that runs every time the
-gate runs. That is a real improvement and it is the whole of the claim.
+**A check is unavailable here, and 0001 says so itself.** Introducing the
+enforcement ladder it concedes: "Honest asymmetry: a test is machine-checkable
+and an architecture statement is not. This buys the discipline, not the proof."
+So 0001 does not ask for rung 2 on this rule; it states that rung 2 is not
+available for it. What follows is not a decision to settle for less than 0001
+wanted, and it should not be argued as one.
 
-**A check is unavailable here, not merely unchosen.** Whether a document still
-describes the code is a judgment, and `0004` argues at length that the
-completeness of a synthesis cannot be counted. A mechanism that must read cannot
-be moved to rung 2 by wanting it there. The backstop below is what rung 2 can
-carry, and it is deliberately coarse.
+**What changes is who holds the obligation and when.** Doc-first today is
+addressed to the author, in documents the author reads before writing. It is not
+that nobody reads them — `CLAUDE.md` is loaded into every session, which is the
+same fact this decision uses two sections below to define the live set, and the
+argument cannot have it both ways. It is that nothing at review time acts on the
+rule. The lens moves it from a thing an author is asked to remember to a thing a
+mandatory gate performs, and that is the whole of the improvement.
+
+The backstop below is what rung 2 can carry, and it is deliberately coarse.
 
 **A finding requires one of two things**: the diff falsifies a claim the
 document makes, or the diff completes work the document describes as pending. An
@@ -105,9 +125,22 @@ what carries the field, and the field is the thing a lens would key on. The
 discriminator in force is location — `xt/run.sh` reads `docs/architecture` and
 `docs/contributing` — which `0004` removes half of.
 
-So: a document is live when `CLAUDE.md` imports it. One grep, already the
-operative definition in `0001`'s terms, and the set cannot grow by accident
-because adding to it means editing the file every agent loads.
+So: a document is live when `CLAUDE.md` imports it, **and `CLAUDE.md` is itself
+in the set.** One grep plus one name, already the operative definition in
+`0001`'s terms, and the set cannot grow by accident because adding to it means
+editing the file every agent loads.
+
+Naming `CLAUDE.md` explicitly matters because it is otherwise excluded on every
+axis: it imports nothing of itself, carries no `covers:`, and sits outside
+`docs/` where `docs health` cannot see it. It is also the live document with
+drift on the record — 0003's Scope of Change documents it asserting a rule the
+decision it cited had already replaced, loading every session on the authority
+of the decision that removed it. A lens for doc-first that could not read
+`CLAUDE.md` would miss the one failure of doc-first this repository has actually
+recorded.
+
+Its `covers:` is the whole repository, since it makes claims about the pipeline,
+the skills and the conventions alike.
 
 ### A mechanical backstop, stated as weak
 
@@ -133,8 +166,25 @@ number linked to a file, so any implementation's real predicate is *the number
 appears somewhere in the document* — satisfied by a link, a code fence, a
 references entry, or a sentence saying the decision is deliberately not
 synthesised. It cannot tell a claim from an explanation of a claim's absence.
-This is written down as weak so that a pass is never read as evidence that a
-live document is complete.
+
+**Three ways that is worse than it sounds**, and the check's pattern must
+account for the first two.
+
+A bare search for a decision's number matches this repository's milestone names:
+`rfc-0001`, `rfc-0003`, `rfc-0004` all contain one, and
+`coding-conventions.md` contains the string `rfc-0003` today in a sentence about
+an unrelated defect. The check matches a decision *citation*, not a number.
+
+It also cannot tell a claim from a criticism. **On the day this lands the
+backstop is green for 0002, and for the wrong reason**: 0002's only two
+appearances in the live layer are `coding-conventions.md` citing it as a
+decision that carried criteria it should not have. Worker identity and
+`ZHI_ACTOR`, which are what 0002 decided, appear nowhere live — 0004's gap table
+says as much. So the first run of this check passes on two hostile citations,
+and nobody should read that as compliance.
+
+This is written down so that a pass is never read as evidence that a live
+document is complete.
 
 ## Scope of Change
 
@@ -157,16 +207,21 @@ validation order and does not cover live documents; the order gains review.
 - [ ] the backstop reports rather than skips when it cannot see its subject (`grep -q 'cannot see' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the checks are in the runner and the repository passes them (`grep -q 'cited nowhere' xt/run.sh && grep -q 'cannot see' xt/run.sh && sh xt/run.sh`)
 
-Four of these name prose and will redden when it is reworded. That is the decay
+These name four distinct prose strings across five criteria, and each will
+redden when its wording changes. That is the decay
 `docs/contributing/coding-conventions.md`'s first constraint describes, in its
 mildest form, and the alternative is a criterion that cannot tell a step from
 its absence.
 
-**The last one is a conjunction because `sh xt/run.sh` alone is green today.**
+**Three of them are conjunctions because `sh xt/run.sh` alone is green today.**
 A criterion that passes before its work starts cannot report that the work was
 done, and this decision's own backstop section is about checks that report what
-they would report if clean. Each half does work: the greps fail until the checks
+they would report if clean. Both halves do work: the greps fail until the checks
 exist, and the run fails if they exist and the repository does not satisfy them.
+The fixture half cannot be satisfied by editing `xt/fixture/expected` alone —
+the self-test requires every declared entry to appear in the fixture's output
+and the file to declare its own length, so a fixture-only edit reports that the
+check has gone quiet.
 
 ## Open Questions
 
