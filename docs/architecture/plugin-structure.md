@@ -1,8 +1,8 @@
 ---
 stability: 2
 covers:
-  - skills/
-  - commands/
+  - skills
+  - commands
   - .claude-plugin/plugin.json
 ---
 

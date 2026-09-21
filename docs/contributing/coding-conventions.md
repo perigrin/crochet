@@ -1,8 +1,8 @@
 ---
 stability: 2
 covers:
-  - skills/
-  - commands/
+  - skills
+  - commands
 ---
 
 <!-- ABOUTME: Conventions for writing crochet's skill and command files. -->

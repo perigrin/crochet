@@ -1,10 +1,10 @@
 ---
 stability: 2
 covers:
-  - skills/
+  - skills
   - .claude-plugin/plugin.json
-  - xt/
-  - t/
+  - xt
+  - t
 ---
 
 <!-- ABOUTME: How work gets done on crochet — validating changes, branching, adding a skill. -->
