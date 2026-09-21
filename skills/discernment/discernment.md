@@ -93,6 +93,25 @@ round ran short. A round with a missing participant is a weaker round and the
 minute says which one was missing — that is a finding about the session, not a
 reason to abandon it.
 
+**Reap it in the same breath.** A dispatch that has failed and not been stopped
+is indistinguishable, in the caller's task list, from one still working. One sat
+for thirty-nine minutes before the human found it.
+
+**A finding outlives its raiser.** Only the raiser may release, which assumes
+raisers persist — and they do not. Two of six participants in one session died
+of infrastructure and four were stopped, leaving every finding they had raised
+held by nobody and the fixed point unreachable by construction.
+
+So a finding whose raiser is gone is neither held nor released. The minute marks
+it `raiser absent`, and a present participant may **re-derive it from its
+recorded consequence and evidence** — raising it anew if the consequence still
+follows, or recording `not reproduced at <revision>` if it does not. Nobody
+inherits it as settled and nobody discharges it by assertion. "One held
+objection means not yet" means held by someone in the room.
+
+**Stopping a participant that holds an open finding is a destructive act.**
+Confirm with the human first, and record it.
+
 **Where a lens can only be administered by the caller, that is a legal
 outcome and not a failure**, provided it is labelled. Load its taxonomy, apply
 it in a pass of its own, and record that it ran inline rather than dispatched.
@@ -137,6 +156,18 @@ to doubt themselves. A participant names the revision it read.
 **Tell them a round airs views rather than deciding.** The first round is a
 threshing session: views put openly, including views that do not reconcile, with
 no pressure to converge.
+
+**Say how to report, because the channel truncates.** A participant sends its
+report to the caller with `SendMessage`, in one message under ten thousand
+characters, or writes it to a file and sends the path. A report left as the
+participant's final text is cut at roughly four thousand nine hundred
+characters. In one session seventeen of twenty-seven reports arrived truncated,
+the caller sent thirteen messages asking for tails against ten substantive
+round messages — **recovery traffic exceeded review traffic** — and the two
+participants that died did so while emitting a long report as final text. The
+one participant that used `SendMessage` was never truncated.
+
+A report that arrives truncated is a failed delivery, not a short report.
 
 ## The loop
 
@@ -206,11 +237,38 @@ no pressure to converge.
      caught it only by luck." Releasing a finding retires the objection, not the
      fixture. Re-run what proved the fix, every round.
 4. Repeat from 1 with the participants resumed, until a round raises nothing new
-   and nothing is outstanding.
+   and nothing is outstanding. **From round two, every round includes at least
+   one participant reading the current subject without the prior findings.** A
+   fixed point reached by verifiers alone is not a fixed point: resumed
+   participants verify against the bars they set, and a defect introduced after
+   their last pass and untouched by the diff is invisible to all of them at
+   once. Resumed participants also declare what they did not re-examine.
 
 **The subject holds still for the duration of a round.** Changing it under a
 participant invalidates the answer being asked for, and turns findings stale
 rather than wrong.
+
+**The author holds still between rounds too**, and this is the harder half. An
+edit between rounds answers a recorded finding and names which one; an edit that
+answers nothing waits for the next round to ask for it. Before re-dispatching,
+the drafter compares the subject's diff against the findings it claims to answer
+and refuses a round whose diff grew the subject.
+
+Without that, the loop stops reviewing the subject and starts reviewing the
+repairs. One assessment answered twenty-four first-round findings with a diff of
++249/−62 on a two-hundred-line document, and every later round's findings landed
+in lines that had not existed the round before.
+
+**When a finding is about a tool's behaviour, the answer is a measurement in a
+scratch repository that varies one input**, recorded as the command and its
+output — not a rewording of the claim. One claim about `git zhi docs health`
+was wrong in four successive revisions across seven rounds. It had been measured
+eleven times, always in the live repository where several inputs varied at once,
+and each correction edited the prose. A participant settled it in seven minutes
+with eight scratch repositories varying one field.
+
+Grepping the document for the old wording is not this check. It was tried, and
+the claim it was guarding was still wrong.
 
 **The loop is bounded, and the bound is not three.** The two sessions on record
 that produced this skill took five rounds and four: the assessment of 0003, and
@@ -230,7 +288,26 @@ which is far more expensive than a reopen and far cheaper than being wrong.
 
 *Drafter-facing.*
 
-The drafter records, for the round:
+**The minute is a ledger first and a narrative second.** One row per finding:
+
+| id | raiser | round | section of the subject | consequence if it ships | evidence | status | revision |
+
+Prose may follow, and a round's brief to a resumed participant is the diff plus
+the ledger.
+
+The table is what makes the rest work. A finding recorded as a row survives its
+raiser, so `raiser absent` is a status rather than a dead end. Rebuttals have
+somewhere to live that is not the subject, so the subject stops absorbing its own
+review. And two facts become things you read rather than things the drafter
+asserts about itself afterwards: where findings came from, and whether they
+cluster in one section — which is the signal that part of the subject is
+carrying the whole argument.
+
+A minute written as narrative hides all three. One ran to six hundred lines of
+prose, was written in arrears, and its findings-by-origin table was composed by
+the drafter at the end from memory.
+
+The drafter also records, for the round:
 
 - each participant, what it raised, and what it says remains;
 - **block or standing-aside as the participant declared it**, never inferred,
