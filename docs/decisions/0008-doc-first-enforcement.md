@@ -267,14 +267,38 @@ one clause in each brings them back.
 - [ ] the backstop reports a decision reflected nowhere (`grep -q 'cited nowhere' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the backstop reports rather than skips when it cannot see its subject (`grep -q 'cannot see' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the checks are in the runner and the repository passes them (`grep -q 'cited nowhere' xt/run.sh && grep -q 'cannot see' xt/run.sh && sh xt/run.sh`)
-- [ ] doc-first is stated once, in 0001's words (`grep -q 'in one PR' CLAUDE.md && grep -q 'in one PR' docs/contributing/development-workflow.md`)
+- [ ] doc-first is stated once, at 0001's strength (`grep -q 'in one pull request' CLAUDE.md && ! tr -s '[:space:]' ' ' < CLAUDE.md | grep -q 'in the same commit' && grep -q 'in one pull request' docs/contributing/development-workflow.md && ! tr -s '[:space:]' ' ' < docs/contributing/development-workflow.md | grep -q 'in the same pull request'`)
 
-**The doc-first criterion asserts the new wording rather than the absence of the
-old.** A negated grep for the wording being removed passed before any work,
-because `CLAUDE.md` wraps the phrase across a line break and the search found
-nothing — the same shape as a negation over an absent subject, arrived at by
-line-wrapping instead. Asking for the replacement text is not vulnerable to how
-the file happens to be filled.
+**The doc-first criterion asserts the new wording and the absence of the old**,
+per file, because either half alone is satisfiable while the entry it checks is
+unmet. Asking only for the replacement passes over a file that gained the new
+sentence and kept the old, which leaves doc-first stated twice — the condition
+the Scope of Change entry exists to end, with the surviving statement being the
+stricter one loaded into every session.
+
+Asking only for the absence was tried first and passed before any work, because
+`CLAUDE.md` wraps that phrase across a line break and the search found nothing.
+That is a negation over a subject the search could not see, which is this
+repository's recurring defect arrived at by line-wrapping. It is fixable rather
+than fatal: squeezing whitespace first finds the phrase across the wrap and both
+negations are red today. **Unwrapping alone is not enough** — the continuation
+lines are indented, so `tr '\n' ' '` leaves a double space and the search still
+misses. That near-miss is the same trap one step over, and it is why the
+criterion squeezes rather than unwraps.
+
+**It asks for "in one pull request", not 0001's "in one PR".** The abbreviation
+appears nowhere in the live layer, while "pull request" appears six times, so a
+criterion demanding `PR` would force both documents to adopt a form neither uses
+in order to satisfy a grep — the trade this decision declined one criterion
+earlier, arriving from the other direction. What the entry reconciles is the
+*strength* of the three statements, not their wording, and 0001 is archive and
+keeps its own.
+
+The remaining exposure is markup rather than wrapping. This repository bolds its
+rules and the doc-first bullet is already bold, so `in **one** pull request`
+would not match while `**in one pull request**` would. A markup character inside
+an asserted phrase is the same hazard as a backtick inside one, and it is likelier
+here than a wrap because the surrounding text already carries emphasis.
 
 These name five distinct prose strings across six criteria, and each will
 redden when its wording changes. That is the decay
