@@ -25,13 +25,8 @@ if [ ! -d "$ROOT" ]; then
     exit 1
 fi
 
-# The count lives in a file rather than a variable. A variable cannot survive a
-# subshell, and the right-hand side of a pipeline is one — so a `note` inside
-# `... | while read` printed FAIL: and incremented nothing, and the runner
-# reported ok: and exited 0. `t/git-zhi-subcommands.sh` already carried the
-# warning ("Redirect from a file, not a pipe, so the counters survive the loop")
-# and this file violated it anyway. A file-backed count removes the hazard
-# instead of asking the next author to remember.
+# Counter in a file: a variable cannot survive the subshell a pipeline's right
+# side runs in.
 FAILS="${TMPDIR:-/tmp}/zhi-xt-fail-$$"
 : > "$FAILS"
 trap 'rm -f "$FAILS"' EXIT
@@ -199,14 +194,10 @@ if [ -d "$DEC" ]; then
 fi
 
 # --------------------------------------------- implementing an accepted one
-# A gate that was skipped and a gate that passed leave the same trace: none.
-# This is the one place a skip is recoverable afterwards, because the claim to
-# have implemented a decision is written into the commit, and the decision says
-# whether it had been accepted yet. Per 0003, acceptance is what refinement
-# writes; implementing before that is the pipeline running out of order.
-# Reads $ROOT rather than the current directory, so the fixture can prove this
-# check still fires. It was gated behind SELFTEST, which put it beyond the
-# fixture's reach: deleting it outright left the runner green.
+# A skipped gate and a passed one leave the same trace: none. The commit's claim
+# to implement a decision is the exception, so commits implementing a decision
+# that is still proposed are the pipeline running out of order — 0003 sets the
+# rule. Reads $ROOT so the fixture can witness it.
 if [ -d "$DEC" ]; then
     for n in $( (cd "$ROOT" && git log --format='%(trailers:key=Implements,valueonly)' 2>/dev/null) | tr -d ' ' | grep . | sort -u); do
         target=$(ls "$DEC/$n"-*.md 2>/dev/null | head -1)
@@ -234,15 +225,10 @@ if [ "$SELFTEST" = yes ] && [ -f "$ROOT/README.md" ] && [ -d "$ROOT/commands" ];
         grep -q "crochet:$name" "$ROOT/README.md" ||
             note "commands/$name.md has no row in README.md"
     done
-    # And the other direction. The guard must be about the name under test: an
-    # earlier version asked whether the README contained "internal" anywhere,
-    # which is true of the whole file on every iteration, so this loop never
-    # reported anything and the "both directions" claim stayed false.
-    #
-    # A skill named on the internal-skills line has no stub by design. Read that
-    # one line and exempt only the names on it.
-    # tr, because the case below matches space-delimited words and sort emits
-    # newlines: without it only the first and last name were ever exempt.
+    # The other direction. A skill on the internal-skills line has no stub by
+    # design, so exempt only the names on that line — the guard must be about
+    # the name under test. tr because the case below matches space-delimited
+    # words and sort emits newlines.
     internal=$(grep -i 'internal' "$ROOT/README.md" | grep -oE 'crochet:[a-z-]+' |
                sed 's/^crochet://' | sort -u | tr '\n' ' ')
     for name in $(grep -oE 'crochet:[a-z-]+' "$ROOT/README.md" | sed 's/^crochet://' | sort -u); do
@@ -253,18 +239,8 @@ if [ "$SELFTEST" = yes ] && [ -f "$ROOT/README.md" ] && [ -d "$ROOT/commands" ];
 fi
 
 # ------------------------------------------- declared floor vs installed binary
-# The repository declares git_zhi_min_version and crochet:preflight compares the
-# installed binary against it at runtime. Nothing here read either value, so the
-# two criteria asserting they agree were satisfied by checks that never looked —
-# a floor raised past the installed binary was invisible to everything in xt/.
-#
-# git-zhi is required, not optional: the product check and `docs check` above
-# both fail without it, so the earlier claim that this runner tolerates a
-# machine without the binary was never true.
-#
-# Reads $ROOT, not the current directory. Gated behind SELFTEST this check sat
-# outside the fixture's reach, so deleting it left the runner reporting a full
-# run and exit 0 — the same hole it was written to close, one level up.
+# Compares the declared floor against the installed binary. Reads $ROOT rather
+# than the current directory, so the fixture can witness it.
 if [ -f "$ROOT/.claude-plugin/plugin.json" ] || [ "$SELFTEST" = yes ]; then
     if [ ! -f "$ROOT/.claude-plugin/plugin.json" ]; then
         note ".claude-plugin/plugin.json is missing — nothing declares a git-zhi floor"
@@ -272,11 +248,8 @@ if [ -f "$ROOT/.claude-plugin/plugin.json" ] || [ "$SELFTEST" = yes ]; then
         floor=$(sed -n 's/.*"git_zhi_min_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
                 "$ROOT/.claude-plugin/plugin.json" | head -1)
         installed=$(git zhi version 2>/dev/null | head -1 | awk '{print $2}')
-        # Both operands must be versions, not just non-empty. An earlier
-        # version guarded the floor against a non-version and never applied the
-        # same reasoning to the installed side, so `v0.7.1`, `garbage` and
-        # `git-zhi` all sorted above a 0.7.2 floor and passed in silence — the
-        # check discriminated only because both values happened to be identical.
+        # Both operands must be versions, not just non-empty: `v0.7.1` and
+        # `garbage` sort above a 0.7.2 floor.
         is_version() { case "$1" in ''|*[!0-9.]*) return 1 ;; *) return 0 ;; esac; }
 
         if [ -z "$floor" ]; then

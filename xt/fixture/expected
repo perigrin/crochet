@@ -1,95 +1,49 @@
 # count: 9
 #
 # One line per finding site the fixture proves. The self-test requires every
-# substring below to appear in the fixture's output, so a check that stops
-# examining anything goes missing here and is named rather than passing
-# silently. Blank lines and lines starting with # are ignored.
-#
-# `# count:` above is the number of entries and is checked. An empty file was
-# already caught; a file one line shorter was not, and deleting a single line
-# is the cheapest way to disarm one check without anything noticing. Adding an
-# entry means bumping the count, which is a deliberate edit rather than a
-# silent one.
-#
-# This exists because an exit code proved only that *some* check fired: four
-# checks were deleted outright and the runner's output was identical.
-#
-# Each line is matched with grep -F, so it is a literal substring and not a
-# pattern. Keep them short and distinctive — long enough to name one check,
-# short enough to survive a reworded message.
+# substring to appear in the fixture's output, so a check that stops examining
+# is named rather than passing silently. `# count:` is checked, so removing an
+# entry is a finding. Matched with grep -F: literal substrings, not patterns.
 
 # covers: a live document declaring covers and naming nothing
 covers is empty, so nothing watches it
 
-# decision link symmetry, supersedes direction: a supersedes with nothing back
+# link symmetry, supersedes direction
 has no superseded-by link back
 
-# decision link symmetry, amends direction. link_check is invoked twice and
-# only the supersedes call had a witness, so the amends call could have been
-# deleted or its arguments typoed with nothing noticing.
+# link symmetry, amends direction — the second invocation, own witness
 amends 0004, but 0004 has no amended-by link back
 
-# a forward reference to a decision that was never written. A different site
-# from the missing-back-link note above: one says the target is absent, the
-# other says a present target does not point back.
+# a forward reference to a decision that was never written
 supersedes 0099, which does not exist
 
-# accepted on a proposed footing: an amendment in force against an unagreed rule
+# accepted on a proposed footing
 which it amends — is 'proposed'
 
-# decisions cite symbols: a file:line citation that decays silently
+# decisions cite symbols
 cites a line number, not a symbol
 
 # git zhi docs check: a link to a file that is not there
 git zhi docs check
 
-# implementing an accepted one: a commit trailer naming a proposed decision.
-# The self-test writes that trailer when it git inits its copy.
+# implementing an accepted one: the self-test's commit trailer names 0004
 the refinement gate was skipped
 
-# declared floor vs installed binary: a manifest demanding a version that will
-# never exist. This check was added to close the "nothing examined" class and
-# was itself unreachable from the fixture until it learned to read $ROOT.
+# declared floor vs installed binary: a manifest demanding 99.0.0
 below the declared floor
 
-# ---------------------------------------------------------------------------
-# NOT COVERED — the honest ledger.
+# --------------------------------------------------------------------------
+# 9 of 26 sites covered — 24 `note` calls and 2 hard exits, counted rather than
+# estimated. Recount when a site is added. Uncovered:
 #
-# An earlier version of this file claimed the product check was the only
-# uncovered one. That was false by a factor of six, and a false coverage claim
-# in the file whose job is coverage is this runner's own defect class one level
-# up. Each site below was confirmed uncovered by deleting it and observing the
-# runner still report a full run and exit 0.
+#   product check, failing and missing    reads this repo's skills/, not $ROOT's
+#   no docs/ under $ROOT                  hard exit, before the counter exists
+#   git-zhi absent                        hard exit
+#   README to commands, both directions   fixture has no README.md or commands/
+#   cycle detection                       no fixture pair cycles
+#   Implements not in series              no fixture commit names a non-decision
+#   five floor sub-notes                  only the below-floor arm is exercised
+#   the self-test itself                  nothing guards the guard
 #
-# 9 of 26 finding sites are covered — 24 `note` calls and 2 hard exits, counted
-# mechanically rather than estimated. An earlier count of 22 omitted the two
-# README sites this file itself gained, which is the ledger reproducing the
-# defect it exists to record. Recount when a site is added.
-#
-# The uncovered ones:
-#
-#   product check failing       reads this repository's own skills/ rather than
-#                               $ROOT's, so aiming it at the fixture would not
-#                               test the fixture
-#   product check missing       the file absent rather than failing
-#   no docs/ under $ROOT        a hard exit before the counter exists; the
-#                               fixture has docs/, so it has no witness
-#   git-zhi absent              also a hard exit, and the fixture cannot make
-#                               the binary disappear for one run
-#   README to commands          a stub with no row, and a row with no stub —
-#                               both fire, both proven by hand, neither has a
-#                               fixture witness because the fixture has no
-#                               README.md or commands/ of its own
-#   cycle detection             no fixture pair supersedes or amends each other
-#   Implements not in series    no fixture commit names a decision that is not
-#                               a file
-#   five floor sub-notes        missing plugin.json, absent
-#                               git_zhi_min_version, a floor that is not a
-#                               version, an unreadable installed version, and an
-#                               installed value that is not a version — the
-#                               fixture exercises only the below-floor arm
-#   the self-test itself        delete the whole block and the runner still
-#                               claims a full run. Nothing guards the guard.
-#
-# The last one is the deepest and is not fixed here: a mechanism that proves
-# other checks can fail cannot prove itself the same way without recursing.
+# The reasoning behind this ledger, and the false claim that preceded it, are in
+# docs/postmortems/rfc-0003.md.
