@@ -4,10 +4,10 @@ covers:
   - skills/preflight/preflight.md
 ---
 
-# Two ways `docs health` reports health it has not established
+# Three ways `docs health` reports health it has not established
 
-Both were found while assessing a decision that proposed to rely on this
-command. They are independent, they compound, and both fail toward reporting
+All three were found while assessing a decision that proposed to rely on this
+command. They are independent, they compound, and each fails toward reporting
 clean.
 
 # 1. A `covers:` entry with a trailing slash matches no churn
@@ -157,3 +157,30 @@ That distinction is the one crochet's own
 `docs/contributing/development-workflow.md` already warns about in this command:
 its summary "reports three zeros both when nothing has drifted and when it is
 observing no documents at all." This is the same shape a third time.
+
+# 3. A code commit sharing a second with the document's is not counted
+
+Two repositories of identical shape — a document commit, then a commit touching
+its covered path — differing only in the spacing of their commit dates:
+
+```
+commits all within the same second    →  code_churn 0,  drift NONE
+same shape, commits one hour apart    →  code_churn 1,  drift LOW
+```
+
+The window comparison appears to be strict, so churn landing in the same second
+as `doc_modified` falls outside it. That is not an exotic input: scripted
+commits, a fast CI job, and `git commit --amend` followed by another commit all
+land inside one second routinely, and the result fails toward reporting clean
+like the other two.
+
+**Where the boundary sits is untested** — same second, sub-second, or an
+inclusive-versus-exclusive comparison on the exact timestamp — and is not
+guessed at here, for the same reason the churn formula above is left
+unexplained. What is measured is that two repositories doing the same thing
+report differently, and the one whose commits are closer together is the one
+that reports health.
+
+This was found by accident, in a probe built to test something else, when a
+first run contradicted the claim it was checking and the discrepancy was
+chased rather than accepted.
