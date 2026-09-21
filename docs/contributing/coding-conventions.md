@@ -62,12 +62,23 @@ repository on the day it was written.
   exist on `$PATH` and no longer dispatch, so `git zhi <sub> --help` answers the
   real question where `test -x` does not.
 
-## A decision states what must be true; a milestone says how to check it
+## What a decision's acceptance criteria may say
 
-A decision does not carry runnable acceptance criteria. It says what must hold,
-and the milestone refinement creates from it carries the commands that check
-that — which is the division `docs/decisions/0003-acceptance-by-refinement.md`
-settles, and the reason `git zhi verify` reads a milestone body at all.
+A decision carries runnable acceptance criteria, in the form
+`0001-documentation-architecture.md` requires: one runnable command per checkbox
+line, in a paren-wrapped backtick span, so that `git-zhi-verify` can run it.
+Refinement carries them onto the milestone it creates, which is why `git zhi
+verify` reads a milestone body at all.
+
+**Two constraints on what such a criterion may be**, both learned by shipping a
+criterion that broke them.
+
+This section previously opened by saying a decision carries no runnable criteria
+at all. That is broader than either constraint below, and it contradicted 0001,
+which is accepted and requires them — a rule in the live layer that the archive
+denies, which is the failure 0001 exists to prevent. Nothing followed the broad
+version either: 0001 carries eight criteria, 0003 carries thirty-three and 0004
+carries eight, and only `0002-worker-identity.md` was ever stripped.
 
 **A decision naming a specific test is a decision that decays when the test is
 renamed.** `0002-worker-identity.md` predated this rule and carried five
@@ -76,7 +87,9 @@ criterion became permanently unrunnable and nothing detected it: the citation
 check here rejects a file-and-line reference, not a filename that stopped
 existing. The section has since been removed from that decision — not as an
 amendment, because a criterion that should never have been in a decision is a
-defect in it rather than a position it took.
+defect in it rather than a position it took. It is this constraint and the one
+below that made the removal right, not the broader rule that briefly stood here:
+all five of those criteria broke one or both.
 
 **And no criterion should be satisfiable only by another repository shipping
 something.** That probe's subject was git-zhi's behaviour rather than this
