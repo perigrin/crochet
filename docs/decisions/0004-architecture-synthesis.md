@@ -102,19 +102,36 @@ the codebase as the subject, assess reports where it asserts something the code
 does not do. When it reports an issue, run it again over each decision the
 document cites: only the decisions say which of the two is wrong.
 
-Its hole is the trigger, and the obvious candidate does not work. `git zhi docs
-health` computes drift from the document's mtime against commits since, so a
-checkout that has just happened reports every document current — which is
-exactly the state CI and every dispatched agent work in. Observed on 0.7.2: in a
-freshly created worktree all documents report `all current` with identical
-mtimes, and the same tree reports real drift once commits land after checkout.
-So the signal is not absent, it is absent precisely where automation reads it.
+Its hole is the trigger. `git zhi docs health` compares commits touching a
+document's `covers:` paths against the commit that last touched the document —
+both git-derived, so the answer is the same in any clone, and the reporting
+machinery works. What does not work is the matching: **a `covers:` entry naming
+a directory never matches churn.** Observed on 0.7.2 against this repository,
+where `skills/` had been touched by three commits since the documents covering
+it were last changed:
+
+| `covers:` entry | churn reported |
+|---|---|
+| `skills/review/review.md` | 1 |
+| `skills/`, `commands/`, the manifest | 0 |
+
+Same tree, same history, opposite answers, and the discriminator is the shape of
+the path. Every live document in this repository declares directory paths, so
+`docs health` has never reported drift on any of them — and it fails in the
+direction of reporting clean, which is the direction that is never noticed.
 `docs/contributing/development-workflow.md` already records other ways that
 summary reports all-clear over nothing.
 
-The trigger is therefore the implementing pull request, the same event doc-first
-attaches to, plus `crochet:review`, which 0003 makes mandatory. Both are events
-nobody can skip, which is what 0001's ladder asks of an enforcement point.
+That settles the trigger for this decision rather than in general.
+`docs/ARCHITECTURE.md` is specified below with `covers: skills/`, `commands/`
+and the manifest, so `docs health` would say nothing about the synthesis for as
+long as the defect stands. The trigger is therefore the implementing pull
+request, the same event doc-first attaches to, plus `crochet:review`, which 0003
+makes mandatory. Both are events nobody can skip, which is what 0001's ladder
+asks of an enforcement point.
+
+The defect belongs to git-zhi and is recorded in `docs/requests/`. Nothing here
+waits on it.
 
 **The citation check**, as backstop. Its subject is every accepted decision with
 at least one commit carrying its `Implements:` trailer — the population
@@ -157,7 +174,8 @@ Neither reads a markdown document against an archive.
 in the live layer that no gate enforces: `xt/run.sh` checks that a `covers:`
 list is non-empty and that decisions link symmetrically, and `git zhi docs
 health` was the nearest thing to an enforcement point until its drift column
-turned out to read NONE in every clone. So the synthesis is not a special case
+turned out to be silent for every document declaring a directory, which is all
+of them. So the synthesis is not a special case
 needing a bespoke check — it is the first live document whose correctness
 someone noticed nothing was checking.
 
@@ -378,6 +396,7 @@ each check, are implementation: they belong to the issue, not here. What must be
 true is that each new check has a case that fails on purpose and that
 `xt/fixture/expected` accounts for it, because that ledger is the only thing
 that detects a check going quiet.
+
 ## Acceptance Criteria
 
 **These check the mechanism, not the synthesis.** Every one is satisfied by a
@@ -393,7 +412,7 @@ against. `crochet:review` judges the synthesis, once it gains the step above.
 - [ ] CONTRIBUTING.md links to it (`grep -q 'docs/ARCHITECTURE.md' CONTRIBUTING.md`)
 - [ ] CONTRIBUTING.md no longer claims every short link is a directory (`! grep -q 'Every link here points at a directory' CONTRIBUTING.md`)
 - [ ] the other decisions no longer cite the absorbed document by path (`ls docs/decisions/0003-*.md docs/decisions/0006-*.md && ! grep -q 'architecture/plugin-structure.md' docs/decisions/0003-*.md docs/decisions/0006-*.md`)
-- [ ] review's coverage lens reads live documents (`grep -q 'covers' skills/review/review.md && grep -q 'live document' skills/review/review.md`)
+- [ ] review's coverage lens reads live documents (`grep -q 'read the document against the diff' skills/review/review.md`)
 - [ ] the fixture proves each new check and the ledger accounts for it (`grep -q 'the synthesis cites' xt/fixture/expected && grep -q 'cited nowhere in the synthesis' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the runner reports rather than skips when it cannot see its subject (`grep -q 'the synthesis is missing' xt/fixture/expected && sh xt/run.sh`)
 
@@ -407,9 +426,15 @@ own ledger. **The implementing issue adds the guard for it**: a sentinel entry
 no check emits, asserted to be reported as gone quiet, which catches the matcher
 being disabled, deleted, or made always-match.
 
-**Two criteria name prose and will redden when it is reworded.** That is the
+**Three criteria name prose and will redden when it is reworded.** That is the
 decay `coding-conventions.md`'s first constraint describes, in its mildest form,
 and the alternative is a criterion that cannot tell a check from its absence.
+
+The review criterion is one of them deliberately. Loosening it to two common
+words — `covers` and `live document` — would make it satisfiable by a sentence
+explaining that the step was *not* added, which is precisely the weakness this
+decision names about its own citation check. A criterion for the one new
+mechanism the decision adds is the last one that should be loose.
 
 **This decision does not require a citation of itself.** By the time its
 implementing commits exist it is `accepted` with trailers naming it, so the
@@ -420,26 +445,30 @@ claim the synthesis makes. So the check excludes the decision that introduces
 it, the exclusion is written here rather than discovered in the pull request that
 lands it, and the same collision this decision resolves for 0003 does not recur
 for 0004.
+
 ## Open Questions
 
-- Whether `docs/ARCHITECTURE.md` should carry `covers:` paths distinct from the ones
-  `plugin-structure.md` declared. It currently covers `skills/`, `commands/` and
-  the manifest; a synthesis of decisions arguably also covers `t/` and `xt/`,
-  since it states what they are for.
+- **What `covers:` paths the synthesis declares, which decides whether anything
+  watches it.** `plugin-structure.md` declares `skills/`, `commands/` and the
+  manifest; a synthesis of decisions arguably also covers `t/` and `xt/`. Either
+  list is directory-shaped, and a directory-shaped entry reports no churn, so on
+  today's binary the choice decides whether `docs health` ever says anything
+  about the synthesis at all. A list of file paths would be watched and would be
+  brittle, since it goes stale every time a skill is added.
 
-  This question no longer gates anything, and that is a change from how it stood
-  when it was written. `covers:` fed the `docs health` drift trigger, and this
-  decision no longer relies on that trigger, so widening or narrowing the list
-  changes what a report lists and not what gets run. It stays open as an
-  editorial question rather than a mechanical one.
+  This question was previously recorded here as editorial on the grounds that
+  `covers:` no longer gates anything once the drift trigger is dropped. That was
+  wrong: the trigger was dropped *because* of what `covers:` does, so the two are
+  the same question rather than independent ones.
 
 - What `stability:` value the synthesis carries. `docs health` reads it and
   nothing here specifies it.
 
-- Whether the git-zhi defect behind the dropped trigger is worth a request
-  document. `docs health`'s drift column is computed from mtime and reads NONE
-  in every fresh clone and worktree; `docs/requests/` is where this repository
-  writes such things for another repository, and nothing has been written.
+- Nothing is open about whether the git-zhi defect warrants a request document —
+  it does, and `docs/requests/` is where this repository writes them. What is
+  open is whether crochet should work around it in the meantime by declaring
+  file-shaped `covers:` paths, or accept an unwatched synthesis until the
+  matching is fixed. The first question above is the same question.
 
 ## References
 
