@@ -33,7 +33,7 @@ the refinement gate was skipped
 below the declared floor
 
 # --------------------------------------------------------------------------
-# 9 of 26 sites covered — 24 `note` calls and 2 hard exits, counted rather than
+# 9 of 27 sites covered — 25 `note` calls and 2 hard exits, counted rather than
 # estimated. Recount when a site is added. Uncovered:
 #
 #   product check, failing and missing    reads this repo's skills/, not $ROOT's
@@ -44,6 +44,8 @@ below the declared floor
 #   Implements not in series              no fixture commit names a non-decision
 #   five floor sub-notes                  only the below-floor arm is exercised
 #   the self-test itself                  nothing guards the guard
+#   fixture repo could not be built       proven by hand, not by a fixture:
+#                                         breaking `git init` makes it fire
 #
 # The reasoning behind this ledger, and the false claim that preceded it, are in
 # docs/postmortems/rfc-0003.md.
