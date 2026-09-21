@@ -155,12 +155,18 @@ validation order and does not cover live documents; the order gains review.
 - [ ] the lens knows what a live document is (`grep -q 'CLAUDE.md imports' skills/review/review.md`)
 - [ ] the backstop reports a decision reflected nowhere (`grep -q 'cited nowhere' xt/fixture/expected && sh xt/run.sh`)
 - [ ] the backstop reports rather than skips when it cannot see its subject (`grep -q 'cannot see' xt/fixture/expected && sh xt/run.sh`)
-- [ ] the repository passes with the checks in place (`sh xt/run.sh`)
+- [ ] the checks are in the runner and the repository passes them (`grep -q 'cited nowhere' xt/run.sh && grep -q 'cannot see' xt/run.sh && sh xt/run.sh`)
 
-Two of these name prose and will redden when it is reworded. That is the decay
+Four of these name prose and will redden when it is reworded. That is the decay
 `docs/contributing/coding-conventions.md`'s first constraint describes, in its
 mildest form, and the alternative is a criterion that cannot tell a step from
 its absence.
+
+**The last one is a conjunction because `sh xt/run.sh` alone is green today.**
+A criterion that passes before its work starts cannot report that the work was
+done, and this decision's own backstop section is about checks that report what
+they would report if clean. Each half does work: the greps fail until the checks
+exist, and the run fails if they exist and the repository does not satisfy them.
 
 ## Open Questions
 
