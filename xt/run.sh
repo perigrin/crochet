@@ -76,29 +76,29 @@ fi
 if ! ( cd "$ROOT" && git zhi docs check >/dev/null 2>&1 ); then
     note "git zhi docs check — unreachable files, dead links, decision gaps or bad covers paths"
 fi
-
 # ----------------------------------------------------------------- covers
 # A live document declaring covers: [] is watched by nothing. It is the state
 # git zhi docs init leaves its templates in, and the state this repo was in.
-for d in "$ROOT"/docs/architecture "$ROOT"/docs/contributing; do
-    [ -d "$d" ] || continue
-    for f in "$d"/*.md; do
-        [ -f "$f" ] || continue
-        # Empty means: `covers: []`, or a bare `covers:` with no list items
-        # under it. A bare key is YAML null and is the form a human writes
-        # when interrupted, which is the case worth catching.
-        if sed -n '2,/^---$/p' "$f" | awk '
-            # awk runs END even after exit, so the has-items branch clears
-            # the flag rather than relying on exit alone.
-            /^covers:[[:space:]]*\[\][[:space:]]*$/ { print "empty"; bare = 0; exit }
-            /^covers:[[:space:]]*$/                  { bare = 1; next }
-            bare && /^[[:space:]]*-[[:space:]]/       { bare = 0; exit }
-            bare                                     { print "empty"; bare = 0; exit }
-            END                                      { if (bare) print "empty" }
-        ' | grep -q empty; then
-            note "covers is empty, so nothing watches it: ${f#"$ROOT"/}"
-        fi
-    done
+#
+# The subject is what CLAUDE.md imports, which is what "live" means here. The
+# door itself never enters the loop: it lists its imports and is not one of
+# them, so no branch is needed to keep it out.
+for f in $(sed -n 's/^@//p' "$ROOT/CLAUDE.md" | sed "s#^#$ROOT/#"); do
+    [ -f "$f" ] || continue
+    # Empty means: `covers: []`, or a bare `covers:` with no list items
+    # under it. A bare key is YAML null and is the form a human writes
+    # when interrupted, which is the case worth catching.
+    if sed -n '2,/^---$/p' "$f" | awk '
+        # awk runs END even after exit, so the has-items branch clears
+        # the flag rather than relying on exit alone.
+        /^covers:[[:space:]]*\[\][[:space:]]*$/ { print "empty"; bare = 0; exit }
+        /^covers:[[:space:]]*$/                  { bare = 1; next }
+        bare && /^[[:space:]]*-[[:space:]]/       { bare = 0; exit }
+        bare                                     { print "empty"; bare = 0; exit }
+        END                                      { if (bare) print "empty" }
+    ' | grep -q empty; then
+        note "covers is empty, so nothing watches it: ${f#"$ROOT"/}"
+    fi
 done
 
 # ------------------------------------------------- decision link symmetry

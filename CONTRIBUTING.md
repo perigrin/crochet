@@ -7,7 +7,6 @@ that ship.
 ## Short Links to Important Resources
 
 - [Architecture](docs/ARCHITECTURE.md) — what the accepted decisions decided, in the present tense
-- [Plugin structure](docs/architecture) — the file layout and the skill tables
 - [Contributing guides](docs/contributing) — coding conventions and development workflow
 - [Decisions](docs/decisions) — the numbered decision archive, and why things are as they are
 - [Assessments](docs/assessments) — what each decision was assessed against, and by whom
@@ -15,9 +14,9 @@ that ship.
 - [Requests](docs/requests) — design documents written from here for another repository
 - [Plans](docs/plans) — pre-series design and implementation documents, frozen and cited by path
 
-Every link here points at a directory that holds a file. Git does not track
-empty directories, so a link into one survives locally and dies on the first
-clone.
+The first link points at a file; the rest point at directories, and each of
+those directories holds one. Git does not track empty directories, so a link
+into an empty directory survives locally and dies on the first clone.
 
 ## Checks
 

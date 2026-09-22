@@ -14,7 +14,7 @@ TDD with review gates, and run retrospectives at milestone completion.
 
 ## The live layer
 
-@docs/architecture/plugin-structure.md
+@docs/ARCHITECTURE.md
 @docs/contributing/coding-conventions.md
 @docs/contributing/development-workflow.md
 
