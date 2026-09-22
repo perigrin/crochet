@@ -1,6 +1,6 @@
 #!/bin/sh
 # ABOUTME: Author tests — does the repo do what CONTRIBUTING.md claims of it?
-# ABOUTME: Eight check families; xt/fixture/expected names which ones it proves.
+# ABOUTME: Nine check families; xt/fixture/expected names which ones it proves.
 #
 # Usage:
 #   sh xt/run.sh              run every check against this repo, then self-test
@@ -223,6 +223,68 @@ if [ -d "$DEC" ]; then
     done
 fi
 
+# ------------------------------------------ accepted decisions cited nowhere
+# Review is a judgment and judgments do not run on every commit. This is the
+# mechanical backstop for the coarsest failure doc-first has: an accepted
+# decision, already implemented, that no live document reflects at all.
+#
+# IT IS DELIBERATELY WEAK AND A GREEN RESULT PROVES ALMOST NOTHING. The
+# predicate is that the decision's number appears in a live document in a
+# citation form — satisfied by a link, a code fence, a references entry, or a
+# sentence explaining why a decision is deliberately not synthesised. It cannot
+# tell a claim from a criticism: on the day this landed it was green for 0002
+# because coding-conventions.md faults that decision twice. Never read a pass
+# here as evidence that a live document is complete. 0008 says the same thing
+# at greater length, and crochet:review is what actually judges it.
+#
+# The live set is CLAUDE.md and what CLAUDE.md imports, the same definition the
+# covers check above uses. Reads $ROOT so the fixture can witness it.
+if [ -d "$DEC" ] && [ -f "$ROOT/CLAUDE.md" ]; then
+    # The population is read from parsed trailers, never from the commit body.
+    # A body grep matches prose about implementing a decision — this repo's own
+    # issue text quotes the trailer form — and would credit a decision because
+    # somebody wrote about it.
+    impl=$( (cd "$ROOT" && git log --format='%(trailers:key=Implements,valueonly)' 2>/dev/null) |
+            tr -d ' ' | grep . | sort -u)
+
+    population=''
+    for n in $impl; do
+        target=$(ls "$DEC/$n"-*.md 2>/dev/null | head -1)
+        [ -n "$target" ] || continue
+        state=$(sed -n '2,/^---$/p' "$target" | sed -n 's/^state:[[:space:]]*//p')
+        case "$state" in accepted|superseded) population="$population $n" ;; esac
+    done
+
+    # A subject the check could not see is a finding, never a skip. The two
+    # sub-causes emit different text on purpose: they are indistinguishable from
+    # each other and from a clean run if they share a literal, and the fixture
+    # can then only prove that one of them fired.
+    if [ -z "$population" ]; then
+        # Iterating citations rather than decisions makes an empty document
+        # indistinguishable from a complete one. So does an empty population.
+        note "cannot see: population is empty — no accepted decision carries an implementing trailer"
+    fi
+    if [ "$( (cd "$ROOT" && git rev-parse --is-shallow-repository 2>/dev/null) )" = true ]; then
+        # actions/checkout produces this by default. A truncated history exempts
+        # every decision implemented earlier while reporting clean.
+        note "cannot see: history is shallow — decisions implemented before the cut are exempt"
+    fi
+
+    live="$ROOT/CLAUDE.md $(sed -n 's/^@//p' "$ROOT/CLAUDE.md" | sed "s#^#$ROOT/#")"
+    for n in $population; do
+        # Match a citation, not a number. A bare search for 0002 matches the
+        # milestone name rfc-0002, and this repository names milestones that way
+        # — so the forms are the slug-bearing filename and the [NNNN] bracket.
+        cited=no
+        for f in $live; do
+            [ -f "$f" ] || continue
+            grep -qE "\[$n\]|$n-[a-z0-9-]+\.md" "$f" && { cited=yes; break; }
+        done
+        [ "$cited" = yes ] ||
+            note "accepted and implemented, but cited nowhere in the live layer: $n"
+    done
+fi
+
 # ------------------------------------------------- README against commands/
 # development-workflow.md claimed this check existed and it did not, in a
 # document imported into every agent's context — a false coverage claim inside
@@ -315,11 +377,20 @@ if [ "$SELFTEST" = yes ]; then
         # reports every tree clean when it is not one, and the Implements check
         # reads commit trailers — so the trailer names 0004, which the fixture
         # keeps `proposed`, giving that check something to report.
+        #
+        # The trailer also names 0002, which the fixture keeps `accepted` and no
+        # live document there cites: that is the backstop's subject. And HEAD is
+        # written into .git/shallow afterwards, so `rev-parse
+        # --is-shallow-repository` reports true here and false in a real
+        # checkout — the red-in-the-fixture, green-in-the-repository pairing
+        # development-workflow.md asks every check to have.
         ( cd "$TMP/fixture" && git init -q . &&
           git -c user.email=xt@fixture -c user.name=xt add -A &&
           git -c user.email=xt@fixture -c user.name=xt commit -qm "fixture
 
-Implements: 0004"
+Implements: 0004
+Implements: 0002" &&
+          git rev-parse HEAD > .git/shallow
         ) >/dev/null 2>&1 || note "the self-test could not build its fixture repository"
 
         OUT=$(sh "$0" "$TMP/fixture" 2>&1) || true

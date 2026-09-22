@@ -1,4 +1,4 @@
-# count: 9
+# count: 11
 #
 # One line per finding site the fixture proves. The self-test requires every
 # substring to appear in the fixture's output, so a check that stops examining
@@ -32,8 +32,22 @@ the refinement gate was skipped
 # declared floor vs installed binary: a manifest demanding 99.0.0
 below the declared floor
 
+# the backstop, cited-nowhere arm: the trailer names 0002, the fixture keeps it
+# accepted, and no live document there cites it. The fixture's CLAUDE.md carries
+# a `rfc-0002` decoy, so a bare-number search reads that as a citation, goes
+# silent, and leaves this entry unmatched. This is the only entry in either
+# suite that can tell a citation pattern from a number search.
+cited nowhere in the live layer: 0002
+
+# the backstop, cannot-see arm: the self-test writes HEAD into .git/shallow.
+# Declared by sub-cause rather than as a bare `cannot see`, because both
+# sub-causes would satisfy the shorter string and only one of them fires here —
+# an implementation that never wrote the empty-population branch would pass an
+# entry written for it.
+cannot see: history is shallow
+
 # --------------------------------------------------------------------------
-# 9 of 27 sites covered — 25 `note` calls and 2 hard exits, counted rather than
+# 11 of 30 sites covered — 28 `note` calls and 2 hard exits, counted rather than
 # estimated. Recount when a site is added. Uncovered:
 #
 #   product check, failing and missing    reads this repo's skills/, not $ROOT's
@@ -43,6 +57,9 @@ below the declared floor
 #   cycle detection                       no fixture pair cycles
 #   Implements not in series              no fixture commit names a non-decision
 #   five floor sub-notes                  only the below-floor arm is exercised
+#   the backstop's empty-population arm   the fixture's population is non-empty
+#                                         by construction — the trailer names
+#                                         0002 and the fixture keeps it accepted
 #   the self-test itself                  nothing guards the guard
 #   fixture repo could not be built       proven by hand, not by a fixture:
 #                                         breaking `git init` makes it fire
