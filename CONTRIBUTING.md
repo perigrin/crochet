@@ -36,6 +36,6 @@ hold to.
 
 Feature branches come off `pu` and return by pull request. `pu` is protected.
 
-Update a live document before the change it describes, in the same pull
-request. The reasoning is in
+Update a live document before the change it describes, in one pull request. The
+reasoning is in
 [decision 0001](docs/decisions/0001-documentation-architecture.md).

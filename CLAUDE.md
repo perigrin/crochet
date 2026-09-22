@@ -41,8 +41,8 @@ not worth carrying in every agent's context.
 - **Observation beats inference.** Where a skill asserts how the CLI behaves,
   that assertion should come from running the command in a scratch repository,
   not from another document that says so.
-- **Update a live document before the change it describes**, in the same
-  commit. The reasoning is in
+- **Update a live document before the change it describes**, in one pull
+  request. The reasoning is in
   `docs/decisions/0001-documentation-architecture.md`.
 - **Every commit implementing a numbered decision carries its trailer** —
   `Implements: NNNN` — in the final trailer block, where git parses it as a

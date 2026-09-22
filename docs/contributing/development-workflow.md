@@ -24,7 +24,7 @@ tree are the files that ship.
 
 ## Validating a change
 
-Crochet has no compiler to catch a mistake, so validation is five things in
+Crochet has no compiler to catch a mistake, so validation is six things in
 order, cheapest first:
 
 1. **Read the skill for internal consistency.** Do its steps reference `git zhi`
@@ -68,6 +68,21 @@ order, cheapest first:
 
    Read `docs health` carefully: its summary reports three zeros both when
    nothing has drifted and when it is observing no documents at all.
+
+6. **Let the review gate read the live documents against the diff.** Nothing
+   above does. Every check here asks whether the repository is internally
+   consistent; none asks whether a document still says something true after the
+   branch changed what it describes.
+
+   `crochet:review` does, as a judgment rather than a check — its coverage lens
+   reads each live document whose `covers:` paths the diff touches, plus
+   `CLAUDE.md` on every diff. A finding is the diff falsifying a claim a document
+   makes, or completing work a document describes as pending. Most branches
+   produce nothing, which is the expected outcome and worth recording when it
+   happens.
+
+   This is last because it is the only one a person or an agent has to perform.
+   The five above run.
 
 ### Writing a check that can be trusted
 
@@ -148,6 +163,6 @@ and is the only thing that does.
 
 ## Changing a live document
 
-Update the document first, then build to match, in the same pull request. The
+Update the document first, then build to match, in one pull request. The
 document is briefly false on the branch; that is the red state, not a defect.
 The reasoning is recorded in `docs/decisions/0001-documentation-architecture.md`.
