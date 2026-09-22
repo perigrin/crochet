@@ -53,7 +53,7 @@ order, cheapest first:
    ```
 
    These ask whether the repo does what this document claims of it. `xt/run.sh`
-   runs nine check families and its own ABOUTME carries the count; among them
+   runs ten check families and its own ABOUTME carries the count and the arithmetic; among them
    are the product check above, `git zhi docs check`, no live document declaring
    a `covers:` list and naming nothing, symmetric links between decisions, and
    the backstop over accepted decisions that no live document cites. **That list
@@ -86,7 +86,7 @@ order, cheapest first:
    produce nothing, which is the expected outcome and worth recording when it
    happens.
 
-   This is last because nothing about it can be automated. Steps 3 to 5 run;
+   This is last because the judgment in it cannot be automated. Steps 3 to 5 run;
    steps 1 and 2 are read and walked by a person or an agent, the same as this
    one, and this step differs from them in what it reads rather than in who
    performs it.
