@@ -24,7 +24,7 @@ tree are the files that ship.
 
 ## Validating a change
 
-Crochet has no compiler to catch a mistake, so validation is six things in
+Crochet has no compiler to catch a mistake, so validation is these, in
 order, cheapest first:
 
 1. **Read the skill for internal consistency.** Do its steps reference `git zhi`
@@ -52,9 +52,14 @@ order, cheapest first:
    sh xt/run.sh
    ```
 
-   These ask whether the repo does what this document claims of it: the
-   product check above, `git zhi docs check`, no live document declaring a
-   `covers:` list and naming nothing, and symmetric links between decisions.
+   These ask whether the repo does what this document claims of it. `xt/run.sh`
+   runs nine check families and its own ABOUTME carries the count; among them
+   are the product check above, `git zhi docs check`, no live document declaring
+   a `covers:` list and naming nothing, symmetric links between decisions, and
+   the backstop over accepted decisions that no live document cites. **That list
+   is not exhaustive**, and naming it here in full would be a second place to
+   keep one count true. Read the banners in `xt/run.sh` for the whole set.
+
    It ends by running itself against `xt/fixture`, which is broken on purpose
    — a runner that can no longer fail has failed open, and you would stop
    watching for what it caught.
