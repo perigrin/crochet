@@ -86,8 +86,10 @@ order, cheapest first:
    produce nothing, which is the expected outcome and worth recording when it
    happens.
 
-   This is last because it is the only one a person or an agent has to perform.
-   The five above run.
+   This is last because nothing about it can be automated. Steps 3 to 5 run;
+   steps 1 and 2 are read and walked by a person or an agent, the same as this
+   one, and this step differs from them in what it reads rather than in who
+   performs it.
 
 ### Writing a check that can be trusted
 

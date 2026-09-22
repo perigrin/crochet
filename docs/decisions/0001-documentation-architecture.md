@@ -570,20 +570,6 @@ following pass on `pu` and the commits that made them pass carry
 - [ ] this decision's implementing commits are findable by trailer (`git log --grep='^Implements: 0001' --oneline | grep -q .`)
 - [ ] the author-test runner exists and passes (`sh xt/run.sh`)
 
-A criterion reading `an architecture doc exists under docs/`, checked as
-`test -n "$(ls docs/architecture/*.md 2>/dev/null)"`, stood in this list and is
-removed by `0004-architecture-synthesis.md`. That decision moves the live
-architecture document to `docs/ARCHITECTURE.md` and removes the directory, which
-this decision never forbade — so the criterion became permanently unrunnable and
-nothing detected it, `xt/run.sh` not being in the business of executing decision
-criteria. The rule it checked survives as `test -f docs/ARCHITECTURE.md`, in
-0004's own criteria.
-
-It is removed rather than amended, because a criterion pinned to a path a later
-decision can legitimately move is a defect in how it was written rather than a
-position this decision took. `docs/contributing/coding-conventions.md` carries
-that as its third constraint, landed in one pull request with this removal.
-
 ## Open Questions
 
 Carried from the source design, still open:

@@ -127,7 +127,7 @@ anyone can read.
 | `refinement` | Decomposes a spec into a git-zhi chain of issues |
 | `chain-review` | Gate between refinement and execute; runs the two lenses below |
 | `execute` | Drives the execution loop, issue by issue |
-| `review` | Gate between execute and postmortem; reviews the delivery's diff against the decision |
+| `review` | Gate between execute and postmortem; reviews the delivery's diff against the decision, and the live documents against the diff |
 | `postmortem` | Milestone retrospective, written to `docs/postmortems/` |
 | `install` | Installs the git-zhi binary and its companion commands |
 | `preflight` | Runs first in every skill; checks git-zhi, returns the capabilities map, reports pipeline position |
