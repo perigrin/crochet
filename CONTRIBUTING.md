@@ -6,7 +6,8 @@ that ship.
 
 ## Short Links to Important Resources
 
-- [Architecture](docs/architecture) — what crochet is and how its parts fit
+- [Architecture](docs/ARCHITECTURE.md) — what the accepted decisions decided, in the present tense
+- [Plugin structure](docs/architecture) — the file layout and the skill tables
 - [Contributing guides](docs/contributing) — coding conventions and development workflow
 - [Decisions](docs/decisions) — the numbered decision archive, and why things are as they are
 - [Assessments](docs/assessments) — what each decision was assessed against, and by whom
