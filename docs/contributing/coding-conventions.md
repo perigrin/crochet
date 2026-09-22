@@ -1,8 +1,8 @@
 ---
 stability: 2
 covers:
-  - skills/
-  - commands/
+  - skills
+  - commands
 ---
 
 <!-- ABOUTME: Conventions for writing crochet's skill and command files. -->
@@ -70,8 +70,8 @@ line, in a paren-wrapped backtick span, so that `git-zhi-verify` can run it.
 Refinement carries them onto the milestone it creates, which is why `git zhi
 verify` reads a milestone body at all.
 
-**Two constraints on what such a criterion may be**, both learned by shipping a
-criterion that broke them. Neither is a rule about whether criteria belong in a
+**Three constraints on what such a criterion may be**, each learned by shipping a
+criterion that broke it. None is a rule about whether criteria belong in a
 decision — 0001 settles that and says they do. A rule here that contradicted it
 would be prose one import away overriding an accepted decision, which is rung 4
 pre-empting rung 1 of 0001's own ladder.
@@ -97,6 +97,26 @@ git-zhi cut 0.7.1.
 Where crochet genuinely depends on another repository, the dependency belongs in
 `git_zhi_min_version`, which `crochet:preflight` reports on and `xt/run.sh`
 compares against the installed binary. That is a claim this repository can check.
+
+**And no criterion should be pinned to a path a later decision can legitimately
+move.** `0001-documentation-architecture.md` carried the criterion
+`an architecture doc exists under docs/`, checked as
+`test -n "$(ls docs/architecture/*.md 2>/dev/null)"`.
+`0004-architecture-synthesis.md` removes that directory — which 0001 never
+forbade and 0004 argues for at length — so the criterion became permanently
+unrunnable the moment the synthesis landed, and nothing detected it: `xt/run.sh`
+does not execute decision criteria, so an unrunnable one is indistinguishable
+from one nobody has run today.
+
+The rule it was checking survives the move as `test -f docs/ARCHITECTURE.md`.
+That is the shape to prefer: assert the property, not the shelf it currently
+sits on. Where a path is genuinely the subject, say what makes it the subject,
+so a later decision moving it can see what it is breaking.
+
+0004 removes 0001's criterion on this rule's authority, as a defect repair
+rather than an amendment — the same disposition the first constraint records
+for `0002-worker-identity.md`. A criterion that should never have been written
+that way is a defect in the decision rather than a position it took.
 
 ## Citing code from a decision
 

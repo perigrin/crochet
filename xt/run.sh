@@ -1,6 +1,6 @@
 #!/bin/sh
 # ABOUTME: Author tests — does the repo do what CONTRIBUTING.md claims of it?
-# ABOUTME: Eight check families; xt/fixture/expected names which ones it proves.
+# ABOUTME: Nine check families; xt/fixture/expected names which ones it proves.
 #
 # Usage:
 #   sh xt/run.sh              run every check against this repo, then self-test
@@ -39,7 +39,7 @@ fi
 # side runs in.
 FAILS="${TMPDIR:-/tmp}/zhi-xt-fail-$$"
 : > "$FAILS"
-trap 'rm -f "$FAILS"' EXIT
+trap 'rm -f "$FAILS" "$FAILS.live"' EXIT
 note() { echo "FAIL: $*"; echo x >> "$FAILS"; }
 
 # One missing binary produced four failure messages, none of which named it:
@@ -76,31 +76,62 @@ fi
 if ! ( cd "$ROOT" && git zhi docs check >/dev/null 2>&1 ); then
     note "git zhi docs check — unreachable files, dead links, decision gaps or bad covers paths"
 fi
+# ------------------------------------------------------------- the live set
+# Two checks below ask what the live layer is, and both answer it the same way:
+# CLAUDE.md and what CLAUDE.md imports. Derived once, here, so they cannot drift
+# apart about it — and so a missing import is reported once rather than twice or
+# not at all.
+#
+# One path per line, never a space-joined string. A $ROOT or TMPDIR containing a
+# space split the list and reported five decisions uncited and a check gone
+# quiet, none of which was true. Read with `while IFS= read -r`, not `for`.
+LIVE="$FAILS.live"
+: > "$LIVE"
+if [ -f "$ROOT/CLAUDE.md" ]; then
+    printf '%s\n' "$ROOT/CLAUDE.md" >> "$LIVE"
+    # A check whose subject is missing is a finding, not a skip — the rule this
+    # runner states above the product check. A typo in an @import silently
+    # removed a document from the live set and both checks below narrowed with
+    # no finding anywhere; renaming a different import reported a *decision*
+    # uncited, naming the wrong thing entirely.
+    sed -n 's/^@//p' "$ROOT/CLAUDE.md" | while IFS= read -r rel; do
+        [ -n "$rel" ] || continue
+        if [ -f "$ROOT/$rel" ]; then
+            printf '%s\n' "$ROOT/$rel" >> "$LIVE"
+        else
+            note "CLAUDE.md imports $rel, which is not there — the live set is short a document"
+        fi
+    done
+else
+    # CLAUDE.md is load-bearing the way docs/ is: without it the two checks
+    # below observe nothing and would otherwise report nothing, one of them
+    # through a bare `sed:` on stderr that the counter never sees.
+    note "no CLAUDE.md under $ROOT — the live set cannot be derived, so the covers and citation checks cannot run"
+fi
 
 # ----------------------------------------------------------------- covers
 # A live document declaring covers: [] is watched by nothing. It is the state
 # git zhi docs init leaves its templates in, and the state this repo was in.
-for d in "$ROOT"/docs/architecture "$ROOT"/docs/contributing; do
-    [ -d "$d" ] || continue
-    for f in "$d"/*.md; do
-        [ -f "$f" ] || continue
-        # Empty means: `covers: []`, or a bare `covers:` with no list items
-        # under it. A bare key is YAML null and is the form a human writes
-        # when interrupted, which is the case worth catching.
-        if sed -n '2,/^---$/p' "$f" | awk '
-            # awk runs END even after exit, so the has-items branch clears
-            # the flag rather than relying on exit alone.
-            /^covers:[[:space:]]*\[\][[:space:]]*$/ { print "empty"; bare = 0; exit }
-            /^covers:[[:space:]]*$/                  { bare = 1; next }
-            bare && /^[[:space:]]*-[[:space:]]/       { bare = 0; exit }
-            bare                                     { print "empty"; bare = 0; exit }
-            END                                      { if (bare) print "empty" }
-        ' | grep -q empty; then
-            note "covers is empty, so nothing watches it: ${f#"$ROOT"/}"
-        fi
-    done
-done
-
+#
+# CLAUDE.md is in the set and passes through harmlessly: the awk reports a
+# `covers:` key with no items beneath it, and a file carrying no such key never
+# sets `bare`. Measured, and the reason there is no branch excluding the door.
+while IFS= read -r f; do
+    # Empty means: `covers: []`, or a bare `covers:` with no list items
+    # under it. A bare key is YAML null and is the form a human writes
+    # when interrupted, which is the case worth catching.
+    if sed -n '2,/^---$/p' "$f" | awk '
+        # awk runs END even after exit, so the has-items branch clears
+        # the flag rather than relying on exit alone.
+        /^covers:[[:space:]]*\[\][[:space:]]*$/ { print "empty"; bare = 0; exit }
+        /^covers:[[:space:]]*$/                  { bare = 1; next }
+        bare && /^[[:space:]]*-[[:space:]]/       { bare = 0; exit }
+        bare                                     { print "empty"; bare = 0; exit }
+        END                                      { if (bare) print "empty" }
+    ' | grep -q empty; then
+        note "covers is empty, so nothing watches it: ${f#"$ROOT"/}"
+    fi
+done < "$LIVE"
 # ------------------------------------------------- decision link symmetry
 # supersedes/superseded-by and amends/amended-by are written both ways in one
 # commit. The obligation is discharged mechanically here rather than by
@@ -208,8 +239,16 @@ fi
 # to implement a decision is the exception, so commits implementing a decision
 # that is still proposed are the pipeline running out of order — 0003 sets the
 # rule. Reads $ROOT so the fixture can witness it.
+#
+# The population is read from parsed trailers, never from the commit body. A
+# body grep matches prose about implementing a decision — this repository's own
+# issue text quotes the trailer form — and would credit a decision because
+# somebody wrote about it. Walked once, here, because the backstop below needs
+# the same list and two walks are two things to keep in step.
+IMPL=$( (cd "$ROOT" && git log --format='%(trailers:key=Implements,valueonly)' 2>/dev/null) |
+        tr -d ' ' | grep . | sort -u)
 if [ -d "$DEC" ]; then
-    for n in $( (cd "$ROOT" && git log --format='%(trailers:key=Implements,valueonly)' 2>/dev/null) | tr -d ' ' | grep . | sort -u); do
+    for n in $IMPL; do
         target=$(ls "$DEC/$n"-*.md 2>/dev/null | head -1)
         if [ -z "$target" ]; then
             note "a commit claims Implements: $n, which is not a decision in the series"
@@ -220,6 +259,60 @@ if [ -d "$DEC" ]; then
             accepted|superseded) : ;;
             *) note "commits implement $n while it is '$state' — the refinement gate was skipped" ;;
         esac
+    done
+fi
+
+# ------------------------------------------ accepted decisions cited nowhere
+# Review is a judgment and judgments do not run on every commit. This is the
+# mechanical backstop for the coarsest failure doc-first has: an accepted
+# decision, already implemented, that no live document reflects at all.
+#
+# IT IS DELIBERATELY WEAK AND A GREEN RESULT PROVES ALMOST NOTHING. The
+# predicate is that the decision's number appears in a live document in one of
+# the two citation forms pinned below — the slug-bearing filename, or [NNNN].
+# A sentence naming the bare number does not satisfy it; a link, a code fence or
+# a references entry does. It cannot tell a claim from a criticism: on the day
+# this landed it was green for 0002 because coding-conventions.md faults that
+# decision three times. Never read a pass here as evidence that a live document
+# is complete. 0008 says the same at greater length, and crochet:review is what
+# actually judges it.
+#
+# The live set is $LIVE, derived once above, so this and the covers check cannot
+# disagree about what "live" means. Reads $ROOT so the fixture can witness it.
+if [ -d "$DEC" ]; then
+    population=''
+    for n in $IMPL; do
+        target=$(ls "$DEC/$n"-*.md 2>/dev/null | head -1)
+        [ -n "$target" ] || continue
+        state=$(sed -n '2,/^---$/p' "$target" | sed -n 's/^state:[[:space:]]*//p')
+        case "$state" in accepted|superseded) population="$population $n" ;; esac
+    done
+
+    # A subject the check could not see is a finding, never a skip. The two
+    # sub-causes emit different text on purpose: they are indistinguishable from
+    # each other and from a clean run if they share a literal, and the fixture
+    # can then only prove that one of them fired.
+    if [ -z "$population" ]; then
+        # Iterating citations rather than decisions makes an empty document
+        # indistinguishable from a complete one. So does an empty population.
+        note "cannot see: population is empty — no accepted decision carries an implementing trailer"
+    fi
+    if [ "$( (cd "$ROOT" && git rev-parse --is-shallow-repository 2>/dev/null) )" = true ]; then
+        # actions/checkout produces this by default. A truncated history exempts
+        # every decision implemented earlier while reporting clean.
+        note "cannot see: history is shallow — decisions implemented before the cut are exempt"
+    fi
+
+    for n in $population; do
+        # Match a citation, not a number. A bare search for 0002 matches the
+        # milestone name rfc-0002, and this repository names milestones that way
+        # — so the forms are the slug-bearing filename and the [NNNN] bracket.
+        cited=no
+        while IFS= read -r f; do
+            grep -qE "\[$n\]|$n-[a-z0-9-]+\.md" "$f" && { cited=yes; break; }
+        done < "$LIVE"
+        [ "$cited" = yes ] ||
+            note "accepted and implemented, but cited nowhere in the live layer: $n"
     done
 fi
 
@@ -315,11 +408,20 @@ if [ "$SELFTEST" = yes ]; then
         # reports every tree clean when it is not one, and the Implements check
         # reads commit trailers — so the trailer names 0004, which the fixture
         # keeps `proposed`, giving that check something to report.
+        #
+        # The trailer also names 0002, which the fixture keeps `accepted` and no
+        # live document there cites: that is the backstop's subject. And HEAD is
+        # written into .git/shallow afterwards, so `rev-parse
+        # --is-shallow-repository` reports true here and false in a real
+        # checkout — the red-in-the-fixture, green-in-the-repository pairing
+        # development-workflow.md asks every check to have.
         ( cd "$TMP/fixture" && git init -q . &&
           git -c user.email=xt@fixture -c user.name=xt add -A &&
           git -c user.email=xt@fixture -c user.name=xt commit -qm "fixture
 
-Implements: 0004"
+Implements: 0004
+Implements: 0002" &&
+          git rev-parse HEAD > .git/shallow
         ) >/dev/null 2>&1 || note "the self-test could not build its fixture repository"
 
         OUT=$(sh "$0" "$TMP/fixture" 2>&1) || true

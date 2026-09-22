@@ -140,6 +140,45 @@ acceptance criteria against what was built. Criteria live on the milestone once
 refinement carries them across; on a milestone refined before that, read them
 from the decision document directly.
 
+**Then read the live documents against the diff.** Doc-first is a rule 0001
+wrote and no gate has ever enforced. This is where it is enforced.
+
+**A document is live when `CLAUDE.md` imports it, and `CLAUDE.md` is itself in
+the set.** Naming the door explicitly matters, because it is excluded on every
+other axis: it imports nothing of itself, carries no `covers:`, and sits outside
+`docs/` where `docs health` cannot see it. It is also the one live document in
+this repository with recorded drift, so a lens that could not read it would miss
+the only failure of doc-first on record.
+
+```bash
+sed -n 's/^@//p' CLAUDE.md
+```
+
+For each of those documents whose `covers:` paths the diff touches,
+**read the document against the diff**. Read `CLAUDE.md` on every diff, with no
+`covers:` trigger: it is the door to the others rather than a fourth document,
+and it gains no frontmatter to trigger on.
+
+**A finding requires one of two things.** Either the diff **falsifies a claim**
+the document makes, or it completes work the document **describes as pending**.
+An enumeration the change renders incomplete is a falsified claim — a list of
+four things in a document, where the branch adds a fifth, is false even though
+every word of it still reads true.
+
+**The quiet case is the common case and is not a finding.** Every live document
+covers `skills`, so this fires on nearly every branch and will usually find
+nothing. A diff under a covered path that the document never claimed anything
+about is **not a finding**. Say that in the minute when it happens. A trigger
+that fires on everything gets ignored exactly as one that fires on nothing does,
+and the way it stops being ignored is that its quiet outcome is recorded rather
+than omitted.
+
+**This does not climb the enforcement ladder.** A step in a skill file is
+instructions an agent follows, which is the same rung as the prose statements of
+doc-first it backs. 0001 concedes that a mechanical check is unavailable for
+this rule, and nothing here makes one available. What changes is who holds the
+obligation and when: it moves from every author remembering, to one gate asking.
+
 **Quality — is the code sound?**
 
 **Availability is not the only question — a lens can be present and still not

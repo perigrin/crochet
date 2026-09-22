@@ -563,7 +563,6 @@ following pass on `pu` and the commits that made them pass carry
 `Implements: 0001`.
 
 - [ ] docs check passes (`git zhi docs check`)
-- [ ] an architecture doc exists under docs/ (`test -n "$(ls docs/architecture/*.md 2>/dev/null)"`)
 - [ ] no live doc has an empty covers list (`! grep -rl '^covers: \[\]' docs/`)
 - [ ] contributing docs do not describe a Go build (`! grep -rq 'go build' docs/contributing`)
 - [ ] CLAUDE.md imports the live layer (`grep -q '^@docs/' CLAUDE.md`)

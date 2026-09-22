@@ -14,7 +14,7 @@ TDD with review gates, and run retrospectives at milestone completion.
 
 ## The live layer
 
-@docs/architecture/plugin-structure.md
+@docs/ARCHITECTURE.md
 @docs/contributing/coding-conventions.md
 @docs/contributing/development-workflow.md
 
@@ -41,8 +41,8 @@ not worth carrying in every agent's context.
 - **Observation beats inference.** Where a skill asserts how the CLI behaves,
   that assertion should come from running the command in a scratch repository,
   not from another document that says so.
-- **Update a live document before the change it describes**, in the same
-  commit. The reasoning is in
+- **Update a live document before the change it describes**, in one pull
+  request. The reasoning is in
   `docs/decisions/0001-documentation-architecture.md`.
 - **Every commit implementing a numbered decision carries its trailer** —
   `Implements: NNNN` — in the final trailer block, where git parses it as a
@@ -62,11 +62,6 @@ be the only voice: at least one participant is neither the author nor a role
 that holds no view. Refinement records the outcome with `state: accepted`; it
 does not decide it.
 
-**Three gates are mandatory: assess, review and postmortem.** Those produce
-judgments, and nothing else produces them. Brainstorming, refinement and execute
-are methods — they produce an artifact, so each is optional whenever that
-artifact arrives another way. A finished pull request enters at review, and what
-gets backfilled is the assessment and the decision, not the work. Chain-review
-is mandatory only when a chain exists.
-
-The rest is in `docs/decisions/0003-acceptance-by-refinement.md`.
+Which gates are mandatory, and what a legal skip is, is stated in
+`docs/ARCHITECTURE.md` — imported above, so it is already in context. The
+argument is in `docs/decisions/0003-acceptance-by-refinement.md`.

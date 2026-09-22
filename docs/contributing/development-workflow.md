@@ -1,10 +1,10 @@
 ---
 stability: 2
 covers:
-  - skills/
+  - skills
   - .claude-plugin/plugin.json
-  - xt/
-  - t/
+  - xt
+  - t
 ---
 
 <!-- ABOUTME: How work gets done on crochet — validating changes, branching, adding a skill. -->
@@ -24,7 +24,7 @@ tree are the files that ship.
 
 ## Validating a change
 
-Crochet has no compiler to catch a mistake, so validation is five things in
+Crochet has no compiler to catch a mistake, so validation is these, in
 order, cheapest first:
 
 1. **Read the skill for internal consistency.** Do its steps reference `git zhi`
@@ -52,9 +52,14 @@ order, cheapest first:
    sh xt/run.sh
    ```
 
-   These ask whether the repo does what this document claims of it: the
-   product check above, `git zhi docs check`, no live document declaring a
-   `covers:` list and naming nothing, and symmetric links between decisions.
+   These ask whether the repo does what this document claims of it. `xt/run.sh`
+   runs nine check families and its own ABOUTME carries the count; among them
+   are the product check above, `git zhi docs check`, no live document declaring
+   a `covers:` list and naming nothing, symmetric links between decisions, and
+   the backstop over accepted decisions that no live document cites. **That list
+   is not exhaustive**, and naming it here in full would be a second place to
+   keep one count true. Read the banners in `xt/run.sh` for the whole set.
+
    It ends by running itself against `xt/fixture`, which is broken on purpose
    — a runner that can no longer fail has failed open, and you would stop
    watching for what it caught.
@@ -68,6 +73,23 @@ order, cheapest first:
 
    Read `docs health` carefully: its summary reports three zeros both when
    nothing has drifted and when it is observing no documents at all.
+
+6. **Let the review gate read the live documents against the diff.** Nothing
+   above does. Every check here asks whether the repository is internally
+   consistent; none asks whether a document still says something true after the
+   branch changed what it describes.
+
+   `crochet:review` does, as a judgment rather than a check — its coverage lens
+   reads each live document whose `covers:` paths the diff touches, plus
+   `CLAUDE.md` on every diff. A finding is the diff falsifying a claim a document
+   makes, or completing work a document describes as pending. Most branches
+   produce nothing, which is the expected outcome and worth recording when it
+   happens.
+
+   This is last because nothing about it can be automated. Steps 3 to 5 run;
+   steps 1 and 2 are read and walked by a person or an agent, the same as this
+   one, and this step differs from them in what it reads rather than in who
+   performs it.
 
 ### Writing a check that can be trusted
 
@@ -148,6 +170,6 @@ and is the only thing that does.
 
 ## Changing a live document
 
-Update the document first, then build to match, in the same pull request. The
+Update the document first, then build to match, in one pull request. The
 document is briefly false on the branch; that is the red state, not a defect.
 The reasoning is recorded in `docs/decisions/0001-documentation-architecture.md`.

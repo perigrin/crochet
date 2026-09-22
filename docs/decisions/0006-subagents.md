@@ -120,7 +120,7 @@ peer's own repository, which is what `docs/requests/git-zhi-verification-integri
 attempts. Where it does not, the same content has to arrive as a message that
 stands on its own, because there is no shared protocol to carry it.
 
-This is `docs/architecture/plugin-structure.md`'s probe-rather-than-test rule
+This is `docs/contributing/coding-conventions.md`'s probe-rather-than-test rule
 pointed at an agent instead of a binary, and **it degrades when it gets there.**
 `git zhi <sub> --help` is an observation; asking a peer whether it has a skill
 loaded returns a claim, and a peer that has been restarted may answer about a

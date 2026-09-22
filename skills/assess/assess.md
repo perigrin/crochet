@@ -41,6 +41,20 @@ and why it is written to an archive rather than presented and lost.
 subject, `docs/assessments/` as where the minute goes, and who drafts. It owns
 the rounds, the dispatch, the recommendation contract and the minute.
 
+**Composition and convergence are this skill's arithmetic, not the user's.**
+Whether another round is owed, who sits in it, and whether a fresh participant
+is added are decided here and reported, not asked. `crochet:discernment` gives
+the bound, the fixed-point test and the rule for a round that raises something
+new; a question the skill can answer from those spends the user's attention on
+the agent's homework. One session put four composition questions to its user,
+each with a recommendation attached, and each recommendation was taken.
+
+**Whether to stop before the bound is a decline, and a decline is the user's.**
+It is a legal outcome and it is written down. The participants are not stopped
+until the minute records the outcome — proposing to stop is not stopping, and
+the same session reaped four participants on its own proposal, which left six
+rounds of findings held by nobody.
+
 No capability check: it ships in this plugin, so it is always present. The
 conditional pattern is for superpowers and paad, which may not be installed —
 guarding a sibling behind it means the guard never passes and the fallback is a
@@ -139,6 +153,23 @@ finding than a missing link.
 
 (`docs check` will have reported "all files reachable from `CONTRIBUTING.md`"
 before this, whether or not such a file exists. That green is not evidence.)
+
+#### A finding about implementation is answered by moving it, not by specifying it
+
+A decision says what must become true; the milestone says how. When a finding
+concerns fixture arithmetic, a check's wording, or a self-test's mechanics, the
+answer is that it belongs to the implementing issue — and if the decision
+already carries such material, **the finding is that it should not**.
+
+This is the one rule that would have shortened the longest assessment on record.
+Seven rounds ran over a decision that specified its own self-test's fixture
+counts. Every round's findings were correct, every answer added specification,
+and the document doubled while getting more accurate — because the findings were
+about material that should never have been in a decision, and answering them
+where they landed compounded the original error.
+
+**A decision that grows during its own assessment is the signal.** Not that the
+participants are thorough: that the gate is reviewing an implementation.
 
 #### Every assessment ends with a recommendation
 
