@@ -1,6 +1,14 @@
 #!/bin/sh
 # ABOUTME: Author tests — does the repo do what CONTRIBUTING.md claims of it?
-# ABOUTME: Nine check families; xt/fixture/expected names which ones it proves.
+# ABOUTME: Ten check families; xt/fixture/expected names which ones it proves.
+#
+# A check family is a banner below that can emit a finding about this
+# repository. Two banners are not families and are excluded from that count:
+# `product`, which runs t/ and reports on the product rather than the project,
+# and `self-test`, whose subject is this runner rather than the repo. Count the
+# banners, subtract those two, and recount here when a banner is added — the
+# arithmetic is written down because deriving it by guessing which banners are
+# excluded is how this number was left at nine when a tenth family landed.
 #
 # Usage:
 #   sh xt/run.sh              run every check against this repo, then self-test

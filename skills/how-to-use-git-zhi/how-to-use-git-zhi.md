@@ -90,6 +90,36 @@ Note: the `--state` flag's own `--help` string lists only `start, pause, resume,
 | Manage milestones | `git zhi milestone add|edit|list|show <name>` | arg + flag | milestone(s) |
 
 Input mode is one of `arg` (positional), `flag`, `stdin` (piped), or `none`.
+
+### What `<ref>` is, and why the id you can see is often not one
+
+A `<ref>` is a **prefix** of the issue's uuid. Measured on 0.7.2:
+
+```
+git zhi issue show 01a0c61f-b892      # resolves
+git zhi issue show 01a0c6             # resolves
+git zhi issue show b892               # resolve ref: no issue found matching "b892"
+```
+
+**The second segment is not a prefix.** It is the distinctive-looking part of the
+id and the part a reader remembers, and it never resolves — for its author or
+anyone else. That failure is at least loud: it errors the first time anyone tries
+it. A ref that resolved only in the session that wrote it would be worse.
+
+**And the eight characters `list` and `show` print are frequently ambiguous.**
+Issues created in one refinement run share a timestamp prefix, so the displayed
+short id matches all of them:
+
+```
+$ git zhi issue show 01a0c5ee
+git-zhi: resolve ref: ambiguous reference: prefix "01a0c5ee" matches 8 issues
+```
+
+So the id on screen is a *label*, not a handle. When writing a ref into anything
+that outlives the session — an issue body, a commit message, a postmortem — use
+the prefix through the second segment (`01a0c61f-b892`), which is short enough to
+read and long enough to resolve. Take it from `--format json`, not from the
+column.
 Note the asymmetry from the stdin section: `issue add` is `arg + flag` (no stdin);
 `issue edit --body -`/`--batch`/`--split` are `stdin`. The dash is not optional
 and the asymmetry is the point: `--body` is a string flag whose value names
