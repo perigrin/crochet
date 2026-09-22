@@ -62,11 +62,6 @@ be the only voice: at least one participant is neither the author nor a role
 that holds no view. Refinement records the outcome with `state: accepted`; it
 does not decide it.
 
-**Three gates are mandatory: assess, review and postmortem.** Those produce
-judgments, and nothing else produces them. Brainstorming, refinement and execute
-are methods — they produce an artifact, so each is optional whenever that
-artifact arrives another way. A finished pull request enters at review, and what
-gets backfilled is the assessment and the decision, not the work. Chain-review
-is mandatory only when a chain exists.
-
-The rest is in `docs/decisions/0003-acceptance-by-refinement.md`.
+Which gates are mandatory, and what a legal skip is, is stated in
+`docs/ARCHITECTURE.md` — imported above, so it is already in context. The
+argument is in `docs/decisions/0003-acceptance-by-refinement.md`.
