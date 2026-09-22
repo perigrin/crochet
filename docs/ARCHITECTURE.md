@@ -59,6 +59,18 @@ change. `state:` carries only what a human declares — `proposed`, `accepted`,
 is derived from commit trailers, because a declared state is an act of judgment
 and a derived one is a fact about the world.
 
+**Mutability follows state, and the links between decisions are bidirectional**
+[[0001](decisions/0001-documentation-architecture.md)]. A `proposed` entry may
+change freely; at `accepted` it freezes — immutable in content, append-only in
+status — and the only way to change what it says is to supersede it.
+`supersedes`/`superseded-by` and `amends`/`amended-by`
+[[0003](decisions/0003-acceptance-by-refinement.md)] are each written both ways,
+in one commit. That duplicates a fact deliberately: an archive document is read
+alone constantly, so the relation has to be legible from either end. The
+consistency obligation is discharged mechanically by `xt/run.sh` rather than by
+discipline, because orphan links and cycles are cheap to check and remembering
+is not.
+
 **Compiler, not runtime**
 [[0001](decisions/0001-documentation-architecture.md)]. Guardrails live in the
 repository being checked, not in this plugin. In-repo checks and in-repo
@@ -105,29 +117,47 @@ because nothing distinguishes it from having forgotten.
 
 A **skill** is a markdown file with `name` and `description` frontmatter
 followed by instructions an agent follows. A **command** is a thin stub
-delegating to one. Skills without a stub are internal by construction.
+delegating to one. Skills without a stub are internal by construction, not by
+convention, and say so in their own text — the absence of a file is not a claim
+anyone can read.
 
 | Skill | Role |
 |---|---|
 | `assess` | Analyses a spec against the codebase and chain; produces a gap analysis |
 | `refinement` | Decomposes a spec into a git-zhi chain of issues |
-| `chain-review` | Gate between refinement and execute; runs the coverage and plan-quality lenses |
+| `chain-review` | Gate between refinement and execute; runs the two lenses below |
 | `execute` | Drives the execution loop, issue by issue |
-| `review` | Gate between execute and postmortem; reviews the delivery against the decision |
-| `postmortem` | Milestone retrospective |
-| `install`, `preflight`, `verify`, `onboard` | Infrastructure |
-| `import`, `report` | Support |
-| `alignment`, `pushback`, `discernment`, `how-to-use-git-zhi` | Internal, no command stub |
+| `review` | Gate between execute and postmortem; reviews the delivery's diff against the decision |
+| `postmortem` | Milestone retrospective, written to `docs/postmortems/` |
+| `install` | Installs the git-zhi binary and its companion commands |
+| `preflight` | Runs first in every skill; checks git-zhi, returns the capabilities map, reports pipeline position |
+| `verify` | On-demand environment health check, deeper than preflight |
+| `onboard` | Walks a repository through git-zhi adoption |
+| `import` | Brings tickets in from an external tracker |
+| `report` | Renders narrative reports from templates |
+| `alignment` | Coverage lens: does the chain cover its spec? Called by `chain-review` |
+| `pushback` | Plan-quality lens: sizing, dependencies, criterion executability. Called by `chain-review` |
+| `discernment` | Convergence mechanism: rounds of independent participants to a fixed point. Called by `assess`, `chain-review` and `review` |
+| `how-to-use-git-zhi` | Agent-facing command reference, consulted before running `git zhi` |
 
-**Refinement dispatches four roles in sequence** — architect, decomposer, SQE,
-technical writer — each with its own prompt. The SQE's isolation from
-implementation code is structural: a role that has not seen the code cannot
-write a test that merely restates it.
+`preflight`, `alignment`, `pushback`, `discernment` and `how-to-use-git-zhi`
+have no command stub.
 
-**Execute nests two loops.** The inner loop is an iterative TDD cycle per issue.
-The outer loop reads sanbao metrics to choose a review tier, then validates with
-PAAD skills, allowing up to three reopen cycles before an issue is reported
-stuck.
+**Refinement dispatches four roles in sequence**, each with its own system
+prompt in `skills/refinement/`:
+
+1. **Architect** (`architect-prompt.md`) — reads the spec and codebase, creates the milestone
+2. **Decomposer** (`decomposer-prompt.md`) — breaks the spec into issues with dependencies and positive acceptance criteria
+3. **SQE** (`sqe-prompt.md`) — adds negative scenarios, and never reads implementation code
+4. **Technical writer** (`techwriter-prompt.md`) — adds documentation steps and standalone doc issues
+
+The SQE's isolation from implementation code is structural: a role that has not
+seen the code cannot write a test that merely restates it.
+
+**Execute nests two loops.** The inner loop is an iterative TDD cycle per issue,
+with a simplification pass as its gate. The outer loop reads sanbao metrics to
+choose a review tier, then validates with PAAD skills, allowing up to three
+reopen cycles per issue before the issue is reported as stuck.
 
 **Execute reads `wip_limit` and dispatches no more workers than it permits**
 [[0002](decisions/0002-worker-identity.md)]. `wip_limit` caps issues in progress
