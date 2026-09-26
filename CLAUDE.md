@@ -20,9 +20,11 @@ TDD with review gates, and run retrospectives at milestone completion.
 
 Those three are imported rather than pointed at. For an agent an import is
 static linking; "see CONTRIBUTING.md" is a dynamic lookup that may not happen.
-They are also the three documents `git zhi docs health` watches, so a claim in
+All three carry `covers:`, so `git zhi docs health` watches them, and a claim in
 any of them that drifts from the code it covers is detectable rather than
-merely wrong.
+merely wrong. It is not the only set the tool watches: `docs health` reads
+`covers:` from every file under `docs/`, archive included, so its output is not
+by itself a signal about the live layer.
 
 Nothing from `docs/decisions/` or `docs/postmortems/` is imported. Those are
 archive — true as of their date, read when a question about *why* arises, and
