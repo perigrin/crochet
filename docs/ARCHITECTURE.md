@@ -191,9 +191,11 @@ the orchestrator assigns one unassigned issue from the milestone's ready set to
 the worker's token, and the worker's bare `next` hands that issue over. `next`
 is not scoped to a milestone, and workers that call it before any has started
 receive the same issue, so a worker left to choose for itself drifts off the
-milestone or duplicates another's pick. A worker that stands down gives its
-assignment back, but only while the assignment still carries that worker's
-token, so one set by anyone since is never touched
+milestone or duplicates another's pick. When a worker stands down, the
+orchestrator gives its assignment back, but only while the assignment still
+carries that worker's token, so one set by anyone since is never touched; a
+start lost to another actor is left alone even while the token still matches,
+because that issue is in progress under the other actor
 [[issue-26-selection](assessments/issue-26-selection.md)]. A run that dies leaves
 issues bearing a token no live worker matches, which is why execute clears, at
 start-up, assignments carrying an `agent:` token without its own run's
