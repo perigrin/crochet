@@ -79,14 +79,23 @@ holds, or an action they have not authorised.
 **Default does not mean never stop.** It means no routine pause between
 issues. Stop when one of these is true:
 
-- the ready set is empty;
-- every remaining issue is blocked by an unfinished one;
-- a permission was denied, or a tool refused the action;
+- no worker is live and the pool is empty — the run's end, under "After every
+  return" below;
+- a stand-down left its issue pending or reopened and no worker is live, the
+  same section's held-slot rule;
+- a permission was denied;
 - an acceptance criterion fails and you cannot make it pass;
 - a decision is genuinely the user's — a deletion they have not approved, or
   work that belongs to another repo or another session.
 
-Then report once, covering everything.
+An empty ready set is not on that list. While a worker is still live, its close
+can unblock more of the milestone, so the run waits for it rather than ending.
+
+Then report once, covering everything. The one end-of-run report names every
+milestone issue not done and why: each issue still in the pool, with git-zhi's
+refusal text for one whose start was refused, and each issue still blocked by
+an unfinished one, with what blocks it. Issues the run itself still holds at a
+normal end are not this report's; they belong to perigrin/crochet#27.
 
 No check enforces this. It is a rule about what an agent chose to do, and
 nothing recovers that from the repository afterwards — so it is placed where
@@ -287,21 +296,27 @@ acts on whatever issue that is.
 reopen included. The start records a transition under `ZHI_ACTOR`, and the
 check reads it back:
 
-1. Wait five seconds, then re-read the issue, as one shell command so the read
-   cannot run before the wait ends:
+1. Wait at least the settle interval, five seconds, then re-read the issue:
 
    ```bash
-   timeout 5 tail -f /dev/null; git zhi issue show <id> --format json
+   git zhi issue show <id> --format json
    ```
 
    The wait is the point: a concurrent start that lost hides in the moment
    right after the start, and a read with no settle time looks straight
-   through it. Some agent harnesses block a foreground `sleep`, so do not use
-   one, and do not background the wait either — a backgrounded `sleep 5`
-   returns at once, and the next command runs a fraction of a second later.
-   `timeout 5 tail -f /dev/null` blocks in the foreground for the full five
-   seconds and exits 124, which is expected; in Claude Code it measured 5.0 s
-   from wait to read.
+   through it. So the wait is a requirement, not a particular command:
+
+   - wait at least the settle interval before every re-read, retries included;
+   - use the harness's own waiting mechanism where it has one — in Claude
+     Code, the Monitor tool with an until-loop — or `sleep 5` where the shell
+     permits it;
+   - never re-read before the wait has elapsed, and issue no other command
+     until the wait returns.
+
+   A harness that blocks a foreground `sleep` is applying a safeguard, so meet
+   it with the mechanism it offers rather than a command chosen only because
+   it is not called `sleep`. Do not background the wait either: a backgrounded
+   wait returns at once, and the read runs a fraction of a second later.
 
 2. The worker owns the issue when its `state` is `in-progress` **and** the
    latest transition's actor — the last entry of `transitions`, each of which
@@ -312,8 +327,8 @@ check reads it back:
 
 3. A read that fails, or returns something that is not the issue, is retried,
    and never counts as won or lost: it says nothing about who holds the issue.
-   Each retry repeats the same command, wait included, so every read gets
-   the same settle. The retry is bounded at three reads. When it is exhausted, the worker stops
+   Each retry repeats the same wait and read, so every read gets the same
+   settle. The retry is bounded at three reads. When it is exhausted, the worker stops
    and returns to the orchestrator saying the ownership of `<id>` is unknown.
    That is not a stand-down, and the stand-down's unassign does not run on it,
    because the worker may hold the issue; it is reported by name for a person
@@ -324,7 +339,7 @@ dispatched for: `next` returned something else, the start was refused, or the
 check found another state or another actor. It runs no further transition on
 the issue and returns to the orchestrator, saying which of those happened and
 quoting git-zhi's refusal text when there was one. What the orchestrator does
-next is the orchestrator's.
+next is in "After every return" below.
 
 The check narrows git-zhi's concurrent-start window and does not close it
 (perigrin/git-zhi#35). Two starts close enough together can both be recorded;
@@ -332,6 +347,53 @@ the check makes the loser see the winner's transition and back off, rather than
 working an issue someone else holds. Within one run the pick already keeps two
 workers off one issue, so what reaches the check is a start refused for
 `wip_limit`, or an actor outside the run taking the issue.
+
+#### After every return — give back, wait, or re-dispatch
+
+A worker is **live** from its dispatch until it returns to the orchestrator.
+Every return comes here, with one worker or many, and is handled in this order.
+
+**A stand-down gives its assignment back, if the assignment is still the
+worker's.** Read the issue first:
+
+```bash
+git zhi issue show <id> --format json
+```
+
+If its `state` is `in-progress` under another actor — the latest transition's
+actor is not the worker's token — the start was lost. Leave the issue alone: it
+stays in progress under the other actor, it is not unassigned and it is not
+re-dispatched from here. That case is perigrin/crochet#27's. Otherwise run
+`git zhi issue edit <id> --unassign` only if its `assigned` field still carries
+that worker's token. An assignment anyone has set since, a human's included, is
+never touched. The guard is the orchestrator's own read, because on 0.7.2
+`--unassign` clears any assignment, whoever set it, and exits 0 even when there
+is none. The read and the unassign are two commands, so this narrows the window
+in which someone else's assignment could be cleared rather than closing it.
+Once unassigned, the issue is back in the pool the pick draws from.
+
+**A held slot pauses dispatch until a live worker returns.** When a stand-down
+leaves its issue not in progress — pending or reopened — dispatch nobody further
+until a live worker returns. A start refused for `wip_limit` is one way that
+happens, and a `next` that returned the wrong issue is another. This takes
+precedence over re-dispatch for that return. Without it a slot held from
+outside the run turns give-back and re-dispatch into a loop: on 0.7.2, with
+`wip_limit` 1 and an outside actor holding the slot, every start is refused
+with `WIP limit reached: 1 issue(s) already in progress (limit 1)` and the
+issue stays `pending`, back in `issue list --ready` once unassigned. A slot
+that frees inside the run lets re-dispatch proceed when that worker returns.
+
+- **If no worker is live, the run ends.** Its report names every issue still in
+  the pool, with git-zhi's refusal text for the refused one.
+- **On the one-worker path the agent running the loop does not count as
+  live**, because it would be waiting on itself, so a refusal there ends the
+  run.
+
+**Otherwise, re-dispatch.** On every other return — an issue finished, or a
+stand-down that left nothing waiting — run the pick again and dispatch for it,
+within the caps above. On the one-worker path this is Step 4's return to the
+pick. The run ends when no worker is live and the pool is empty, not when the
+ready set is empty: a live worker's close can unblock more.
 
 ### Step 3: Inner Loop (Execute Issue)
 
@@ -495,9 +557,10 @@ decline it in writing rather than silently.
 
 **Record the tier and the outcome, including on a clean pass**, as a checklist
 entry in the milestone body: which tier the analyst chose and why, which lenses
-ran, and whether the gate was backfilled. Then proceed to the next issue — back
-to Step 2, whose Loop control section decides whether that happens now or after
-confirmation.
+ran, and whether the gate was backfilled. Then return to Step 2: its "After
+every return" section re-enters the pick, where the orchestrator assigns the
+next issue and `next` hands it over, and its Loop control section decides
+whether that happens now or after confirmation.
 
 **Write it on a clean pass especially.** Without it, an issue that passed review
 and an issue where review never ran are byte-identical in the chain: same state,
@@ -578,7 +641,8 @@ Postmortem: see output above
 ## Key Constraints
 
 - All chain interaction through `git zhi` CLI — never access refs directly
-- Each worker selects with bare `git zhi next`, identity in `ZHI_ACTOR`
+- The orchestrator assigns each issue before dispatch; the worker's bare
+  `git zhi next` hands it over, with identity set as `ZHI_ACTOR` on each command
 - Reopen requires two state transitions: `--state reopen` then `--state start`
 - Sanbao gate analyst determines review depth — measured complexity, not heuristics
 - Sanbao runs at milestone scope; gate analyst extracts single-issue metrics

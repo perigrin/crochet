@@ -165,6 +165,13 @@ across the chain and git-zhi enforces per-worker WIP of one independently, so
 the two compose into a parallelism throttle without anything being added. A
 `wip_limit` of zero means no limit rather than no workers.
 
+**Execute re-dispatches on every worker's return, and ends when no worker is
+live and its pool is empty** [[issue-26-selection](assessments/issue-26-selection.md)],
+not when the ready set is empty, because a live worker's close can unblock
+more. A stand-down that leaves its issue pending or reopened pauses dispatch
+until a live worker returns, and ends the run when none is live, so a
+`wip_limit` slot held from outside the run cannot turn re-dispatch into a loop.
+
 ## Data Stores
 
 **The chain is git-zhi's, and crochet reaches it only through the CLI**
@@ -184,9 +191,13 @@ the orchestrator assigns one unassigned issue from the milestone's ready set to
 the worker's token, and the worker's bare `next` hands that issue over. `next`
 is not scoped to a milestone, and workers that call it before any has started
 receive the same issue, so a worker left to choose for itself drifts off the
-milestone or duplicates another's pick. A run that dies leaves issues bearing a
-token no live worker matches, which is why execute clears assignments carrying a
-token that is not its own at start-up.
+milestone or duplicates another's pick. A worker that stands down gives its
+assignment back, but only while the assignment still carries that worker's
+token, so one set by anyone since is never touched
+[[issue-26-selection](assessments/issue-26-selection.md)]. A run that dies leaves
+issues bearing a token no live worker matches, which is why execute clears, at
+start-up, assignments carrying an `agent:` token without its own run's
+`agent:<run-id>-` prefix — a run holds a token per pick rather than one.
 
 The capabilities manifest at `.claude/crochet/capabilities.json` is
 machine-specific and gitignored. It records what is installed on one machine, so
