@@ -65,9 +65,8 @@ order, cheapest first:
    `sh t/execute-selection-walkthrough.sh control` runs the same setup and
    cases with R1 to R3 removed: bare, unassigned `next`, no ownership check and
    no give-back. Its verdict is inverted. It exits 0 only when that
-   protocol-less run fails a selection property for the expected reason — two
-   workers on one issue, a start outside the milestone, or a worker working an
-   issue not assigned to it — **and** the setup precondition
+   protocol-less run shows one of #26's real symptoms — two workers' work on
+   one issue, or a start outside the milestone — **and** the setup precondition
    `ok - other milestone leads critical_chain` passed. So exit 0 means the
    walkthrough can tell the protocol from its absence; a broken binary or a
    broken setup exits non-zero rather than passing as that absence.

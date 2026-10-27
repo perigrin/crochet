@@ -14,8 +14,8 @@
 #
 # `control` runs the same setup and cases with R1-R3 removed: no assignment,
 # bare `next`, whatever it returns started, no ownership check, no give-back.
-# It exits 0 only if that run fails a selection verdict for the expected
-# reason and the setup precondition passed, so a broken setup or binary cannot
+# It exits 0 only if that run shows a real symptom (a start outside the
+# milestone, or one issue worked by two workers) and the setup precondition passed, so a broken setup or binary cannot
 # pass as the protocol's absence.
 #
 # WALKTHROUGH_KEEP=<empty dir> keeps the scratch repository there after the run.
@@ -111,7 +111,9 @@ PRE_OK=0 EXPECTED=0   # control's two conditions: setup precondition, expected f
 pass() { echo "ok - $*"; }
 fail() {
     echo "not ok - $*"; echo x >> "$TMP/fails"
-    case "$*" in *"two workers"*|*"outside the milestone"*|*"assigned to it"*) EXPECTED=1 ;; esac
+    # Only #26's real symptoms count for control. "assigned to it" fails there
+    # by construction, since control assigns nothing, so it proves nothing.
+    case "$*" in "no issue carries work from two workers"*|"no worker started an issue outside the milestone"*) EXPECTED=1 ;; esac
 }
 
 # A read concurrent with a worker's write can fail on 0.7.2 with "ref file is
@@ -734,10 +736,10 @@ if [ "$PROTO" = 0 ]; then
     # Control inverts the verdict, and both halves are needed: a broken setup
     # fails every case too, so a failure alone would not be the protocol's absence.
     if [ "$PRE_OK" = 1 ] && [ "$EXPECTED" = 1 ]; then
-        pass "control: without R1-R3 the run failed a selection verdict for the expected reason, with the setup precondition passing"
+        pass "control: without R1-R3 the run showed a real symptom (off-milestone start or one issue worked twice), with the setup precondition passing"
         exit 0
     fi
-    echo "not ok - control: setup precondition passed=$PRE_OK, expected selection failure seen=$EXPECTED"
+    echo "not ok - control: setup precondition passed=$PRE_OK, real symptom seen=$EXPECTED"
     exit 1
 fi
 [ -s "$TMP/fails" ] && exit 1
