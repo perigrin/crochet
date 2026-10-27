@@ -83,7 +83,9 @@ issues. Stop when one of these is true:
   return" below;
 - a stand-down left its issue pending or reopened and no worker is live, the
   same section's held-slot rule;
-- a permission was denied;
+- a permission was denied, or any tool other than git-zhi's `start` refused the
+  action. A refused `start` is a stand-down, handled under "After every return"
+  below; every other refusal still stops the run;
 - an acceptance criterion fails and you cannot make it pass;
 - a decision is genuinely the user's — a deletion they have not approved, or
   work that belongs to another repo or another session.
@@ -93,8 +95,9 @@ can unblock more of the milestone, so the run waits for it rather than ending.
 
 Then report once, covering everything. The one end-of-run report names every
 milestone issue not done and why: each issue still in the pool, with git-zhi's
-refusal text for one whose start was refused, and each issue still blocked by
-an unfinished one, with what blocks it. Issues the run itself still holds at a
+refusal text for one whose start was refused; each issue still blocked by
+an unfinished one, with what blocks it; each issue whose ownership a worker
+reported unknown; and each lost start left in progress under another actor. Issues the run itself still holds at a
 normal end are not this report's; they belong to perigrin/crochet#27.
 
 No check enforces this. It is a rule about what an agent chose to do, and
@@ -161,6 +164,11 @@ git zhi issue list --ready --milestone <milestone> --format json
 git zhi list --critical --format json
 git zhi issue edit <id> --assign agent:<run-id>-<n>
 ```
+
+On 0.7.2 `--assign` overwrites whatever assignment the issue holds, a human's
+included. The pool read and the assign are two commands, so an assignment made
+between them is overwritten; reading the pool immediately before assigning
+narrows that window, and nothing here closes it.
 
 **Self-resume comes before any pick.** An agent told to continue mid-issue
 first resumes the issue it already holds, under that issue's own token, before
@@ -259,10 +267,11 @@ with its token. It does not choose; the pick above already did, by assigning,
 and `next` hands the assigned issue over:
 
 ```bash
-git zhi next --format json
+ZHI_ACTOR=agent:<run-id>-<n> git zhi next --format json
 ```
 
-Bare, with **no actor flag**. The identity is already in the environment, and
+Bare, with **no actor flag**: the token is set on the command, as on every
+`git zhi` command the worker runs. The identity is already in the environment, and
 passing it on the read side while the write side reads the environment is the
 split-identity failure this exists to prevent. On 0.7.2, `next` returns the
 asking worker's own assignment ahead of any other ready issue; with nothing
@@ -285,7 +294,7 @@ same one.
 Start the issue by its literal id:
 
 ```bash
-git zhi issue edit <id> --state start
+ZHI_ACTOR=agent:<run-id>-<n> git zhi issue edit <id> --state start
 ```
 
 Never by an empty or unset variable. An empty ref is not an error on 0.7.2: it
@@ -338,7 +347,9 @@ check reads it back:
 dispatched for: `next` returned something else, the start was refused, or the
 check found another state or another actor. It runs no further transition on
 the issue and returns to the orchestrator, saying which of those happened and
-quoting git-zhi's refusal text when there was one. What the orchestrator does
+quoting git-zhi's refusal text when there was one. That text offers `--force`;
+never use it. On 0.7.2 it overrides `wip_limit`, and the refusal is the
+protocol working, not an obstacle to it. What the orchestrator does
 next is in "After every return" below.
 
 The check narrows git-zhi's concurrent-start window and does not close it
@@ -351,7 +362,11 @@ workers off one issue, so what reaches the check is a start refused for
 #### After every return — give back, wait, or re-dispatch
 
 A worker is **live** from its dispatch until it returns to the orchestrator.
-Every return comes here, with one worker or many, and is handled in this order.
+Only its final report is a return. A worker waiting on its own background work
+has not returned: a Monitor wait ends a dispatched agent's turn, and the agent
+resumes when the wait completes, so a harness notice that a worker is waiting
+on its own work leaves it live. Every return comes here, with one worker or
+many, and is handled in this order.
 
 **A stand-down gives its assignment back, if the assignment is still the
 worker's.** Read the issue first:
@@ -363,7 +378,10 @@ git zhi issue show <id> --format json
 If its `state` is `in-progress` under another actor — the latest transition's
 actor is not the worker's token — the start was lost. Leave the issue alone: it
 stays in progress under the other actor, it is not unassigned and it is not
-re-dispatched from here. That case is perigrin/crochet#27's. Otherwise run
+re-dispatched from here. That case is perigrin/crochet#27's. If the read
+itself fails, retry it under the ownership check's bound; when that is
+exhausted, leave the assignment as it is and name the issue in the end-of-run
+report, because unassigning blind could clear someone else's. Otherwise run
 `git zhi issue edit <id> --unassign` only if its `assigned` field still carries
 that worker's token. An assignment anyone has set since, a human's included, is
 never touched. The guard is the orchestrator's own read, because on 0.7.2
