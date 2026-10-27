@@ -179,9 +179,14 @@ nothing durable cites it and durable citations point at commits instead
 the actor on the in-progress transition. An assignment attracts its own worker
 and repels nobody, so the orchestrator assigns only issues that are currently
 unassigned and never dispatches for an issue assigned outside its own worker
-set. A run that dies leaves issues bearing a token no live worker matches, which
-is why execute clears assignments carrying a token that is not its own at
-start-up.
+set. That is how execute chooses: before every pick, with one worker or many,
+the orchestrator assigns one unassigned issue from the milestone's ready set to
+the worker's token, and the worker's bare `next` hands that issue over. `next`
+is not scoped to a milestone, and workers that call it before any has started
+receive the same issue, so a worker left to choose for itself drifts off the
+milestone or duplicates another's pick. A run that dies leaves issues bearing a
+token no live worker matches, which is why execute clears assignments carrying a
+token that is not its own at start-up.
 
 The capabilities manifest at `.claude/crochet/capabilities.json` is
 machine-specific and gitignored. It records what is installed on one machine, so
@@ -220,12 +225,21 @@ withheld on the strength of it.
 exists, then `ZHI_ACTOR`, then the git author. No write command takes `--actor`,
 so on the write path `ZHI_ACTOR` is the top of that order by commitment rather
 than by oversight. Every agent in one repository inherits the same git author,
-so without an exported identity they all resolve to the same actor and mutual
+so without a declared identity they all resolve to the same actor and mutual
 exclusion excludes nothing.
 
-The token is opaque and per-run, not derived from the milestone name — milestones
-share prefixes, and a derived token would let one run's reclamation clear
-another's assignments.
+**Identity is set on each `git zhi` command**
+[[0002](decisions/0002-worker-identity.md)]. It is declared once for the
+process, so that the read side and the write side resolve the same actor and
+nothing passes a different one by flag. Where each shell command is its own
+process, as in agent harnesses where an `export` does not survive between
+invocations, setting the same token on each command is that single declaration.
+
+**The token is opaque and fresh for every pick**, so a token is used for exactly
+one issue: a reused one makes `next` return an earlier reopened issue instead of
+the new pick. It is never derived from the milestone name — milestones share
+prefixes, and a derived token would let one run's reclamation clear another's
+assignments.
 
 ## Development and Testing
 
