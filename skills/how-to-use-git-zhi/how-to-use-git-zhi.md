@@ -76,7 +76,7 @@ Note: the `--state` flag's own `--help` string lists only `start, pause, resume,
 
 | Intent | Command | Input mode | Output |
 |---|---|---|---|
-| Find next work | `git zhi next [--label <l>]` — bare, with `ZHI_ACTOR` set | env | the HEAD issue for this worker |
+| Find next work | `git zhi next [--label <l>]` — bare, with `ZHI_ACTOR` set | env | this worker's assignment, which the orchestrator made before dispatch |
 | Find next work across repos | `git zhi project next <file.yaml>` — needs an identity | env or flag | cross-repo recommendation |
 | Inspect the chain | `git zhi list [--ready] [--milestone <m>] [--label <l>] [--critical]` | flag | open issues |
 | Inspect the chain, including done | `git zhi issue list --all` | flag | every issue |
@@ -129,31 +129,38 @@ stdin.
 
 ## Worker identity: `ZHI_ACTOR`
 
-Every transition records who made it. A process declares itself by exporting:
+Every transition records who made it. A worker declares itself by setting
+`ZHI_ACTOR` on each `git zhi` command:
 
 ```bash
-export ZHI_ACTOR=agent:worker-3
+ZHI_ACTOR=agent:<token> git zhi next
+ZHI_ACTOR=agent:<token> git zhi issue edit <ref> --state start
 ```
+
+In an agent harness each shell command is its own process, so an `export` does
+not survive to the next invocation. Setting the same token on every command is
+one declaration for the worker, not many: the read side and the write side
+resolve the same actor.
 
 The actor resolves in order: an explicit `--actor` flag where a command has one,
 then `ZHI_ACTOR`, then a derivation from git's `user.name` and `user.email`.
 
 **Only `next` and `project next` take `--actor`, and both are read-side.** No
 write command has the flag (git-zhi ADR 0004), so on the write path `ZHI_ACTOR`
-is the only way to declare an identity. Use bare `git zhi next` with the
-variable exported rather than `next --actor`: passing it on the read side while
+is the only way to declare an identity. Use bare `git zhi next` with
+`ZHI_ACTOR` set on the command rather than `next --actor`: passing it on the read side while
 the write side reads the environment is how one worker ends up with two
 identities.
 
 The value must name its type — `agent:` or `human:`. A bare string is refused
 at this boundary rather than defaulted, because defaulting would silently record
-agents as humans. To override for a single command, prefix the assignment:
+agents as humans. A human declares the same way:
 
 ```bash
 ZHI_ACTOR=human:chris git zhi issue edit <ref> --state done
 ```
 
-With nothing exported, behaviour is exactly what it was before this existed:
+With no `ZHI_ACTOR` set, behaviour is exactly what it was before this existed:
 the git-author derivation, one actor, no migration.
 
 **Why this matters.** Every agent in one repository shares the git author
