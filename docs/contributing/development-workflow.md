@@ -34,17 +34,57 @@ order, cheapest first:
    actually happens. This is the step that catches version skew: a skill can be
    internally consistent and still describe a flag the installed binary does not
    have, or an input mode it no longer accepts.
-3. **Run the product check.**
+3. **Run the product checks.**
 
    ```bash
    sh t/git-zhi-subcommands.sh
+   sh t/execute-selection-walkthrough.sh
    ```
 
-   Every `git zhi` subcommand named in a fenced block or backtick span under
-   `skills/` must really exist. This is the check that catches version skew at
-   the level it actually happens: a subcommand's `--help` exits 0 long after
-   the flags beneath it have moved, and a companion invoked by hyphenated name
-   stopped dispatching in v0.5.0 while the stale symlink kept answering.
+   The first: every `git zhi` subcommand named in a fenced block or backtick
+   span under `skills/` must really exist. This is the check that catches
+   version skew at the level it actually happens: a subcommand's `--help` exits
+   0 long after the flags beneath it have moved, and a companion invoked by
+   hyphenated name stopped dispatching in v0.5.0 while the stale symlink kept
+   answering.
+
+   The second drives git-zhi in a throwaway scratch repository, playing an
+   orchestrator and workers that follow the selection protocol in
+   `skills/execute/execute.md` — the orchestrator assigns each pick, the worker
+   confirms it with `next`, starts it and checks ownership. It prints one
+   `ok`/`not ok` line per property, naming the scratch issues it judged, and
+   exits non-zero on any `not ok`. It refuses to run below the
+   `git_zhi_min_version` in `.claude-plugin/plugin.json`, because the protocol
+   leans on behaviour observed at that version. Besides the selection cases it
+   drives the refusal cases: a start refused for a `wip_limit` slot held from
+   outside the run, a lost start, a failed ownership read, a human assignment
+   made mid-run, self-resume, and a reused token. It takes a minute or two,
+   since every start waits out the ownership check's settle interval, and set
+   `WALKTHROUGH_KEEP` to a directory to keep its scratch chain for inspection.
+
+   `sh t/execute-selection-walkthrough.sh control` runs the same setup and
+   cases with R1 to R3 removed: bare, unassigned `next`, no ownership check and
+   no give-back. Its verdict is inverted. It exits 0 only when that
+   protocol-less run shows positive evidence of one of #26's real symptoms — a
+   worker's recorded start on an issue of another milestone, or one issue that
+   two workers' records both say they worked — **and** the setup precondition
+   `ok - other milestone leads critical_chain` passed. A run where nothing
+   started or nothing was worked has shown no symptom, so it exits non-zero.
+   So exit 0 means the walkthrough can tell the protocol from its absence; a
+   broken binary or a broken setup exits non-zero rather than passing as that
+   absence.
+
+   On 0.7.2 a `git zhi` read running while another worker writes can fail with
+   `ref file is empty`, or with `no issue found matching` for an issue that
+   exists (a sibling of perigrin/git-zhi#35). In the walkthrough it
+   shows as a `# stand-downs:` line quoting that text. The protocol absorbs it:
+   the worker stands down, the orchestrator gives the assignment back and
+   re-dispatches, and the issue is worked by a later worker — so progress is
+   judged per issue, and such a run still passes.
+
+   `xt/run.sh` runs only the first. The walkthrough is not wired into it: its
+   cost would be paid on every project check, and its subject is a skill's
+   protocol rather than the repository's consistency.
 
 4. **Run the project checks.**
 
@@ -54,7 +94,7 @@ order, cheapest first:
 
    These ask whether the repo does what this document claims of it. `xt/run.sh`
    runs ten check families and its own ABOUTME carries the count and the arithmetic; among them
-   are the product check above, `git zhi docs check`, no live document declaring
+   are the first product check above, `git zhi docs check`, no live document declaring
    a `covers:` list and naming nothing, symmetric links between decisions, and
    the backstop over accepted decisions that no live document cites. **That list
    is not exhaustive**, and naming it here in full would be a second place to
