@@ -235,11 +235,13 @@ nothing passes a different one by flag. Where each shell command is its own
 process, as in agent harnesses where an `export` does not survive between
 invocations, setting the same token on each command is that single declaration.
 
-**The token is opaque and fresh for every pick**, so a token is used for exactly
-one issue: a reused one makes `next` return an earlier reopened issue instead of
-the new pick. It is never derived from the milestone name — milestones share
-prefixes, and a derived token would let one run's reclamation clear another's
-assignments.
+**The token is opaque and never derived from the milestone name**
+[[0002](decisions/0002-worker-identity.md)] — milestones share prefixes, and a
+derived token would let one run's reclamation clear another's assignments. 0002
+mints it per run; execute mints a fresh one for every pick, so a token is used
+for exactly one issue, because a reused one makes `next` return an earlier
+reopened issue instead of the new pick
+[[issue-26-selection](assessments/issue-26-selection.md)].
 
 ## Development and Testing
 
