@@ -4,13 +4,13 @@ covers:
   - skills/execute/execute.md
 ---
 
-<!-- The subject of docs/assessments/issue-26.md as accepted at revision r8. Earlier revisions are not kept; the ledger records what changed and why. -->
+<!-- The subject of docs/assessments/issue-26-selection.md as accepted at revision r8. Earlier revisions are not kept; the ledger records what changed and why. -->
 
 # Subject, revision r8: perigrin/crochet#26, milestone-scoped selection in execute
 
 r1 is the body of perigrin/crochet#26. Revisions r2 to r7 were held in the
 assessing session and are not kept here; the record of each round is
-`docs/assessments/issue-26.md`.
+`docs/assessments/issue-26-selection.md`.
 
 r8 changes r7 only where a round-7 finding asked for it, and every change names
 the finding. Rulings 1 to 4 are unchanged. **Human ruling 5:** if round 8 does
