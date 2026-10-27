@@ -97,17 +97,29 @@ the decision is made, which is the honest ceiling for a rule of this kind.
 
 Every agent in one repository inherits the same git author config, so without
 this they all resolve to the same actor: each "resumes" whatever another
-started, and mutual exclusion excludes nothing. Mint an opaque token for this
-run — `<run-id>`, a few random characters — and give worker *n*:
+started, and mutual exclusion excludes nothing. Mint an opaque id for this
+run — `<run-id>`, a few random characters — and set the worker's token as a
+prefix on **each `git zhi` command** it runs:
 
 ```bash
-export ZHI_ACTOR=agent:<run-id>-<n>
+ZHI_ACTOR=agent:<run-id>-<n> git zhi next
 ```
 
-**Export it at dispatch, not at worktree creation.** A worktree is only
-preferred below, and a worker taking either fallback has no worktree step to
-mint an identity in — it would fall back to the git author and the collapse
-above would recur for exactly that worker.
+Not an `export`. An agent harness runs each shell command as its own process,
+so an export does not survive to the next command, and the worker would fall
+back to the git author — the collapse above, for exactly that worker. Setting
+the same token on every command is still one declaration of identity: the read
+side and the write side resolve the same actor, and nothing passes a different
+one by flag. Give the token to the worker when it is dispatched, not at
+worktree creation; a worktree is only preferred below, and a worker taking
+either fallback has no worktree step.
+
+**Every pick gets a fresh `<n>`**, on the parallel and one-worker paths alike,
+so a token names exactly one issue. A reused token is ruled out because `next`
+resumes that token's earlier issue once it has been reopened, and returns it
+instead of the new pick. That is still one identity per worker per issue, the
+same on the read and write side. A reopen in Step 4 keeps the issue's own
+token, so the reopened issue stays reachable by the worker that holds it.
 
 Do not derive `<run-id>` from the milestone name. Milestones share prefixes
 (`rfc-0001` and `rfc-0001-followups`), and the reclamation rule below would
@@ -115,10 +127,12 @@ match across them and clear another run's assignments.
 
 Then reclaim what a dead run left behind:
 
-- **Clear assignments bearing an `agent:` token that is not this run's.** An
-  issue still assigned to a worker that no longer exists is outside the pool,
-  because the rule below only assigns unassigned issues. A `human:` value, or
-  an `agent:` name that is not a run token, is never touched.
+- **Clear assignments bearing an `agent:` token that is not this run's** — one
+  without this run's `agent:<run-id>-` prefix, since a run holds a token per
+  pick rather than one. An issue still assigned to a worker that no longer
+  exists is outside the pool, because the rule below only assigns unassigned
+  issues. A `human:` value, or an `agent:` name that is not a run token, is
+  never touched.
 - **Assign only issues that are currently unassigned**, and never dispatch for
   an issue assigned outside this run's workers. Assigning an issue to yourself
   therefore removes it from the orchestrator's pool, which is what a reader
@@ -164,7 +178,7 @@ Ownership is the actor on the in-progress transition.
   Disjoint file scope is necessary but NOT sufficient for concurrent commits —
   index isolation is what makes parallel execution actually parallel.
 
-**Otherwise:** one worker, still with an identity exported.
+**Otherwise:** one worker, still with its token set on each `git zhi` command.
 
 Each worker selects its own work:
 
@@ -340,7 +354,9 @@ decline it in writing rather than silently.
   git zhi issue edit <id> --state reopen
   git zhi issue edit <id> --state start
   ```
-  The next execution pass reads the issue and sees the findings.
+  The next execution pass reads the issue and sees the findings. The reopen
+  and restart run under the issue's own token, not a fresh one, so `next`
+  still hands the reopened issue to its worker.
 
 - **In-scope findings AND reopens >= 3:** Stop and report: "Issue <id> exceeded
   max review passes (3). Consider splitting the issue or revising the AC."
