@@ -110,8 +110,8 @@ so an export does not survive to the next command, and the worker would fall
 back to the git author — the collapse above, for exactly that worker. Setting
 the same token on every command is still one declaration of identity: the read
 side and the write side resolve the same actor, and nothing passes a different
-one by flag. Give the token to the worker when it is dispatched, not at
-worktree creation; a worktree is only preferred below, and a worker taking
+one by flag. Give the token to the worker at each pick, not at worktree
+creation; a worktree is only preferred below, and a worker taking
 either fallback has no worktree step.
 
 **Every pick gets a fresh `<n>`**, on the parallel and one-worker paths alike,
@@ -141,9 +141,70 @@ Then reclaim what a dead run left behind:
 Assignment is a hint, not a lock: it attracts its own worker and repels nobody.
 Ownership is the actor on the in-progress transition.
 
+#### The pick — before every dispatch, on both paths
+
+Workers do not choose their issue; the agent that orchestrates does, by
+assigning. Before any worker calls `next`, it takes one issue from the
+milestone's ready set and assigns it to the token that worker will use:
+
+```bash
+git zhi issue list --ready --milestone <milestone> --format json
+git zhi list --critical --format json
+git zhi issue edit <id> --assign agent:<run-id>-<n>
+```
+
+**Self-resume comes before any pick.** An agent told to continue mid-issue
+first resumes the issue it already holds, under that issue's own token, before
+picking anything new. When `next` under that token returns its own in-progress
+issue, run no transition: `start` is refused on an issue already in progress,
+and `--state resume` is refused while its session is open. Skip the stand-down
+and the ownership check after start, and go straight back to Step 3. The one
+exception is a paused issue, which takes `--state resume` before Step 3, because
+its session is closed. A paused issue's `state` stays `in-progress`; only
+`sessions[-1].ended_at` in `git zhi issue show <id> --format json` marks the
+pause, so run `--state resume` only when the last session has one. A prior run's
+in-progress issue is not self-resume: its token belongs to no live worker, which
+is the dead-worker case and not this skill's selection.
+
+**The pool.** The ready rule comes from the query, never computed by hand. Keep
+only issues with no assignment: the ready JSON leaves the `assigned` field out
+when nothing is assigned rather than setting it to null, so a missing
+`assigned` field means unassigned, and any value at all — a `human:` one
+included — takes the issue out of the pool, so an issue a human has assigned is
+never picked. Query with `issue list --ready`, not bare `list --ready`: that
+returns only each issue's `id` and `title` under `ready_set`, so the filter has
+nothing to read and would dispatch human-assigned issues.
+
+**The order.** Issues on the `critical_chain` key of `list --critical` come
+first, in that key's order. Not the `issues` key, which is every issue in
+creation order. The rest follow by `created` ascending, with equal values
+broken by UUID, so two passes over the same pool never order it differently.
+`critical_chain` can be null, or left out of the JSON altogether when no chain
+is open; then every ready unassigned issue falls through to creation order.
+Re-read the critical chain at every pick and never cache it from the first,
+because the chain moves as issues close. No other ordering is used, so
+`urgency` plays no part.
+
+This has a recorded cost. `list --critical` reports the one repo-wide chain
+and ignores `--milestone`, so when another milestone holds the chain none of
+its issues is in the pool, and a milestone-scoped critical order is lost. Bare
+`next` never offered one either. The cost goes away if git-zhi ships a
+milestone-scoped `next` (perigrin/git-zhi#35). The JSON shapes above were
+observed on 0.7.2.
+
+**Who mints `<n>`.** On the parallel path the orchestrator mints a fresh `<n>`
+at each pick and gives that token to the worker it dispatches for the issue. On
+the one-worker path the agent is both orchestrator and worker: it mints the
+`<n>` itself, at the pick that Step 4's return to this step re-enters, not in
+the once-per-run identity block above.
+
+`--step` goes through this same pick. Its confirmation is asked about the issue
+the pick chose, after the pick, and is never a separate selection.
+
 **If `superpowers:dispatching-parallel-agents` is available** (check preflight capabilities):
-  Dispatch one agent per issue, each with its own `ZHI_ACTOR`, and let each
-  select its own work with bare `git zhi next` (below).
+  Run the pick before each dispatch, and dispatch one agent per picked issue,
+  each with the token its pick assigned. Dispatch no more workers than there
+  are unassigned ready issues in the pool, and within `wip_limit`.
 
   Read the cap with `git zhi config --format json`:
 
@@ -178,7 +239,9 @@ Ownership is the actor on the in-progress transition.
   Disjoint file scope is necessary but NOT sufficient for concurrent commits —
   index isolation is what makes parallel execution actually parallel.
 
-**Otherwise:** one worker, still with its token set on each `git zhi` command.
+**Otherwise:** one worker, which is its own orchestrator. It runs the pick,
+works the picked issue with that pick's token set on each `git zhi` command, and
+comes back to the pick when Step 4 returns here.
 
 Each worker selects its own work:
 
