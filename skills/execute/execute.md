@@ -83,12 +83,11 @@ issues. Stop when one of these is true:
   return" below;
 - a stand-down left its issue pending or reopened and no worker is live, the
   same section's held-slot rule;
-- a permission was denied, or a tool refused the action — except the refusals
-  the protocol already handles: a `next` that does not return the dispatched
-  issue (including its exit 1 on `no actionable issues`) and a refused `start`
-  are stand-downs, handled under "After every return" below, and a failed read
-  the protocol retries is retried to its bound first. Every other refusal still
-  stops the run;
+- a permission was denied, or a refusal the protocol does not handle. The ones
+  it handles: a `next` that does not return the dispatched issue (including its
+  exit 1 on `no actionable issues`) and a refused `start` are stand-downs,
+  handled under "After every return" below, and a failed read the protocol
+  retries is retried to its bound first;
 - an acceptance criterion fails and you cannot make it pass;
 - a decision is genuinely the user's — a deletion they have not approved, or
   work that belongs to another repo or another session.

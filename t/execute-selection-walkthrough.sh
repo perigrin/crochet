@@ -1,7 +1,9 @@
 #!/bin/sh
 # ABOUTME: Product check — drives execute's selection protocol (R1-R3) against real git-zhi.
 # ABOUTME: Scratch chain; the orchestrator assigns each pick, workers confirm, start, check.
-#
+
+set -u
+
 # Usage: sh t/execute-selection-walkthrough.sh [selection|control]
 #
 # Every verdict below is computed from the scratch chain and from the records
@@ -20,7 +22,6 @@
 #
 # WALKTHROUGH_KEEP=<empty dir> keeps the scratch repository there after the run.
 
-set -u
 
 # Clear what a git hook exports, as xt/run.sh does, so no command here can aim
 # at the developer's own refs/zhi. ZHI_ACTOR too: every actor below is explicit.
