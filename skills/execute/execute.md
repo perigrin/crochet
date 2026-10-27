@@ -83,9 +83,12 @@ issues. Stop when one of these is true:
   return" below;
 - a stand-down left its issue pending or reopened and no worker is live, the
   same section's held-slot rule;
-- a permission was denied, or any tool other than git-zhi's `start` refused the
-  action. A refused `start` is a stand-down, handled under "After every return"
-  below; every other refusal still stops the run;
+- a permission was denied, or a tool refused the action — except the refusals
+  the protocol already handles: a `next` that does not return the dispatched
+  issue (including its exit 1 on `no actionable issues`) and a refused `start`
+  are stand-downs, handled under "After every return" below, and a failed read
+  the protocol retries is retried to its bound first. Every other refusal still
+  stops the run;
 - an acceptance criterion fails and you cannot make it pass;
 - a decision is genuinely the user's — a deletion they have not approved, or
   work that belongs to another repo or another session.
@@ -97,7 +100,9 @@ Then report once, covering everything. The one end-of-run report names every
 milestone issue not done and why: each issue still in the pool, with git-zhi's
 refusal text for one whose start was refused; each issue still blocked by
 an unfinished one, with what blocks it; each issue whose ownership a worker
-reported unknown; and each lost start left in progress under another actor. Issues the run itself still holds at a
+reported unknown; each issue whose give-back read failed past its bound, with
+its assignment left as it was; and each lost start left in progress under
+another actor. Issues the run itself still holds at a
 normal end are not this report's; they belong to perigrin/crochet#27.
 
 No check enforces this. It is a rule about what an agent chose to do, and
@@ -408,8 +413,9 @@ that frees inside the run lets re-dispatch proceed when that worker returns.
   run.
 
 **Otherwise, re-dispatch.** On every other return — an issue finished, or a
-stand-down that left nothing waiting — run the pick again and dispatch for it,
-within the caps above. On the one-worker path this is Step 4's return to the
+stand-down that left nothing waiting — run the pick again for every slot the
+caps above leave free, and dispatch for each, so a close that unblocks several
+issues widens the run back out. On the one-worker path this is Step 4's return to the
 pick. The run ends when no worker is live and the pool is empty, not when the
 ready set is empty: a live worker's close can unblock more.
 
@@ -473,8 +479,8 @@ After execution completes, close the issue and compute a sanbao snapshot
 to determine review tier.
 
 ```bash
-git zhi issue edit <id> --state done
-git zhi sanbao <milestone> --format json
+ZHI_ACTOR=agent:<run-id>-<n> git zhi issue edit <id> --state done
+ZHI_ACTOR=agent:<run-id>-<n> git zhi sanbao <milestone> --format json
 ```
 
 Sanbao operates at milestone scope. Extract the target issue's metrics from
@@ -555,9 +561,9 @@ decline it in writing rather than silently.
 
   ### Review Findings
 
-  <findings>" | git zhi issue edit <id> --body -
-  git zhi issue edit <id> --state reopen
-  git zhi issue edit <id> --state start
+  <findings>" | ZHI_ACTOR=agent:<run-id>-<n> git zhi issue edit <id> --body -
+  ZHI_ACTOR=agent:<run-id>-<n> git zhi issue edit <id> --state reopen
+  ZHI_ACTOR=agent:<run-id>-<n> git zhi issue edit <id> --state start
   ```
   The next execution pass reads the issue and sees the findings. The reopen
   and restart run under the issue's own token, not a fresh one, so `next`
