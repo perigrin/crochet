@@ -262,10 +262,11 @@ someone else. That is why `next` confirms the pick rather than making it.
 
 **The worker starts nothing unless `next` returns exactly that id.** "Assigned
 to my token" is not the test: a reused token's earlier reopened issue passes it
-too, and `next` returns that one first. If `next` returns any other issue, or
-reports `no actionable issues for actor <id>` or the plainer
-`no actionable issues`, the worker starts nothing, stands down and returns to
-the orchestrator.
+too, and `next` returns that one first. Any output other than that exact id means the
+worker starts nothing, stands down and returns to the orchestrator: another
+issue, `no actionable issues for actor <id>`, the plainer
+`no actionable issues`, or `no issues found`, which is what 0.7.2 prints when
+the chain is empty.
 
 Read the id from the JSON `id` field, never from the text output. Text prints
 an 8-character short id, and short ids collide for issues created together
@@ -286,14 +287,21 @@ acts on whatever issue that is.
 reopen included. The start records a transition under `ZHI_ACTOR`, and the
 check reads it back:
 
-1. Wait a few seconds, then re-read the issue. Some agent harnesses block a
-   foreground `sleep`, so do not use one: run the wait as a background
-   command — in Claude Code, `sleep 5` with `run_in_background`, whose
-   completion re-invokes the worker — and read the issue when it returns.
+1. Wait five seconds, then re-read the issue, as one shell command so the read
+   cannot run before the wait ends:
 
    ```bash
-   git zhi issue show <id> --format json
+   timeout 5 tail -f /dev/null; git zhi issue show <id> --format json
    ```
+
+   The wait is the point: a concurrent start that lost hides in the moment
+   right after the start, and a read with no settle time looks straight
+   through it. Some agent harnesses block a foreground `sleep`, so do not use
+   one, and do not background the wait either — a backgrounded `sleep 5`
+   returns at once, and the next command runs a fraction of a second later.
+   `timeout 5 tail -f /dev/null` blocks in the foreground for the full five
+   seconds and exits 124, which is expected; in Claude Code it measured 5.0 s
+   from wait to read.
 
 2. The worker owns the issue when its `state` is `in-progress` **and** the
    latest transition's actor — the last entry of `transitions`, each of which
@@ -304,7 +312,8 @@ check reads it back:
 
 3. A read that fails, or returns something that is not the issue, is retried,
    and never counts as won or lost: it says nothing about who holds the issue.
-   The retry is bounded at three reads. When it is exhausted, the worker stops
+   Each retry repeats the same command, wait included, so every read gets
+   the same settle. The retry is bounded at three reads. When it is exhausted, the worker stops
    and returns to the orchestrator saying the ownership of `<id>` is unknown.
    That is not a stand-down, and the stand-down's unassign does not run on it,
    because the worker may hold the issue; it is reported by name for a person
