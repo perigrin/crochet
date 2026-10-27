@@ -22,6 +22,7 @@ into an empty directory survives locally and dies on the first clone.
 
 ```bash
 sh t/git-zhi-subcommands.sh   # every git zhi subcommand the skills name exists
+sh t/execute-selection-walkthrough.sh  # execute's selection protocol, driven in a scratch chain
 sh xt/run.sh                  # the repo does what this document claims of it
 git zhi docs check            # reachability, dead links, decision numbering, covers
 git zhi docs health           # drift between a document's covers: paths and churn
