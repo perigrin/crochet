@@ -107,14 +107,9 @@ else
     REPO="$TMP/repo"; mkdir -p "$REPO"
 fi
 
-PRE_OK=0 EXPECTED=0   # control's two conditions: setup precondition, expected failure
+PRE_OK=0 EXPECTED=0   # control's two conditions: setup precondition, a symptom observed
 pass() { echo "ok - $*"; }
-fail() {
-    echo "not ok - $*"; echo x >> "$TMP/fails"
-    # Only #26's real symptoms count for control. "assigned to it" fails there
-    # by construction, since control assigns nothing, so it proves nothing.
-    case "$*" in "no issue carries work from two workers"*|"no worker started an issue outside the milestone"*) EXPECTED=1 ;; esac
-}
+fail() { echo "not ok - $*"; echo x >> "$TMP/fails"; }
 
 # A read concurrent with a worker's write can fail on 0.7.2 with "ref file is
 # empty". The orchestrator's own reads are retried; a worker's next and start
@@ -378,13 +373,15 @@ echo "# case one-worker: dispatched $(ids_of solo)"
 # scratch chain. Each line names the issues it judged.
 all_ids=$(awk '{print $3}' "$TMP/dispatch" | tr '\n' ' ')
 
-bad=""; started=""
+bad=""; started=""; offs=""   # offs: starts read as another milestone's, the positive evidence
 for r in "$TMP"/rec/*; do
     case "$r" in *.err) continue ;; esac
     s=$(sed -n 's/^started //p' "$r"); [ -n "$s" ] || continue
     c=$(sed -n 's/^case //p' "$r"); m=$(awk -v c="$c" '$1 == c {print $2}' "$TMP/cases")
     started="$started $s"
-    [ "$(milestone_of "$s")" = "$m" ] || bad="$bad $s(case $c)"
+    ms=$(milestone_of "$s")
+    [ "$ms" = "$m" ] || bad="$bad $s(case $c)"
+    [ -n "$ms" ] && [ "$ms" != "$m" ] && offs="$offs $s($ms, case $c)"
 done
 otr=$(git zhi issue list --all --format json |
       jq -r '[.[] | select(.milestone == "other") | (.transitions // []) | length] | add')
@@ -401,6 +398,14 @@ if [ -z "$dup" ] && [ -n "$worked" ]; then
     pass "no issue carries work from two workers: each of $worked worked by one token, per the workers' records"
 else
     fail "no issue carries work from two workers: ${dup:-nothing worked}"
+fi
+# Control counts only positive evidence of #26's symptoms: a start recorded on
+# another milestone's issue, or an issue two workers' records both worked. A
+# run where nothing started or nothing was worked fails both verdicts above,
+# and shows neither symptom.
+if [ -n "$offs" ] || [ -n "$dup" ]; then
+    EXPECTED=1
+    echo "# symptoms: off-milestone starts:${offs:- none}; worked twice: ${dup:-none}"
 fi
 
 mism=""; okw=""
@@ -739,7 +744,7 @@ if [ "$PROTO" = 0 ]; then
         pass "control: without R1-R3 the run showed a real symptom (off-milestone start or one issue worked twice), with the setup precondition passing"
         exit 0
     fi
-    echo "not ok - control: setup precondition passed=$PRE_OK, real symptom seen=$EXPECTED"
+    echo "not ok - control: setup precondition passed=$PRE_OK, symptom observed (an off-milestone start or an issue worked twice)=$EXPECTED"
     exit 1
 fi
 [ -s "$TMP/fails" ] && exit 1
