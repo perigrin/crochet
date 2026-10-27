@@ -8,11 +8,12 @@ covers:
 
 Threshing session over perigrin/crochet#26 ("execute: bare `git zhi next` is not
 milestone-scoped, so workers pick other milestones' issues and collide").
-#26 has no decision number, so this file is named for the issue. Seven rounds
+#26 has no decision number, so this file is named for the issue. Eight rounds
 have run, all against git-zhi 0.7.2 (`7b9287d`), which is also the plugin's
 declared `git_zhi_min_version`. Rounds 1 and 2 ran against crochet `d2de72f`.
 Round 3 ran against `bd918b1`, round 4 against `7ef0469`, round 5 against
-`8e0d986`, round 6 against `eefe101`, and round 7 against `7614e9f`; each is
+`8e0d986`, round 6 against `eefe101`, round 7 against `7614e9f`, and round 8
+against `b2c0b85`; each is
 `d2de72f` plus the commits recording this assessment, and
 `skills/execute/execute.md` is unchanged from `d2de72f`.
 
@@ -45,11 +46,23 @@ Round 3 ran against `bd918b1`, round 4 against `7ef0469`, round 5 against
   walkthrough gains a reused-token case and "each worker worked the issue
   assigned to it"; preamble lines on W9 and W8; and git-zhi#37 under Out of
   scope. It grew from 187 to 225 lines.
+- **Round 8**, the last under ruling 5, assessed r8, under the same title. r8
+  "changes r7 only where a round-7 finding asked for it, and every change names
+  the finding. Rulings 1 to 4 are unchanged." It adds "Self-resume runs no
+  transition" to R1 and removes R3's "unreachable" clause; reads ruling 4's
+  order from the `critical_chain` key; restates the ordering cost (Q11); fires
+  R1c on any stand-down that leaves its issue pending; adds
+  `docs/ARCHITECTURE.md` to R5; and collects round 7's nits in a new section,
+  "Binding on the implementing issue". It is 264 lines.
 
 r2 to r7 are held in the session's scratch directory (`subject-r2.md` to
 `subject-r7.md`, with r1 as `subject.md` and the diffs as `r1-r2.diff` to
-`r6-r7.diff`), **not in this repository**. The round-7 brief is `brief-r7.md`.
-#26's body on GitHub is still r1.
+`r7-r8.diff`), **not in this repository**. r8 is committed beside this record
+as `docs/assessments/issue-26-subject.md`. The round-8 brief is `brief-r8.md`;
+it asks each participant to say, for anything still held, whether it is "**a
+bar**, meaning it should not ship while this is open, and why; or **a
+residual** the implementing issue or #27 can carry". #26's body on GitHub is
+still r1.
 
 **The human's scope ruling at r3.** r3's opening records it: "Round 2 showed
 (F1) that #26 cannot be fixed at the first pick alone. Dispatched workers return
@@ -127,7 +140,7 @@ returns an object with keys `critical_chain`, `current_constraint`, `issues`
 and `parallel_work`. `.critical_chain` held the chain `o1, o2, o3`; `.issues`
 held every issue in creation order. `i26-pushback`'s round-7 report says the
 same. C21 stays as its raiser declared it; only `i26-cold` may release it. See
-D14.
+D14. In round 8 `i26-cold` re-measured and released C21.
 
 **Round 1 outcome: another round owed.** All three participants recommended
 **modify**.
@@ -316,6 +329,53 @@ participant's recommendation, as written:
 **Standing-asides in round 7.** None declared. `i26-arch` on A18: "I am
 releasing rather than standing aside."
 
+**Round 8 outcome: no participant holds anything as a bar, and the round
+raised new findings, every one declared a residual by its raiser.** Every open
+round-7 row is released by its raiser. P27 is "**released, as a residual
+carried by the binding section**"; V2, V3 and V6 are each "**released**, one
+residual". `i26-cold` releases C21, withdrawing its own round-7 measurement
+(D14). 15 findings were raised in round 8, by four participants, one of them
+(`i26-cold6`) new: E21, P28 to P30, K17 to K19 and Z1 to Z8. `i26-fresh`,
+`i26-cold3` and `i26-cold4` also name residuals without ids. No participant
+declared a block or a standing-aside. Each participant's recommendation, as
+written:
+
+- `i26-arch`: "**Recommendation: accept.** I hold nothing, as either a bar or
+  a residual."
+- `i26-evidence`: "**accept**". "I hold one **residual** (E21: a paused issue)
+  and one **record correction** to my round-7 nit (the tie-break). Neither is
+  a bar."
+- `i26-pushback`: "**accept**". "I hold nothing as a bar. P26 is answered. P27
+  is carried by the binding section. Three residuals are recorded below for
+  the implementing issue. None of them should stop #26 shipping."
+- `i26-fresh`: "**accept**". "I hold nothing as a bar against #26. The one
+  residual is the `--step` carve-out wording, for the implementing issue."
+- `i26-cold`: "**accept**". "I hold nothing as a bar or as a residual."
+- `i26-cold2`: "**accept**". "No bar remains from me." "K17, K18 and K19 are
+  residuals for the implementing issue. K19 could instead be a one-word fix in
+  Out of scope." "K17 is the one I would most want fixed in wording before
+  implementation starts".
+- `i26-cold3`: "**accept**". "Nothing is held as a bar. The two
+  binding-section points and the R1c note are residuals for the implementing
+  issue."
+- `i26-cold4`: "**accept**". "My rows are all released. I name two residuals
+  for the implementing issue, and neither is a bar."
+- `i26-cold5`: "**accept**". "r8 answers every row I raised. The three
+  residuals above are one sentence each, and all belong to the implementing
+  issue. Nothing in r8 contradicts 0002, the body, or the binary."
+- `i26-cold6`: "**accept**". "I found no bar. Every finding below is a
+  residual the implementing issue can carry."
+
+**Standing-asides in round 8.** None declared.
+
+**What follows under ruling 5.** Round 8 is the bound. It did not reach a
+strict fixed point, because it raised new findings. No participant holds any
+of them, or anything else, as a bar. Under ruling 5, #26 is therefore accepted
+at r8 with what remains open recorded as residuals; they are listed under
+"Residuals carried to the implementing issue". This is acceptance with
+residuals under ruling 5, not a fixed point. The disagreements below are not
+marked resolved where their parties did not say so.
+
 No participant declared a block in any round, and none declared a
 standing-aside before round 4. (`i26-fresh` writes of F8(f) in round 3, "I note
 this but do not block on it".)
@@ -324,15 +384,16 @@ this but do not block on it".)
 
 | | Role | Rounds | Context |
 |---|---|---|---|
-| `i26-arch` | participant | 1, 2, 3, 4, 5, 6, 7 | dispatched fresh in round 1, resumed in rounds 2 to 7; codebase and architecture axes, read against decisions 0002 and 0003. In round 4 it read r4, then #27 through the REST API, then 0002 again, then ran its checks, and read `r3-r4.diff` last. In round 5 it read r5, then this ledger at `8e0d986` (D9 and the P19, C12, K3 and F3 rows), then #27's comments through the REST API, then ran its checks (J1 to J3), and read `r4-r5.diff` last. In round 6 it read `brief-r6.md`, then r6, then git-zhi's source for `list --critical` (`chain_list.go`) and `sortIssues`, then ran its checks (L1 to L3), and read `r5-r6.diff` last. In round 7 it read `brief-r7.md`, then r7, then `r6-r7.diff` last; it ran no new commands |
-| `i26-evidence` | participant | 1, 2, 3, 4, 5, 6, 7 | dispatched fresh in round 1, resumed in rounds 2 to 7; re-derived every behavioural claim in scratch repositories on 0.7.2. In round 4 it read r4, measured, and read the diff and this ledger last. In round 5 the same order; its script is `walk5.sh`, with the `--assign ""` probe in `r36`. In round 6 the same order; its script is `walk6.sh` (adding R1c's hold, the token-guarded `--unassign`, token-naming worker records and an urgency-then-creation order), with micro-tests in `r38` to `r40`. In round 7 it read r7, measured, and read `r6-r7.diff` and its ledger rows last; its script is `walk7.sh` (ruling 4's order, R1c's whole-pool report and exemption, worker records naming the worked and assigned ids, and `SCEN=reuse`), with the ordering probe `order.sh` and runs in `w7*` and `r41` to `r45` |
-| `i26-pushback` | participant | 1, 2, 3, 4, 5, 6, 7 | dispatched fresh in round 1, resumed in rounds 2 to 7; `paad:pushback` over the subject as a spec. In round 4 it read r4, then this ledger at `7ef0469`, then #27 through the REST API, then `r3-r4.diff`; it ran no new probes. In round 5 it read r5, then this ledger at `8e0d986`, then `r4-r5.diff` last; no new probes. In round 6 it read `brief-r6.md`, r6, this ledger at `eefe101` (for the round-5 ids), and `r5-r6.diff` last; probes of `issue edit --help` and `list --critical` in `probe26`. In round 7 it read `brief-r7.md`, r7, this ledger at `7614e9f` (D12, D13, and F21, E20, Q1, A10, F15, C7), and `r6-r7.diff` last; probe of `list --critical` in `probe26r7` |
-| `i26-fresh` | participant | 2, 3, 4, 5, 6, 7 | dispatched fresh in round 2, resumed in rounds 3 to 7. In round 2 it declared it did not open this ledger, any other `i26-*` report, r1 or the diff. In round 3 it read r3 and ran its checks first, then this ledger at `bd918b1`, then `r2-r3.diff`. In round 4 it read r4, execute.md Step 2, the ledger rows on the one-worker path, #27 through the REST API, then `r3-r4.diff`; it re-ran nothing. In round 5 it read r5, then execute.md Step 2, Step 4's return and Loop control, then ran one new probe, then this ledger at `8e0d986` (the P17, C4, C12 and K3 rows), and `r4-r5.diff` last. In round 6 it read r6, ran probes in `scratch-fresh/`, then this ledger at `eefe101` (D10, D11), and `r5-r6.diff` last. In round 7 it read r7, ran a probe in `scratch-fresh/`, then read `r6-r7.diff` last; it did not open the ledger |
-| `i26-cold` | participant | 3, 4, 5, 6, 7 | dispatched fresh in round 3 with no prior findings or revisions. Declared it did not open this ledger, any `i26-*` file, any diff, `subject.md` or `subject-r2.md`. Read crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002, `execute.md` and parts of `how-to-use-git-zhi`, git-zhi source, and the body of git-zhi#35 through the GitHub API. Resumed in round 4: read r4, then this ledger at `7ef0469`, then `r3-r4.diff`; did not read #27's text. In round 5 it read r5, then this ledger at `8e0d986` (round-4 rows, via `git show`), then `r4-r5.diff`; probes in `scratch-cold/r5/`. In round 6 it read r6, then `brief-r6.md`, then `r5-r6.diff` last; probes in `scratch-cold/r6/` and `scratch-cold/r6b/`. In round 7 it read r7, then `brief-r7.md`, then `r6-r7.diff` last; probes in `scratch-cold/r6b/` |
-| `i26-cold2` | participant | 4, 5, 6, 7 | dispatched fresh in round 4 with no prior findings; resumed in rounds 5 to 7. Declared it did not open any earlier subject, this assessment record, any `i26-*` file or any diff. Read crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002, `execute.md` and parts of `how-to-use-git-zhi`; git-zhi's `Graph.headForActor`, `checkWIPLimit` and `checkBlockers`; and git-zhi#35 and #36 through the REST API. In round 5 it read r5, then this ledger at `8e0d986` (its K rows, and rows C4, C12 to C14, E17, F17, P19 to P21), and `r4-r5.diff` last; probes continue round 4's repository in `scratch-cold2/`. In round 6 it read `brief-r6.md`, then r6, then `r5-r6.diff` last, and did not re-read this ledger; observations O11 to O13. In round 7 it read r7, then `r6-r7.diff` last, and did not re-read this ledger; observations O14 to O16 |
-| `i26-cold3` | participant | 5, 6, 7 | dispatched fresh in round 5 with no prior findings; resumed in rounds 6 and 7. Declared it read r5 only: no earlier revision, no assessment record, no other participant's file, and not #27. Takes the two human rulings as settled. Read in full crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002, `execute.md` and `how-to-use-git-zhi.md`, and grepped the live skills for other selection and identity claims. Probes in `scratch-cold3/`. In round 6 it read r6, then `r5-r6.diff` last, and this ledger's rows Q1 to Q8, D10, D11, and A17, P22, F19, C15 and K12; it read git-zhi source on `Urgency`. In round 7 it read r7, then `r6-r7.diff` last, and this ledger's rows Q1 to Q10, A18, W2, W3, E20, F21 and P24; it ran nothing new |
-| `i26-cold4` | participant | 6, 7 | dispatched fresh in round 6 with no prior findings; resumed in round 7. "I read it without prior findings. The finding ids it cites are labels to me." Read in full crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002 and `execute.md`, and the relevant parts of `how-to-use-git-zhi.md` and `postmortem.md`; in git-zhi 0.7.2, `Graph.headForActor`, `sortIssues`, `checkWIPLimit` and `runChainList`. Probes in `scratch-cold4/`. In round 7 it read r7, then this ledger at `7614e9f` for its rows and D12 and D13, then `r6-r7.diff`; probes in `scratch-cold4/` |
-| `i26-cold5` | participant | 7 | dispatched fresh in round 7 with no prior findings. Declared it read r7 only: "no earlier revision, record, brief, diff or #27". Read in full crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002 and `execute.md`, the `ZHI_ACTOR` section of `how-to-use-git-zhi.md` and the relevant paragraph of `postmortem.md`; in git-zhi at `7b9287d`, `Graph.headForActor`, `ReadySet`, `sortIssues`, `runChainNext`, `runChainListReady`, `checkWIPLimit` and `checkBlockers`. Probes in `scratch-cold5/` |
+| `i26-arch` | participant | 1, 2, 3, 4, 5, 6, 7, 8 | dispatched fresh in round 1, resumed in rounds 2 to 8; codebase and architecture axes, read against decisions 0002 and 0003. In round 4 it read r4, then #27 through the REST API, then 0002 again, then ran its checks, and read `r3-r4.diff` last. In round 5 it read r5, then this ledger at `8e0d986` (D9 and the P19, C12, K3 and F3 rows), then #27's comments through the REST API, then ran its checks (J1 to J3), and read `r4-r5.diff` last. In round 6 it read `brief-r6.md`, then r6, then git-zhi's source for `list --critical` (`chain_list.go`) and `sortIssues`, then ran its checks (L1 to L3), and read `r5-r6.diff` last. In round 7 it read `brief-r7.md`, then r7, then `r6-r7.diff` last; it ran no new commands. In round 8 it read `brief-r8.md`, then r8 "with attention to R1 to R3 and the new 'Binding on the implementing issue' section", then `r7-r8.diff` last; it ran no new commands |
+| `i26-evidence` | participant | 1, 2, 3, 4, 5, 6, 7, 8 | dispatched fresh in round 1, resumed in rounds 2 to 8; re-derived every behavioural claim in scratch repositories on 0.7.2. In round 4 it read r4, measured, and read the diff and this ledger last. In round 5 the same order; its script is `walk5.sh`, with the `--assign ""` probe in `r36`. In round 6 the same order; its script is `walk6.sh` (adding R1c's hold, the token-guarded `--unassign`, token-naming worker records and an urgency-then-creation order), with micro-tests in `r38` to `r40`. In round 7 it read r7, measured, and read `r6-r7.diff` and its ledger rows last; its script is `walk7.sh` (ruling 4's order, R1c's whole-pool report and exemption, worker records naming the worked and assigned ids, and `SCEN=reuse`), with the ordering probe `order.sh` and runs in `w7*` and `r41` to `r45`. In round 8 it read the subject, measured, and read `r7-r8.diff` and the ledger last; `walk7.sh` is unchanged ("r8's selection rules match it"), and its self-resume micro-tests are in `r46` to `r49` |
+| `i26-pushback` | participant | 1, 2, 3, 4, 5, 6, 7, 8 | dispatched fresh in round 1, resumed in rounds 2 to 8; `paad:pushback` over the subject as a spec. In round 4 it read r4, then this ledger at `7ef0469`, then #27 through the REST API, then `r3-r4.diff`; it ran no new probes. In round 5 it read r5, then this ledger at `8e0d986`, then `r4-r5.diff` last; no new probes. In round 6 it read `brief-r6.md`, r6, this ledger at `eefe101` (for the round-5 ids), and `r5-r6.diff` last; probes of `issue edit --help` and `list --critical` in `probe26`. In round 7 it read `brief-r7.md`, r7, this ledger at `7614e9f` (D12, D13, and F21, E20, Q1, A10, F15, C7), and `r6-r7.diff` last; probe of `list --critical` in `probe26r7`. In round 8 it read `brief-r8.md`, r8, this ledger at `b2c0b85`, and `r7-r8.diff` last; probes of self-resume and `--state pause` in `probe26r7` |
+| `i26-fresh` | participant | 2, 3, 4, 5, 6, 7, 8 | dispatched fresh in round 2, resumed in rounds 3 to 8. In round 2 it declared it did not open this ledger, any other `i26-*` report, r1 or the diff. In round 3 it read r3 and ran its checks first, then this ledger at `bd918b1`, then `r2-r3.diff`. In round 4 it read r4, execute.md Step 2, the ledger rows on the one-worker path, #27 through the REST API, then `r3-r4.diff`; it re-ran nothing. In round 5 it read r5, then execute.md Step 2, Step 4's return and Loop control, then ran one new probe, then this ledger at `8e0d986` (the P17, C4, C12 and K3 rows), and `r4-r5.diff` last. In round 6 it read r6, ran probes in `scratch-fresh/`, then this ledger at `eefe101` (D10, D11), and `r5-r6.diff` last. In round 7 it read r7, ran a probe in `scratch-fresh/`, then read `r6-r7.diff` last; it did not open the ledger. In round 8 it read r8, then `r7-r8.diff` last; it did not re-run any probes |
+| `i26-cold` | participant | 3, 4, 5, 6, 7, 8 | dispatched fresh in round 3 with no prior findings or revisions. Declared it did not open this ledger, any `i26-*` file, any diff, `subject.md` or `subject-r2.md`. Read crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002, `execute.md` and parts of `how-to-use-git-zhi`, git-zhi source, and the body of git-zhi#35 through the GitHub API. Resumed in round 4: read r4, then this ledger at `7ef0469`, then `r3-r4.diff`; did not read #27's text. In round 5 it read r5, then this ledger at `8e0d986` (round-4 rows, via `git show`), then `r4-r5.diff`; probes in `scratch-cold/r5/`. In round 6 it read r6, then `brief-r6.md`, then `r5-r6.diff` last; probes in `scratch-cold/r6/` and `scratch-cold/r6b/`. In round 7 it read r7, then `brief-r7.md`, then `r6-r7.diff` last; probes in `scratch-cold/r6b/`. In round 8 it read r8, then `brief-r8.md`, then `r7-r8.diff` last; probes in `scratch-cold/r6b/` |
+| `i26-cold2` | participant | 4, 5, 6, 7, 8 | dispatched fresh in round 4 with no prior findings; resumed in rounds 5 to 8. Declared it did not open any earlier subject, this assessment record, any `i26-*` file or any diff. Read crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002, `execute.md` and parts of `how-to-use-git-zhi`; git-zhi's `Graph.headForActor`, `checkWIPLimit` and `checkBlockers`; and git-zhi#35 and #36 through the REST API. In round 5 it read r5, then this ledger at `8e0d986` (its K rows, and rows C4, C12 to C14, E17, F17, P19 to P21), and `r4-r5.diff` last; probes continue round 4's repository in `scratch-cold2/`. In round 6 it read `brief-r6.md`, then r6, then `r5-r6.diff` last, and did not re-read this ledger; observations O11 to O13. In round 7 it read r7, then `r6-r7.diff` last, and did not re-read this ledger; observations O14 to O16. In round 8 it read r8, then `r7-r8.diff` last, and did not re-read this ledger at `b2c0b85` |
+| `i26-cold3` | participant | 5, 6, 7, 8 | dispatched fresh in round 5 with no prior findings; resumed in rounds 6 to 8. Declared it read r5 only: no earlier revision, no assessment record, no other participant's file, and not #27. Takes the two human rulings as settled. Read in full crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002, `execute.md` and `how-to-use-git-zhi.md`, and grepped the live skills for other selection and identity claims. Probes in `scratch-cold3/`. In round 6 it read r6, then `r5-r6.diff` last, and this ledger's rows Q1 to Q8, D10, D11, and A17, P22, F19, C15 and K12; it read git-zhi source on `Urgency`. In round 7 it read r7, then `r6-r7.diff` last, and this ledger's rows Q1 to Q10, A18, W2, W3, E20, F21 and P24; it ran nothing new. In round 8 it read r8, then `r7-r8.diff` last, and this ledger's D15 and its own rows at `b2c0b85`; it re-measured self-resume in `scratch-cold3/` |
+| `i26-cold4` | participant | 6, 7, 8 | dispatched fresh in round 6 with no prior findings; resumed in rounds 7 and 8. "I read it without prior findings. The finding ids it cites are labels to me." Read in full crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002 and `execute.md`, and the relevant parts of `how-to-use-git-zhi.md` and `postmortem.md`; in git-zhi 0.7.2, `Graph.headForActor`, `sortIssues`, `checkWIPLimit` and `runChainList`. Probes in `scratch-cold4/`. In round 7 it read r7, then this ledger at `7614e9f` for its rows and D12 and D13, then `r6-r7.diff`; probes in `scratch-cold4/`. In round 8 it read r8, then `r7-r8.diff` last; it ran nothing new |
+| `i26-cold5` | participant | 7, 8 | dispatched fresh in round 7 with no prior findings; resumed in round 8. Declared it read r7 only: "no earlier revision, record, brief, diff or #27". Read in full crochet's `CLAUDE.md`, `ARCHITECTURE.md`, decision 0002 and `execute.md`, the `ZHI_ACTOR` section of `how-to-use-git-zhi.md` and the relevant paragraph of `postmortem.md`; in git-zhi at `7b9287d`, `Graph.headForActor`, `ReadySet`, `sortIssues`, `runChainNext`, `runChainListReady`, `checkWIPLimit` and `checkBlockers`. Probes in `scratch-cold5/`. In round 8 it read r8, then the brief, then its rows V1 to V6 in this ledger at `b2c0b85`, then `r7-r8.diff` last; probes in `scratch-cold5/`, reused. "I did not read other participants' r8 reports." |
+| `i26-cold6` | participant | 8 | dispatched fresh in round 8 with no prior findings. Declared it read r8 only: "I did not open the record, any other `i26-*` file, any diff, any brief, any other subject revision, or #27." Read in full crochet's `CLAUDE.md`, `docs/ARCHITECTURE.md`, decision 0002, `execute.md` and `how-to-use-git-zhi.md`; spot reads of `postmortem.md` lines 95-115, git-zhi's `internal/graph/graph.go` (`Head`, `headGlobal`, `headForActor`) and `.claude-plugin/plugin.json`. Probes on 0.7.2 in `scratch-cold6/` |
 | orchestrating session | drafter, round 1 | 1 | held no view on the subject; was not r1's author |
 | round-2 drafter | drafter, round 2 | 2 | a separately dispatched subagent holding no view on the subject. The orchestrating session could not draft round 2, because it became the subject's author at r2 |
 | round-3 drafter | drafter, round 3 | 3 | again a separately dispatched subagent holding no view on the subject |
@@ -340,6 +401,7 @@ this but do not block on it".)
 | round-5 drafter | drafter, round 5 | 5 | again a separately dispatched subagent holding no view on the subject |
 | round-6 drafter | drafter, round 6 | 6 | again a separately dispatched subagent holding no view on the subject |
 | round-7 drafter | drafter, round 7 | 7 | again a separately dispatched subagent holding no view on the subject |
+| round-8 drafter | drafter, round 8 | 8 | again a separately dispatched subagent holding no view on the subject |
 
 r1's author, an agent running `crochet:execute` on pvm's `m2-incremental`, did
 not sit. r2's author, the orchestrating session, wrote the revision and
@@ -349,16 +411,79 @@ submitted no participant report in round 4. r5's author submitted no
 participant report in round 5. r6's author submitted no participant report in
 round 6; after round 6 it made the measurement recorded above. r7's author
 submitted no participant report in round 7; it filed git-zhi#37 after round 6
-and made the measurement bearing on C21 recorded above. Every participant
-reported by writing a file; no report was truncated and no participant died.
-No participant reports reading another's round-4, round-5, round-6 or round-7
-report.
+and made the measurement bearing on C21 recorded above. r8's author submitted
+no participant report in round 8. Every participant reported by writing a
+file; no report was truncated and no participant died. No participant reports
+reading another's round-4, round-5, round-6, round-7 or round-8 report.
 
 ## The three axes
 
-As the participants stated them. Round-7 statements come first; the round-6,
-round-5, round-4 and round-3 statements follow as they were recorded, since r4
-removed much of what round 3 concerns.
+As the participants stated them. Round-8 statements come first; the round-7,
+round-6, round-5, round-4 and round-3 statements follow as they were recorded,
+since r4 removed much of what round 3 concerns.
+
+### After round 8
+
+1. **Codebase.**
+   - Self-resume on 0.7.2, under the issue's own token with its session open:
+     `next` returns the in-progress issue; `start` is refused, `cannot start:
+     issue is in-progress, expected pending or reopened`; `--state resume` is
+     refused, `cannot resume: a measurement session is already open`
+     (`i26-evidence` r46, `i26-pushback`, `i26-cold3`, `i26-cold6`).
+     `i26-evidence`: r8's rule, no transition, then `done`, succeeds with
+     "The assignment is kept"; the bracket through R2, R3 and R1b strands the
+     issue. `i26-cold5`, from source: "`start` and `resume` both refuse when a
+     session is open, with `cannot %s: a measurement session is already
+     open`, so not starting again is required, not optional".
+   - After `--state pause` by the same actor, `--state resume` succeeds and
+     `next` still returns the issue; with no transition, `done` measures only
+     the window before the pause, or is refused with `session has 0 commits`
+     (`i26-evidence` r47 to r49, E21; `i26-pushback`, P28). Neither finds
+     `--state pause` or `--state resume` anywhere under `skills/`.
+   - `list --critical --format json` has the keys `critical_chain`,
+     `current_constraint`, `issues` and `parallel_work`; `critical_chain` holds
+     the chain in order, upstream first (`i26-cold` re-measured, `i26-cold5`,
+     `i26-cold6`).
+   - `issue list --ready --milestone <m> --format json` carries `assigned`
+     and `created`; `assigned` is absent when unset (`i26-cold5`,
+     `i26-cold6`; `i26-evidence`: `has("assigned") == false`, and `issue show`
+     and `next` omit it too). `git zhi list --ready`'s JSON has no `assigned`
+     (`i26-cold5`).
+   - `i26-evidence`'s `walk7.sh` re-run: CAP=2 `none`, `steal`, `wipin`,
+     `wipout`, `human` PASS 3/3 each; CAP=1 `none`, `wipout`, `reuse` PASS;
+     `REUSE=1` FAILs as a negative control; red FAILs at CAP=2 and CAP=1.
+   - `i26-cold6` (Z1): under `wip_limit` 1, a reopened issue whose start is
+     refused is left `reopened`, assigned and in the ready set. Also: a
+     `wip_limit` refusal leaves the issue `pending`; `--assign` adds no
+     transition; `--unassign` exists.
+2. **Architecture.**
+   - `i26-cold6`: "**Inside 0002.**" "R1 restores one of 0002's premises":
+     "an orchestrator is a single serialisation point with no race to solve".
+     Z8 names one wording risk against "Identity is fixed for the life of a
+     worker".
+   - `i26-cold5`: "Nothing in r8 contradicts 0002, the body, or the binary."
+   - V5's `docs/ARCHITECTURE.md` site is doc-first: `i26-arch` ("as
+     `CLAUDE.md` requires"), `i26-pushback`, `i26-fresh`, `i26-cold5`,
+     `i26-cold6`.
+   - The binding section: every participant that reports the brief's check
+     finds nothing in it that must become a body requirement. `i26-evidence`
+     names E21's qualifier as "a sentence in R1". The tensions named against
+     the body are `--step`, the retry bound and the reused-token lines.
+   - `i26-pushback`'s growth check: "I found no clause citing neither a
+     round-7 finding nor a ruling."
+3. **Direction.**
+   - `i26-cold`: "Is r8 still the core? Yes." "The binding section moves
+     detail to the implementer, which is where it should go."
+   - `i26-cold6`: "No human gate is added." r8 "removes two live defects" and
+     a third, "`export` does not survive between shell invocations in agent
+     harnesses. It adds nothing that makes the skill worse."
+   - On R1c's widening: `i26-arch`, "An unneeded halt costs throughput, never
+     termination"; `i26-fresh`, "conservative and bounded"; `i26-cold2`,
+     "stricter than it needs to be … But it cannot loop or hang"; `i26-cold4`,
+     "it stops and reports rather than looping"; `i26-cold3` names a rare
+     early end as a residual.
+   - `i26-fresh`: on the one-worker path, under the old token, "`next` resumes
+     own work (`headForActor` step 1), so the agent never picks."
 
 ### After round 7
 
@@ -657,10 +782,26 @@ Round-2 statements that a round-3 report did not revisit are kept and marked.
 
 Where one row has several raisers, each raiser's declaration is recorded
 separately. Only a raiser releases. A raiser that did not re-declare a row in
-round 3, 4, 5, 6 or 7 is recorded as having made no declaration in that round; its
+round 3, 4, 5, 6, 7 or 8 is recorded as having made no declaration in that round; its
 last declaration stands. "Released: out of scope, in #27" is a release by the
 raiser, in the raiser's words; the raiser's own report says where it still
 holds the finding live.
+
+**Round-8 declarations on rows before round 7**, made in a sentence rather than
+row by row, and recorded here in the raiser's words. The rows' status cells are
+updated only where the raiser named the row (F3, W4).
+
+- `i26-arch`: "**All other rows**, A1 to A18, stay released on their recorded
+  grounds."
+- `i26-evidence`: E19 and E20 "**released** (round 7; re-run holds)"; "E1 to
+  E18 **still released**", "reproduced by this round's red and green runs".
+- `i26-fresh`: "F1, F4, F8, F17, F19, F20 and F21 stay released. Nothing in r8
+  reopens them. F3, F11 to F14 and F16 remain live in #27, and I hold them
+  there."
+- `i26-cold2`: "K1 to K15 still hold against r8."
+- `i26-cold4`: W4's nit "**released**"; "My rows are all released."
+- `i26-pushback`, `i26-cold` and `i26-cold3` make no declaration on rows before
+  round 7 in round 8.
 
 ### Round-1 findings
 
@@ -701,7 +842,7 @@ round 3, `i26-evidence`'s `walk.sh` re-run "re-proves E1, E2, E5 and E6", and
 | P11 | i26-pushback | 2 | Acceptance, bullet 2 | the walkthrough can pass without exercising the finish trigger, widening, stand-down service or run end. cf. F8 | text of the subject; a refused start does not arise under R1 and must be induced | **r3: released** (`i26-pushback`): "It exercises what I asked." It exercises none of R6's death, reopen or integration paths, noted under P13–P15. **r4:** "stands for selection scope, minus one clause: r4 dropped r3's 'its issue is re-dispatched', so the walkthrough no longer tests P19". **r5:** stands. "Acceptance has grown in the direction P11 asked for.". **r6:** stands. **r7:** no round-7 declaration | r2 |
 | F1 | i26-fresh | 2 | R1, R4, Where it goes | dispatched subagents return and end, so "each time a worker finishes" has no mechanism. R4's re-evaluation degrades to once per batch. Step 4's lens dispatch and reopen need an owner. cf. A9 | execute.md l.131-132, l.169, l.298, l.356; dispatching-parallel-agents "When agents return" | **r3: released** (`i26-fresh`): R1 and R4 give "finishes" a mechanism; the leftover is raised as F11. **r4:** "F1 does not apply again." R1 now triggers on dispatch, which the batch model has; R2 gives "one issue per worker, then return" as a consequence. **r5:** "**F1 stays released.**" R1a's trigger "is a worker's **return**, which the batch dispatch model provides", not F1's hand-off to a live worker. With foreground batch dispatch it fires at the batch's end: "That costs throughput, and no requirement depends on it.". **r6:** "still released. R1a still triggers on a worker's return.". **r7:** still released: "R1a, R1b, R1c and R3 compose as in round 6" | r2 |
 | F2 | i26-fresh | 2 | R4 | an issue that is chain-ready is not code-ready: downstream dispatch can start from a tree without its upstream's commits, or build on work later reopened | execute.md l.154-156, l.256-257, l.367-369; `ReadySet` treats done upstream as satisfied | **r3: released** (`i26-fresh`): R3's integration gate and R6's integrate-on-reviewed "close both halves". cf. A14, E15, P16, C2. **r4:** no declaration. `i26-fresh` lists F2 among the ids it found in #27. **r5:** no declaration. **r6:** no declaration. **r7:** no declaration | r2 |
-| F3 | i26-fresh | 2 | R2, R3 | a stand-down leaves the issue in progress under the wrong actor, absent from the ready set; the milestone cannot complete. cf. A9, P10 | scratch: start without `ZHI_ACTOR` → `human:T`, absent from `issue list --ready`, second start refused; 0002 "Breaking it costs a stranded issue" | **r3: held** (`i26-fresh`): start-up reclamation clears only assignments and no verb returns an in-progress issue to the pool (`reopen` refused; pause then resume leaves it absent from the ready set). "The subject must allow a handover outside the pool and an orchestrator transition on a dead worker's issue." cf. A12, E14, P13, C1; see D8. **r4: released** (`i26-fresh`): "out of scope, in #27". "Under r4, a stood-down worker's issue stays assigned to its token … the issue is stranded for the run. That is the defect F3 names, it predates #26 … I still hold it live in #27." See D8, D9. **r5:** no declaration. A party to D9 by its round-4 placement. **r6:** "still in #27. Nothing in r6 reaches back into them. R1b's 'a lost start is not re-dispatched, #27's' is consistent with F3." F21 names "F3's shape on the single path". **r7:** "still in #27" | r2 |
+| F3 | i26-fresh | 2 | R2, R3 | a stand-down leaves the issue in progress under the wrong actor, absent from the ready set; the milestone cannot complete. cf. A9, P10 | scratch: start without `ZHI_ACTOR` → `human:T`, absent from `issue list --ready`, second start refused; 0002 "Breaking it costs a stranded issue" | **r3: held** (`i26-fresh`): start-up reclamation clears only assignments and no verb returns an in-progress issue to the pool (`reopen` refused; pause then resume leaves it absent from the ready set). "The subject must allow a handover outside the pool and an orchestrator transition on a dead worker's issue." cf. A12, E14, P13, C1; see D8. **r4: released** (`i26-fresh`): "out of scope, in #27". "Under r4, a stood-down worker's issue stays assigned to its token … the issue is stranded for the run. That is the defect F3 names, it predates #26 … I still hold it live in #27." See D8, D9. **r5:** no declaration. A party to D9 by its round-4 placement. **r6:** "still in #27. Nothing in r6 reaches back into them. R1b's 'a lost start is not re-dispatched, #27's' is consistent with F3." F21 names "F3's shape on the single path". **r7:** "still in #27" **r8:** "F3, F11 to F14 and F16 remain live in #27, and I hold them there." | r2 |
 | F4 | i26-fresh | 2 | R3, Out of scope | R3 does not mitigate git-zhi#35; a single read right after the write cannot detect a lost update. Within a run, R1+R2 already prevent the case. See D1 | `WriteEntity`: parent from the current ref, then ref update, no CAS; interleaving read(A), read(B), write(A), check(A), write(B), check(B) | **r3: released** (`i26-fresh`): R5 claims only to narrow the window, "and that claim has been withdrawn" (the false assurance). "**D1 is resolved for me.**". **r4:** no declaration; "D1, which was resolved for me at r3". **r5:** no declaration. **r6:** "still released. R3 is unchanged.". **r7:** still released | r2 |
 | F5 | i26-fresh | 2 | R2, R3; Step 2 identity paragraph | `export ZHI_ACTOR` does not survive between Bash calls, so calls resolve to the git author; R2 and R3 trip on every issue and each trip strands one | scratch: exported in one call, empty in the next; the Bash tool's own statement; execute.md l.103-105 | **r3: released** (`i26-fresh`): R7. The piped `echo ... \| git zhi issue edit --body -` in Step 4 is included, as implementation detail. **r4:** no row declaration. On ruling 2: "I have no objection. R4 matches what I asked for in F5.". **r5:** no declaration. **r6:** no declaration. **r7:** no declaration | r2 |
 | F6 | i26-fresh | 2 | R1, R4, against Loop control | the ready set is empty whenever every ready issue is held, so Loop control ends the run with workers running; R4's cap shrinks below the live count. cf. P8, P9, A11 | execute.md l.80-89; `ReadySet` filter; in-progress A absent from `issue list --ready` | **r3: released** (`i26-fresh`): R8 and R4. **r4:** no declaration. P20 cites F6. **r5:** no declaration. **r6:** no declaration. **r7:** no declaration | r2 |
@@ -893,7 +1034,7 @@ marked "cf.".
 | W1 | i26-cold4 | 6 | Acceptance, the third "passes if" criterion, against R1c | `wip_limit 1`, the slot held from outside, two ready issues: "One worker is dispatched, it is refused, no worker is live, and the run ends. The second issue was never dispatched, so the walkthrough fails by its own criterion." "the implementer either gets a red walkthrough or builds the scenario with a single issue so that it passes. In the second case the acceptance hides the very behaviour it should show." Fix: count an issue "if it was dispatched **or** named in the end-of-run report". cf. E19, P25, C18, K14 | observed: with the slot held outside, start refused `WIP limit reached …`, exit 1, the issue stays `pending`; the text of R1c and Acceptance | **r6:** open; the first of the "modify" changes. **r7:** "**released**" | r6 |
 | W2 | i26-cold4 | 6 | R1, "Order" | `headForActor` takes the first candidate on the **whole-graph** critical chain, otherwise `sortIssues` (UUID, roughly creation order); the graph never reads `Urgency`. The same chain is exposed by `list --critical --format json`. "So 'nothing in git-zhi 0.7.2 exposes that order' is true only in the narrow sense that nothing is milestone-scoped. Bare `next` was not milestone-scoped either." "urgency first" makes `urgency` matter to scheduling "for the first time". "the change gives up a property it could keep, records that as an unavoidable cost, and changes priority policy without anyone deciding to." cf. A18, Q9; see D12 | observed `critical_chain` listing b1, c1, d1, e1 "when the milestone held the longest path"; `headForActor`, `sortIssues`; grep of `internal/graph` for `Urgency` finds nothing | **r6:** open. "*Human's decision?* Yes. Whether urgency outranks the critical chain is a product choice about CCPM, not a selection fix.". **r7:** "**released**": "Settled by ruling 4, which I accept." "the stated cost is now accurate" | r6 |
 | W3 | i26-cold4 | 6 | R1, "Every pick, on both paths, uses a fresh `<n>`", read with ruling 2 | 0002 lists "resumption after a restart" among what it wanted, and identity "fixed for the life of a worker". A one-worker agent re-entering Step 2 with its issue still in progress "mints a new token", draws from a pool that excludes in-progress issues, and starts a different issue: "The first issue is stranded under the old token." "This is not #27's dead worker: the worker is alive and has abandoned its own work." "Ruling 2 settles setting the **same** token on every command. It does not settle changing the token between issues inside one agent." "Options for the human": one token for the one-worker path; look for an in-progress issue under this run's tokens before minting; or "Rule explicitly that 'worker' means one dispatch for one issue", "a reading of 0002 that the subject assumes without recording it". cf. F21, Q1's note, E20; see D10, D13 | 0002 text; `headForActor`; the ready pool excludes in-progress issues | **r6:** open; "put W3 to the human". **r7:** "**released**": "Settled by ruling 3, which I accept." "The residual is W10, which is new." | r6 |
-| W4 | i26-cold4 | 6 | R1a, R1b, R1c, R2 and R3 together | the orchestrator must know which return happened (done; refused, with git-zhi's text; lost start; `next` mismatch; read failure), and "The subject never says that the worker reports this"; the worker record "is likewise never defined". R2 has no retry clause: a failing `next` gives stand-down, give-back and immediate re-dispatch, "because R1c does not apply", "with no bound". "the termination argument holds only if the agent infers a contract the text does not give." Fix: one line listing the return outcomes; extend R3's retry-don't-count rule to `next`, or treat a repeated stand-down on the same issue the way R1c treats a refusal | the text of R1a to R3 | **r6:** open; "name the worker's return outcomes (W4)". **r7:** "**released**, with a nit the implementing issue can carry": "One unbounded path remains: a stand-down with the issue still pending for a reason other than a refused start". "**Nit:** read R1c's trigger as 'stands down with the issue still pending', whatever the cause." "Not a bar." cf. V1 | r6 |
+| W4 | i26-cold4 | 6 | R1a, R1b, R1c, R2 and R3 together | the orchestrator must know which return happened (done; refused, with git-zhi's text; lost start; `next` mismatch; read failure), and "The subject never says that the worker reports this"; the worker record "is likewise never defined". R2 has no retry clause: a failing `next` gives stand-down, give-back and immediate re-dispatch, "because R1c does not apply", "with no bound". "the termination argument holds only if the agent infers a contract the text does not give." Fix: one line listing the return outcomes; extend R3's retry-don't-count rule to `next`, or treat a repeated stand-down on the same issue the way R1c treats a refusal | the text of R1a to R3 | **r6:** open; "name the worker's return outcomes (W4)". **r7:** "**released**, with a nit the implementing issue can carry": "One unbounded path remains: a stand-down with the issue still pending for a reason other than a refused start". "**Nit:** read R1c's trigger as 'stands down with the issue still pending', whatever the cause." "Not a bar." cf. V1 **r8:** "**released**" (the W4 nit): "R1c now fires on any stand-down that leaves its issue pending … That closes the unbounded re-dispatch path." | r6 |
 | W5 | i26-cold4 | 6 | R1a; R1c ("Loop control's stop … changes to match"); Where it goes | Loop control's "the ready set is empty" and "every remaining issue is blocked by an unfinished one" stay, and "tell the orchestrator to end its turn and report while workers are still live, or while the pool is non-empty and the chain-wide ready set is empty". "the same contradiction F19 fixed for the refusal bullet stays in place for two others." Fix: say that Loop control's stop list is restated in terms of R1a and R1c. cf. K15, P20 | execute.md Loop control | **r6:** open. **r7:** "**released**": "R1a now replaces both Loop control stops by name." | r6 |
 | W6 | i26-cold4 | 6 | R3, "waits briefly"; "the pause length … belong[s] to the implementing issue" | "In this session's harness the Bash tool states that 'Foreground `sleep` is blocked'." A worker told to wait "either errors or skips the wait. If it skips the wait it re-reads at once, which narrows nothing in git-zhi#35's window, while it believes it waited." Fix: name a wait that works under the harness, or say what to do when sleep is refused. cf. D1 | the harness's Bash tool statement | **r6:** open. **r7:** "**released**": "That was my fix." | r6 |
 | W7 | i26-cold4 | 6 | R1, the 0002 paragraph (Q8) | "`issue list --assigned <worker>` exists. What it cannot do is select **unassigned** issues". "A reader checking `--help` finds the flag and doubts the rest of the reasoning." Fix: "cannot filter to unassigned, and has no notion of who is asking". cf. C19, Q8, E11 | observed: `issue list --assigned ""` returned 5 of 5 issues, "an empty value is no filter" | **r6:** open; "minor". **r7:** "**released**" | r6 |
@@ -955,21 +1096,21 @@ marked "cf.". The bar-or-nit column is the status cell, in the raiser's words.
 
 | id | raiser | round | section of the subject | consequence if it ships | evidence | status | revision |
 |---|---|---|---|---|---|---|---|
-| A19 | i26-arch | 7 | R1, ruling 3 ("an agent told to continue mid-issue resumes the issue it already holds, under that issue's own token, before it picks anything new (F21)"); R3 ("r3's resume branch … gone: … unreachable with one token per issue (F15, C7)" and "On a lost or refused start, the worker stands down") | an agent resuming under its issue's token runs bare `next`, which returns its own in-progress issue; R3 has it start, which is refused; R3 makes it stand down, and R1b clears the assignment. "The issue stays in progress under the token, out of the pool, and no other token can get it back." On the one-worker path R1c ends the run, "with an issue the agent was told to continue left stranded." "This is the A10 failure, and A15 recorded it for #27's re-dispatch-under-token case. Ruling 3 makes it reachable inside #26." Fix: "restore r3's R5 bullet 1 in R3: 'If `next` returned the worker's own in-progress issue, it does not start it again.' Delete the claim that the branch is unreachable." cf. P26, F22, C20, K16, W10, V2, A10, A15; see D4, D15 | `headForActor` step 1; `cannot start: issue is in-progress` (round-2 C2, D4, observed on 0.7.2). No new commands this round | **r7:** open. "This is a bar, not a nit, because it is a direct contradiction between two clauses of r7 on a path the subject itself now keeps." "I will release it on that sentence." | r7 |
-| P26 | i26-pushback | 7 | R1, ruling 3; R3's bullets ("It starts its issue … On a lost or refused start, the worker stands down and returns") and note ("r3's resume branch … gone: the first is unreachable with one token per issue (F15, C7)"); R1b | an implementer follows R3's note and writes no resume handling. The resuming agent's `next` returns its own in-progress issue, "0002 tier 1, and it is also 'its own assignment' under R2" (D2); its start is refused (D4); it stands down; R1b clears. "The issue now sits in progress under its token, unassigned and outside the pool. This is F3's stranded shape, the outcome ruling 3 adopted self-resume to prevent." A10's release "has rested since round 4 on the branch being unreachable". Fix: one sentence in R3, and strike "unreachable": "On self-resume, the worker does not start again; it owns the issue if it is in progress with itself as the latest actor." A walkthrough case would make it testable. "Would change my mind: if ruling 3's self-resume is meant to bypass R2 and R3 entirely … The subject then needs to say that instead, which is the same one sentence pointing the other way." cf. A19, F22, C20, K16, W10, V2, A10; see D4, D15 | D4 (`cannot start: issue is in-progress … exit 1`, measured), D2, the text. "No walkthrough run" | **r7:** open; "contradiction, medium; **the one hold**". "Why this is a bar and not a nit: the subject's own text tells the implementer to omit the handling, and the failure is silent stranding, not an error." | r7 |
-| P27 | i26-pushback | 7 | Acceptance, "a worker whose token was used before, so that a reopened issue is reachable (E20)", with "each worker worked the issue assigned to it" and R1's "Every pick … uses a fresh `<n>`" | "following R1, no token is ever reused, so the case cannot be constructed without breaking R1." If the walkthrough reuses a token anyway, the worker works the reopened issue and the run fails "each worker worked the issue assigned to it". "That makes it a negative control, and it belongs with 'Run without R1 to R3 … fails', not in the passing set." Fix: move it to the negative-control bullet. cf. E20; see D16 | E20's r39 run, "taken as given"; the text | **r7:** "(nit)". "The implementing issue can carry this. It is not a bar." | r7 |
-| F22 | i26-fresh | 7 | R1, ruling 3's self-resume sentence, against R3 (the bullet "On a lost or refused start, the worker stands down" and the line "r3's resume branch ... [is] gone: ... unreachable with one token per issue") | "the subject does not say how an agent 'resumes' an issue it holds. The two literal readings both go wrong": through the pick path, `next` returns the issue, `start` is refused, and R3 stands the agent down from its own issue; by name, `--state resume` is also refused. On the one-worker path the agent then picks a fresh token and a new issue, and "The held issue is stranded under the old token and keeps its WIP slot". R3's "unreachable" sentence "is also now false of the subject". Fix: "Self-resume runs no transition. The agent returns to Step 3 on the held issue under its token, and never calls `start` or `--state resume`"; R3's "gone" line reads "...except self-resume, which skips the start". Optional walkthrough case. cf. A19, P26, C20, K16, W10, V2, F21; see D15 | probe in `scratch-fresh/`: A in progress, latest transition `agent:r-9`; as `agent:r-9`, `--state resume` refused (`cannot resume: a measurement session is already open`), `--state start` refused (`cannot start: issue is in-progress, expected pending or reopened`), bare `next` returned A. 0002; D4 | **r7:** open. "I treat it as a bar to shipping the text unchanged, though it needs one sentence, not a revision of the design. If the coordinator records F22's sentence as binding on the implementing issue, I would accept on that basis instead." | r7 |
-| C20 | i26-cold | 7 | R1, ruling 3 ("resumes the issue it already holds, under that issue's own token, before it picks anything new"); R3 ("The worker starts its issue by its literal id … On a lost or refused start, the worker stands down"); R3's closing line, "unreachable with one token per issue" | under its own token, `next` returns the in-progress issue, still assigned to that token, "so R2 is satisfied". R3's start is refused (D4), and R3 says stand down. "R1b does not apply (the worker owns the issue). R1c does not apply (the issue is not pending). The issue is left in progress and assigned. The run moves on and never finishes it." "The one path ruling 3 adds is the one R3 breaks." Fix: "When `next` returns the worker's own in-progress issue (self-resume), it does not start it; it goes straight to the ownership read." Then delete "unreachable". cf. A19, P26, F22, K16, W10, V2; see D15 | D4: `cannot start: issue is in-progress`; "The diff shows the self-resume clause added and the 'unreachable' sentence kept" | **r7:** open. "A bar, one sentence." | r7 |
-| C21 | i26-cold | 7 | R1, Order ("as `list --critical` reports it"); Out of scope ("workers read issue IDs from JSON output, never from text") | "an implementer following r7 literally takes JSON and gets 'the chain' as every issue in creation order. The skill would then claim chain priority it does not deliver, and no check would notice. Taking the text output instead means matching short IDs, which collide, or titles, which are not unique." "the order degrades but correctness does not … Even so, execute.md would state something false about its own behaviour." Fix, either: "the order is read from `list --critical`'s text output, matched to the pool by full ID prefix where unambiguous, else by creation order", or record that on 0.7.2 the JSON form ignores `--critical`, "so ruling 4 falls back to creation order until git-zhi fixes it". File the JSON defect next to git-zhi#37. cf. D12, A18; see D14 | measured on 0.7.2 in `scratch-cold/r6b/` (`other` holds o1→o4): `git zhi list --critical --format json` "ignores `--critical`. It returns all nine issues in creation order (`["a","b","c","d","o1",…,"o5"]`)". The text output shows the chain o1→o4, and "all six shown were `01a17b5d`" | **r7:** open. "A bar for the skill's truthfulness, one sentence." The author's measurement, and `i26-pushback`'s and `i26-evidence`'s probes, report a `critical_chain` key in that JSON; see D14. C21 stands as its raiser declared it, and only `i26-cold` may release it | r7 |
-| K16 | i26-cold2 | 7 | R1's ruling 3 clause ("lines 74-76") against R3 ("lines 137-140") | R3 still says the resume branch is "unreachable with one token per issue"; "Ruling 3 makes that branch reachable on purpose." "the skill gives no verb for resuming, and both of the obvious ones fail": through the pick protocol, `next` returns the held issue, "its own assignment" (O14), and R3's start gets rc 1 (O15); by name, `--state resume` gets rc 1 (O16). If it ships, the agent "stands down on its own work. R1b then clears the assignment. Because the issue is in progress, it is not in R1's pool and R1c does not hold it. The run goes on and ends with that issue in progress and unowned, so the milestone cannot complete." This is on "the 'continue' path, which Loop control makes routine". Fix: "self-resume makes no transition: under the issue's token it confirms with `next` that the issue is its own in-progress one, then continues at Step 3, skipping R3"; strike or reword R3's "unreachable" clause. "this is A15's concern … now inside #26". cf. A19, P26, F22, C20, W10, V2, A15; see D15 | O14 to O16 in `scratch-cold2/`, as `agent:r-1` on m2 (in progress, last transition and assignment `agent:r-1`): `next` returns m2; start `cannot start: issue is in-progress, expected pending or reopened`, rc 1; resume `cannot resume: a measurement session is already open`, rc 1 | **r7:** open. "This is a bar, but a one-sentence fix." | r7 |
-| Q11 | i26-cold3 | 7 | R1, "Order", lines 82–86 | r7 says the order "recovers `next`'s order only when the run's milestone holds that chain". By A18's and W2's reading, `next` ranks "first on the whole-graph critical chain, otherwise UUID order", "the same rule r7 applies to the milestone's pool. So among milestone issues, r7's order matches `next`'s whether or not the milestone holds the chain." What is lost "is a *milestone-scoped* critical order, and `next` never had one." "the skill would carry a slightly understated claim about git-zhi, the kind of claim A18 objected to. Scheduling is unaffected." Fix, for the implementing issue: "phrase the recorded cost against a milestone-scoped critical chain, not against `next`." cf. A18, W2, Q3, V4 | A18's and W2's reading of `headForActor`; ran nothing new | **r7:** "A nit the implementing issue can carry. It does not bar shipping, and I do not hold it." | r7 |
-| W10 | i26-cold4 | 7 | R1, ruling 3's sentence "resumes the issue it already holds, under that issue's own token"; R3's bullets; R3's closing paragraph, "unreachable with one token per issue" | under the issue's own token, bare `next` returns the in-progress issue and R2 calls it "its own assignment"; R3's start is refused; R3 says stand down; "R1b then clears the assignment, because it still carries the token. The issue is left in progress, unassigned and held by nobody live." "R1c does not fire, because the issue is not pending. On the one-worker path the agent goes on to pick a new issue." "The walkthrough has no resume case, so nothing would go red." Fix: "Resuming skips R2 and R3: it does not start the issue again, and continues at Step 3 under the issue's token." R3's "unreachable" becomes "replaced by ruling 3's self-resume". "Optional nit, also carriable": "an agent **told to continue**" is narrower than W3's case, an agent "re-entering the per-pick step on its own, after compaction or the max-iteration valve"; state self-resume "as a check at the per-pick step, made before minting a token". cf. A19, P26, F22, C20, K16, V2, W3; see D15 | `scratch-cold4/`, token `agent:r7-1`: `next` returned `b1 in-progress agent:r7-1`; start `cannot start: issue is in-progress, expected pending or reopened`, exit 1 | **r7:** open. "*Severity:* low-medium." "**Not held.** I would rather it went into r7 than be left to the implementing issue, because it reconciles two clauses of the subject rather than adding a rule." | r7 |
-| V1 | i26-cold5 | 7 | R1c, R2, and Loop control's "a tool refused the action" stop | R2 sends every non-assignment result back as a stand-down, "including `no actionable issues`. That covers an error exit too. R1c's pause covers only a *refused start*. So a `next` that fails the same way every time makes R1b → R1a → R1 re-dispatch with a fresh token forever." Causes: "a malformed token that `ZHI_ACTOR` refuses, or an unreadable chain." R1c's Loop control stop "changes to match" without saying how; "R3's 'a failed read is retried' has no bound either." Fix in the issue: keep the refusal stop "for any `git zhi` error other than a refused or lost start", or "apply R1c's 'no re-dispatch until a live worker returns' to every stand-down"; bound R3's retry. cf. W4 | R2's text; R1c's stated trigger ("because its start was refused") | **r7:** "(nit)". One of the two "worth writing into that issue explicitly" | r7 |
-| V2 | i26-cold5 | 7 | R1, the ruling 3 bullet | "What a single token would have given instead is self-resume …" "can be read as the forgone benefit or as a requirement. No acceptance item exercises it." If skipped, a one-worker agent told to "continue" mints a fresh token and picks again while its issue is in progress: under `wip_limit` 1 a refused start ends the run under R1c; "Without a limit, the old issue is stranded." Fix in the issue: "state it as a rule. Before minting, check for an in-progress milestone issue whose last transition's actor carries this run's token, and resume it under that token. Add one walkthrough case for it." cf. A19, P26, F22, C20, K16, W10, F21; see D15 | the text | **r7:** "(nit)". One of the two "worth writing into that issue explicitly" | r7 |
-| V3 | i26-cold5 | 7 | R1, together with the F9 deferral | "`list --ready --milestone <m> --format json` has no `assigned` field and no `created` field. Filtering on assignment and ordering by creation both need the full `list --milestone <m> --format json`, joined by id." "`assigned` is omitted when empty, so 'no assignment' means the key is absent." Name the join in the implementing issue. cf. F9, E11 | `readySetIssueJSON` in `chain_list.go`; `Assigned ... json:"assigned,omitempty"` in `issue.go`; observed: `list --ready --format json` carries only `id`, `title`, `paths` | **r7:** "(nit)" | r7 |
-| V4 | i26-cold5 | 7 | R1, Order | "`ReadySet` sorts by UUID (`sortIssues`). Issue ids are UUIDv7, so that approximates creation order, but the `created` field is the honest key." "'In that chain's order' is unambiguous only because `critical_chain` lists issues upstream first (observed `b1,b2,b3`). Say so, so the implementer does not reverse it." cf. Q11, C21 | `sortIssues`; observed on 0.7.2 | **r7:** "(nit)" | r7 |
-| V5 | i26-cold5 | 7 | R5, Where it goes | "`docs/ARCHITECTURE.md:223` says 'without an exported identity they all resolve to the same actor'. The sentence is not falsified … But it is the same wording R5 corrects in `postmortem.md`, in the document CLAUDE.md imports." `how-to-use-git-zhi`'s "with the variable exported" and "With nothing exported" lines "should go with the example". "Either add the ARCHITECTURE line, doc-first, or record that it stays true. `crochet:review` reads CLAUDE.md's imports on every diff and will raise it otherwise." cf. Q8, C9, K6 | `docs/ARCHITECTURE.md:223`; `how-to-use-git-zhi.md`'s `ZHI_ACTOR` section | **r7:** "(nit)" | r7 |
-| V6 | i26-cold5 | 7 | Out of scope | "`--step` is listed under #27. But it runs through the same Step 2, so it gets R1's per-pick assignment and fresh token automatically. That is harmless, and probably intended." One line in the issue, "`--step` confirms before R1's pick; selection is unchanged", "prevents an implementer from excluding it." cf. C11 | the text | **r7:** "(nit)" | r7 |
+| A19 | i26-arch | 7 | R1, ruling 3 ("an agent told to continue mid-issue resumes the issue it already holds, under that issue's own token, before it picks anything new (F21)"); R3 ("r3's resume branch … gone: … unreachable with one token per issue (F15, C7)" and "On a lost or refused start, the worker stands down") | an agent resuming under its issue's token runs bare `next`, which returns its own in-progress issue; R3 has it start, which is refused; R3 makes it stand down, and R1b clears the assignment. "The issue stays in progress under the token, out of the pool, and no other token can get it back." On the one-worker path R1c ends the run, "with an issue the agent was told to continue left stranded." "This is the A10 failure, and A15 recorded it for #27's re-dispatch-under-token case. Ruling 3 makes it reachable inside #26." Fix: "restore r3's R5 bullet 1 in R3: 'If `next` returned the worker's own in-progress issue, it does not start it again.' Delete the claim that the branch is unreachable." cf. P26, F22, C20, K16, W10, V2, A10, A15; see D4, D15 | `headForActor` step 1; `cannot start: issue is in-progress` (round-2 C2, D4, observed on 0.7.2). No new commands this round | **r7:** open. "This is a bar, not a nit, because it is a direct contradiction between two clauses of r7 on a path the subject itself now keeps." "I will release it on that sentence." **r8:** "**released**". "That is the requirement I asked for." "Bias note: this is my own bar, met by name." It holds nothing "as either a bar or a residual". | r7 |
+| P26 | i26-pushback | 7 | R1, ruling 3; R3's bullets ("It starts its issue … On a lost or refused start, the worker stands down and returns") and note ("r3's resume branch … gone: the first is unreachable with one token per issue (F15, C7)"); R1b | an implementer follows R3's note and writes no resume handling. The resuming agent's `next` returns its own in-progress issue, "0002 tier 1, and it is also 'its own assignment' under R2" (D2); its start is refused (D4); it stands down; R1b clears. "The issue now sits in progress under its token, unassigned and outside the pool. This is F3's stranded shape, the outcome ruling 3 adopted self-resume to prevent." A10's release "has rested since round 4 on the branch being unreachable". Fix: one sentence in R3, and strike "unreachable": "On self-resume, the worker does not start again; it owns the issue if it is in progress with itself as the latest actor." A walkthrough case would make it testable. "Would change my mind: if ruling 3's self-resume is meant to bypass R2 and R3 entirely … The subject then needs to say that instead, which is the same one sentence pointing the other way." cf. A19, F22, C20, K16, W10, V2, A10; see D4, D15 | D4 (`cannot start: issue is in-progress … exit 1`, measured), D2, the text. "No walkthrough run" | **r7:** open; "contradiction, medium; **the one hold**". "Why this is a bar and not a nit: the subject's own text tells the implementer to omit the handling, and the failure is silent stranding, not an error." **r8:** "**released**". "The path I traced is closed: own issue, then `start`, refused, stand-down, `--unassign`, stranded." "One factual qualifier is recorded as residual P28 below. It does not change the rule, only the reason given for it." | r7 |
+| P27 | i26-pushback | 7 | Acceptance, "a worker whose token was used before, so that a reopened issue is reachable (E20)", with "each worker worked the issue assigned to it" and R1's "Every pick … uses a fresh `<n>`" | "following R1, no token is ever reused, so the case cannot be constructed without breaking R1." If the walkthrough reuses a token anyway, the worker works the reopened issue and the run fails "each worker worked the issue assigned to it". "That makes it a negative control, and it belongs with 'Run without R1 to R3 … fails', not in the passing set." Fix: move it to the negative-control bullet. cf. E20; see D16 | E20's r39 run, "taken as given"; the text | **r7:** "(nit)". "The implementing issue can carry this. It is not a bar." **r8:** "**released, as a residual carried by the binding section**". "The body's Acceptance still lists that case among what the passing walkthrough 'covers' (L186–187). The binding section overrides it, and the implementing issue must follow the binding line. Editing L186 to match would remove the contradiction. That is a nit and not a bar." cf. K17, Z4; see D16 | r7 |
+| F22 | i26-fresh | 7 | R1, ruling 3's self-resume sentence, against R3 (the bullet "On a lost or refused start, the worker stands down" and the line "r3's resume branch ... [is] gone: ... unreachable with one token per issue") | "the subject does not say how an agent 'resumes' an issue it holds. The two literal readings both go wrong": through the pick path, `next` returns the issue, `start` is refused, and R3 stands the agent down from its own issue; by name, `--state resume` is also refused. On the one-worker path the agent then picks a fresh token and a new issue, and "The held issue is stranded under the old token and keeps its WIP slot". R3's "unreachable" sentence "is also now false of the subject". Fix: "Self-resume runs no transition. The agent returns to Step 3 on the held issue under its token, and never calls `start` or `--state resume`"; R3's "gone" line reads "...except self-resume, which skips the start". Optional walkthrough case. cf. A19, P26, C20, K16, W10, V2, F21; see D15 | probe in `scratch-fresh/`: A in progress, latest transition `agent:r-9`; as `agent:r-9`, `--state resume` refused (`cannot resume: a measurement session is already open`), `--state start` refused (`cannot start: issue is in-progress, expected pending or reopened`), bare `next` returned A. 0002; D4 | **r7:** open. "I treat it as a bar to shipping the text unchanged, though it needs one sentence, not a revision of the design. If the coordinator records F22's sentence as binding on the implementing issue, I would accept on that basis instead." **r8:** "**Released.**" "Both halves of F22 are answered." "I hold nothing as a bar against #26." | r7 |
+| C20 | i26-cold | 7 | R1, ruling 3 ("resumes the issue it already holds, under that issue's own token, before it picks anything new"); R3 ("The worker starts its issue by its literal id … On a lost or refused start, the worker stands down"); R3's closing line, "unreachable with one token per issue" | under its own token, `next` returns the in-progress issue, still assigned to that token, "so R2 is satisfied". R3's start is refused (D4), and R3 says stand down. "R1b does not apply (the worker owns the issue). R1c does not apply (the issue is not pending). The issue is left in progress and assigned. The run moves on and never finishes it." "The one path ruling 3 adds is the one R3 breaks." Fix: "When `next` returns the worker's own in-progress issue (self-resume), it does not start it; it goes straight to the ownership read." Then delete "unreachable". cf. A19, P26, F22, K16, W10, V2; see D15 | D4: `cannot start: issue is in-progress`; "The diff shows the self-resume clause added and the 'unreachable' sentence kept" | **r7:** open. "A bar, one sentence." **r8:** "**released**". "This closes the self-resume stand-down I raised". | r7 |
+| C21 | i26-cold | 7 | R1, Order ("as `list --critical` reports it"); Out of scope ("workers read issue IDs from JSON output, never from text") | "an implementer following r7 literally takes JSON and gets 'the chain' as every issue in creation order. The skill would then claim chain priority it does not deliver, and no check would notice. Taking the text output instead means matching short IDs, which collide, or titles, which are not unique." "the order degrades but correctness does not … Even so, execute.md would state something false about its own behaviour." Fix, either: "the order is read from `list --critical`'s text output, matched to the pool by full ID prefix where unambiguous, else by creation order", or record that on 0.7.2 the JSON form ignores `--critical`, "so ruling 4 falls back to creation order until git-zhi fixes it". File the JSON defect next to git-zhi#37. cf. D12, A18; see D14 | measured on 0.7.2 in `scratch-cold/r6b/` (`other` holds o1→o4): `git zhi list --critical --format json` "ignores `--critical`. It returns all nine issues in creation order (`["a","b","c","d","o1",…,"o5"]`)". The text output shows the chain o1→o4, and "all six shown were `01a17b5d`" | **r7:** open. "A bar for the skill's truthfulness, one sentence." The author's measurement, and `i26-pushback`'s and `i26-evidence`'s probes, report a `critical_chain` key in that JSON; see D14. C21 stands as its raiser declared it, and only `i26-cold` may release it **r8:** "**released**". "The premise was my error". "In round 7 I read only `.issues` and concluded that JSON ignores `--critical`. That was wrong." "The author and i26-pushback were right. There is no git-zhi defect to file for the JSON form." "The `--milestone` being ignored, which I also measured, still holds, and r8 states it." See D14 | r7 |
+| K16 | i26-cold2 | 7 | R1's ruling 3 clause ("lines 74-76") against R3 ("lines 137-140") | R3 still says the resume branch is "unreachable with one token per issue"; "Ruling 3 makes that branch reachable on purpose." "the skill gives no verb for resuming, and both of the obvious ones fail": through the pick protocol, `next` returns the held issue, "its own assignment" (O14), and R3's start gets rc 1 (O15); by name, `--state resume` gets rc 1 (O16). If it ships, the agent "stands down on its own work. R1b then clears the assignment. Because the issue is in progress, it is not in R1's pool and R1c does not hold it. The run goes on and ends with that issue in progress and unowned, so the milestone cannot complete." This is on "the 'continue' path, which Loop control makes routine". Fix: "self-resume makes no transition: under the issue's token it confirms with `next` that the issue is its own in-progress one, then continues at Step 3, skipping R3"; strike or reword R3's "unreachable" clause. "this is A15's concern … now inside #26". cf. A19, P26, F22, C20, W10, V2, A15; see D15 | O14 to O16 in `scratch-cold2/`, as `agent:r-1` on m2 (in progress, last transition and assignment `agent:r-1`): `next` returns m2; start `cannot start: issue is in-progress, expected pending or reopened`, rc 1; resume `cannot resume: a measurement session is already open`, rc 1 | **r7:** open. "This is a bar, but a one-sentence fix." **r8:** "**released**". "This is the fix I asked for." | r7 |
+| Q11 | i26-cold3 | 7 | R1, "Order", lines 82–86 | r7 says the order "recovers `next`'s order only when the run's milestone holds that chain". By A18's and W2's reading, `next` ranks "first on the whole-graph critical chain, otherwise UUID order", "the same rule r7 applies to the milestone's pool. So among milestone issues, r7's order matches `next`'s whether or not the milestone holds the chain." What is lost "is a *milestone-scoped* critical order, and `next` never had one." "the skill would carry a slightly understated claim about git-zhi, the kind of claim A18 objected to. Scheduling is unaffected." Fix, for the implementing issue: "phrase the recorded cost against a milestone-scoped critical chain, not against `next`." cf. A18, W2, Q3, V4 | A18's and W2's reading of `headForActor`; ran nothing new | **r7:** "A nit the implementing issue can carry. It does not bar shipping, and I do not hold it." **r8:** "**released**". "r8's cost sentence says what I asked". | r7 |
+| W10 | i26-cold4 | 7 | R1, ruling 3's sentence "resumes the issue it already holds, under that issue's own token"; R3's bullets; R3's closing paragraph, "unreachable with one token per issue" | under the issue's own token, bare `next` returns the in-progress issue and R2 calls it "its own assignment"; R3's start is refused; R3 says stand down; "R1b then clears the assignment, because it still carries the token. The issue is left in progress, unassigned and held by nobody live." "R1c does not fire, because the issue is not pending. On the one-worker path the agent goes on to pick a new issue." "The walkthrough has no resume case, so nothing would go red." Fix: "Resuming skips R2 and R3: it does not start the issue again, and continues at Step 3 under the issue's token." R3's "unreachable" becomes "replaced by ruling 3's self-resume". "Optional nit, also carriable": "an agent **told to continue**" is narrower than W3's case, an agent "re-entering the per-pick step on its own, after compaction or the max-iteration valve"; state self-resume "as a check at the per-pick step, made before minting a token". cf. A19, P26, F22, C20, K16, V2, W3; see D15 | `scratch-cold4/`, token `agent:r7-1`: `next` returned `b1 in-progress agent:r7-1`; start `cannot start: issue is in-progress, expected pending or reopened`, exit 1 | **r7:** open. "*Severity:* low-medium." "**Not held.** I would rather it went into r7 than be left to the implementing issue, because it reconciles two clauses of the subject rather than adding a rule." **r8:** "**released**". "'Self-resume runs no transition' is the sentence I asked for." | r7 |
+| V1 | i26-cold5 | 7 | R1c, R2, and Loop control's "a tool refused the action" stop | R2 sends every non-assignment result back as a stand-down, "including `no actionable issues`. That covers an error exit too. R1c's pause covers only a *refused start*. So a `next` that fails the same way every time makes R1b → R1a → R1 re-dispatch with a fresh token forever." Causes: "a malformed token that `ZHI_ACTOR` refuses, or an unreadable chain." R1c's Loop control stop "changes to match" without saying how; "R3's 'a failed read is retried' has no bound either." Fix in the issue: keep the refusal stop "for any `git zhi` error other than a refused or lost start", or "apply R1c's 'no re-dispatch until a live worker returns' to every stand-down"; bound R3's retry. cf. W4 | R2's text; R1c's stated trigger ("because its start was refused") | **r7:** "(nit)". One of the two "worth writing into that issue explicitly" **r8:** "**released**". "Both of V1's fixes landed." | r7 |
+| V2 | i26-cold5 | 7 | R1, the ruling 3 bullet | "What a single token would have given instead is self-resume …" "can be read as the forgone benefit or as a requirement. No acceptance item exercises it." If skipped, a one-worker agent told to "continue" mints a fresh token and picks again while its issue is in progress: under `wip_limit` 1 a refused start ends the run under R1c; "Without a limit, the old issue is stranded." Fix in the issue: "state it as a rule. Before minting, check for an in-progress milestone issue whose last transition's actor carries this run's token, and resume it under that token. Add one walkthrough case for it." cf. A19, P26, F22, C20, K16, W10, F21; see D15 | the text | **r7:** "(nit)". One of the two "worth writing into that issue explicitly" **r8:** "**released**, one residual". "Residual: add a walkthrough case where an agent continues mid-issue under that issue's token and runs no transition." | r7 |
+| V3 | i26-cold5 | 7 | R1, together with the F9 deferral | "`list --ready --milestone <m> --format json` has no `assigned` field and no `created` field. Filtering on assignment and ordering by creation both need the full `list --milestone <m> --format json`, joined by id." "`assigned` is omitted when empty, so 'no assignment' means the key is absent." Name the join in the implementing issue. cf. F9, E11 | `readySetIssueJSON` in `chain_list.go`; `Assigned ... json:"assigned,omitempty"` in `issue.go`; observed: `list --ready --format json` carries only `id`, `title`, `paths` | **r7:** "(nit)" **r8:** "**released**, one residual". Its own correction: "My premise was wrong: `issue list --ready` carries `assigned` and `created` (observed above)." "V3's 'needs a join' was true of the wrong command." "Residual: name `issue list`, not `list`, in the issue, because the rule applied to `list --ready` would dispatch human-assigned issues." | r7 |
+| V4 | i26-cold5 | 7 | R1, Order | "`ReadySet` sorts by UUID (`sortIssues`). Issue ids are UUIDv7, so that approximates creation order, but the `created` field is the honest key." "'In that chain's order' is unambiguous only because `critical_chain` lists issues upstream first (observed `b1,b2,b3`). Say so, so the implementer does not reverse it." cf. Q11, C21 | `sortIssues`; observed on 0.7.2 | **r7:** "(nit)" **r8:** "**released**". "All stated." | r7 |
+| V5 | i26-cold5 | 7 | R5, Where it goes | "`docs/ARCHITECTURE.md:223` says 'without an exported identity they all resolve to the same actor'. The sentence is not falsified … But it is the same wording R5 corrects in `postmortem.md`, in the document CLAUDE.md imports." `how-to-use-git-zhi`'s "with the variable exported" and "With nothing exported" lines "should go with the example". "Either add the ARCHITECTURE line, doc-first, or record that it stays true. `crochet:review` reads CLAUDE.md's imports on every diff and will raise it otherwise." cf. Q8, C9, K6 | `docs/ARCHITECTURE.md:223`; `how-to-use-git-zhi.md`'s `ZHI_ACTOR` section | **r7:** "(nit)" **r8:** "**released**". "ARCHITECTURE.md is in R5 and Where it goes, doc-first." | r7 |
+| V6 | i26-cold5 | 7 | Out of scope | "`--step` is listed under #27. But it runs through the same Step 2, so it gets R1's per-pick assignment and fresh token automatically. That is harmless, and probably intended." One line in the issue, "`--step` confirms before R1's pick; selection is unchanged", "prevents an implementer from excluding it." cf. C11 | the text | **r7:** "(nit)" **r8:** "**released**, one residual". "Residual: one clause in Out of scope, '`--step`'s selection is R1's; only its lifecycle is #27's', mirroring the one-worker sentence." cf. P30, K19, Z5 | r7 |
 
 Also recorded, not raised as findings, from round 7:
 
@@ -1022,6 +1163,93 @@ Also recorded, not raised as findings, from round 7:
   loop except in V1's case; the single path's fresh token per issue against
   0002's "identity fixed for the life of a worker", "nothing is stranded";
   and R1's use of the ready query against 0002's "that query is wrong".
+
+### Round-8 findings
+
+Each row is as its raiser wrote it; none is merged with another. Overlaps are
+marked "cf.". The status cell gives the raiser's bar-or-residual declaration in
+its words. Every round-8 row is declared a residual; none is declared a bar.
+
+| id | raiser | round | section of the subject | consequence if it ships | evidence | status | revision |
+|---|---|---|---|---|---|---|---|
+| E21 | i26-evidence | 8 | R1, "Self-resume runs no transition", and its sentence that on 0.7.2 "both `start` and `--state resume` are refused" on one's own in-progress issue | that sentence "holds only while the session is open". After a pause, `next` under the own token still returns the issue. r8's rule (no transition), then a commit and `done`, "succeeds, but measures **1 commit in 1 window**. w2 is not measured"; with `--state resume` first, "**2 commits in 2 windows**"; with all work after the pause and no transition, `done` gives `cannot mark done: session has 0 commits (use --force to override)`. Fix, "For the implementing issue: when self-resume finds the session closed, run `--state resume`. Equivalently, the subject's sentence should read 'refused while a session is open'." It adds that this qualifier "is a sentence in R1 rather than in the binding section". cf. P28; see D15 | r46: under `agent:run-1`, `next` returned `m1 in-progress assigned=agent:run-1`, start and resume refused, r8's rule then `done` with actors `[run-1, run-1]` and "The assignment is kept"; the bracket (R2, R3, R1b) left m3 `{"state":"in-progress","assigned":null,"actor":"agent:run-3"}`, absent from the pool, "**The issue is stranded.**" r47 to r49 for the paused cases. `grep` finds no `--state pause` or `--state resume` in `skills/` | **r8:** "**held as a residual**". "crochet never pauses an issue … So the state arises only if a human or an outside tool paused it." "a paused own issue needs `--state resume`. crochet never pauses, so it is not a bar" | r8 |
+| P28 | i26-pushback | 8 | R1, "Self-resume runs no transition … On 0.7.2 both `start` and `--state resume` are refused on one's own in-progress issue" | "suppose an issue was paused from outside the run (a human's `--state pause`) and the agent then self-resumes. With no transition run, no measurement session is open. Its later Step 3.5 `--state done` is refused (`session has 0 commits`, measured). The agent then either stalls or reaches for `--force`." Fix: "say that self-resume runs `--state resume` when the issue's session is closed, and correct the sentence to 'refused while a session is open'." cf. E21; see D15 | `probe26r7`: with the session open, resume `cannot resume: a measurement session is already open` and start refused; after `--state pause` by the same actor, resume succeeds and `next` still returns the issue; paused, a commit, then `done` refused. "P28's 'outside pause' trigger was reasoned from `grep`. I did not check whether a harness interrupt ever pauses an issue." | **r8:** "(residual)". "no crochet skill pauses an issue, so the case needs an outside actor. The failure is loud (a refused `done`), not silent stranding. Session telemetry is lifecycle, which belongs to #27." | r8 |
+| P29 | i26-pushback | 8 | R3, "A failed read is retried, and never counts as won or lost", with the binding line "R3's retry of a failed read is bounded (V1)" | "at the bound, an implementer has to pick an outcome. If the worker stands down and returns, R1b then `--unassign`s an issue the worker may in fact hold. That issue is left in progress, unassigned and outside the pool, which is F3's stranded shape." Fix: "state that exhausting the retries ends the worker's attempt as *unknown*, reported by name, without R1b's unassign. Whatever outcome it picks, it must not count as lost." cf. K18, Z3, V1; see D17 | the text; read failures "2 in 15 under a racing write (E12) and 0 in 110 in controls" | **r8:** "(residual)". "reaching the bound is rare." | r8 |
+| P30 | i26-pushback | 8 | Out of scope ("the `--step` path. These are perigrin/crochet#27"), against the binding line "`--step` goes through R1's pick like every other path" | "The one-worker path has an explicit carve-out ('*selection* is in R1; only its lifecycle questions stay in #27'), and `--step` lacks one." Fix: "give `--step` the same carve-out as the one-worker path: '`--step`'s selection is R1's; its confirmation semantics stay in #27.'" cf. K19, Z5, V6 | the text | **r8:** "(residual, wording)" | r8 |
+| K17 | i26-cold2 | 8 | Acceptance's "a worker whose token was used before", listed under "It passes if", against the binding lines "is a negative control, which must fail (P27)" and "the reused-token stand-down is an explicit assertion" | "Both are true, of different runs": with R2 in force "the worker stands down. The assertion holds, and the walkthrough passes"; with R2's guard removed, "each worker worked the issue assigned to it" goes red, "That is the negative control." "an implementer reading the lines literally either drops the assertion or makes the main run red." Fix, "which the implementing issue can carry": "under R2 the reused-token worker stands down (asserted); the same case with R2's guard off must fail." cf. P27, Z4; see D16 | the text | **r8:** "(residual)". "K17 is the one I would most want fixed in wording before implementation starts, because it is the only place where the binding section, read literally, tells the implementer to make the walkthrough red." | r8 |
+| K18 | i26-cold2 | 8 | the binding line bounding R3's retry, against the body's "never counts as won or lost" | "when the bound is exhausted, something must happen. The safe reading is 'unknown: stand down, and leave the assignment alone'. R1b clears an assignment only for a worker that does not own its issue, and an unknown read does not show that." cf. P29, Z3, V1; see D17 | the text | **r8:** "(residual)". "The implementing issue can carry this, but it should state the outcome." | r8 |
+| K19 | i26-cold2 | 8 | the binding line "`--step` goes through R1's pick like every other path", against Out of scope's "the `--step` path" under #27 | "the contradiction is only on paper, because `--step` adds a confirmation and uses whichever branch it runs on." Fix: "extend the Out-of-scope sentence the one-worker path already has to cover `--step`." cf. P30, Z5, V6 | the text | **r8:** "(residual)". "K19 could instead be a one-word fix in Out of scope." | r8 |
+| Z1 | i26-cold6 | 8 | R1c, R3 and the Step 4 reopen | "a refused restart leaves the issue `reopened`, not `pending`." "R3 is written for 'the worker starts its issue'. It does not say that it also governs Step 4's `--state start`." "R1c triggers on 'its issue is still pending'. `reopened` is a different state noun." "an implementer may not apply stand-down, R1b's unassign or R1c's hold to this case. The worker would then carry on into Step 3 on an issue it does not hold." Fix: "say that R3 covers every `--state start`, Step 4's included. Read 'pending' in R1b and R1c as 'not in progress, that is pending or reopened'." | measured in `scratch-cold6/` with `wip_limit` 1: B done, an outside actor started X; B's `--state reopen` succeeded and its `--state start` was refused with `WIP limit reached`; "B is left `reopened`, still assigned to the worker's token, and in the ready set" | **r8:** "residual". "This is arguably lifecycle, which is #27's, but the wording is this subject's." | r8 |
+| Z2 | i26-cold6 | 8 | R1a ("On each return the orchestrator runs R1 again") against R1c ("does not re-dispatch at once") | "R1c's heading makes it an exception, so the text can be read correctly. execute.md should still say that R1c takes precedence over R1a for that return. Otherwise a literal reading re-dispatches straight into the held slot, which is the loop R1c exists to prevent." | the text | **r8:** "residual" | r8 |
+| Z3 | i26-cold6 | 8 | the binding item on R3's bounded retry (V1), against "never counts as won or lost" | "When the bound is reached, the worker therefore needs a third outcome. The natural one is Loop control's tool-failure stop: stop and report without standing down. A failed read says nothing about who owns the issue, so unassigning would be wrong." "The implementing issue should name that outcome, or the bound has no defined end." cf. P29, K18; see D17 | the text | **r8:** "residual" | r8 |
+| Z4 | i26-cold6 | 8 | Binding, Walkthrough: "The reused-token case is a negative control, which must fail" (P27) beside "the reused-token stand-down is an explicit assertion" (i26-cold2) | "the two reused-token assertions point in opposite directions." "These can both hold, but only if the implementing issue says which check is which": "the negative control: `next` under a reused token returns the earlier reopened issue, not the assignment. This is expected to 'fail', as E20 shows"; "the passing assertion: under R2 the worker starts nothing and returns." "As written, an implementer could script the whole case to fail." cf. K17, P27; see D16 | the text | **r8:** "residual" | r8 |
+| Z5 | i26-cold6 | 8 | Out of scope's "the `--step` path", against Binding's "`--step` goes through R1's pick" (V6) | "These can be reconciled. Out of scope opens with 'the worker lifecycle *after selection*', R1 says 'on every path', and the binding item agrees with R1. But a quick reader sees `--step` both out of scope and in scope." Fix: "Change the out-of-scope entry to '`--step`'s lifecycle after selection'." cf. P30, K19, V6 | the text | **r8:** "residual" | r8 |
+| Z6 | i26-cold6 | 8 | R5 ("the `export ZHI_ACTOR` example") and Where it goes ("the `ZHI_ACTOR` example") | how-to-use line 135 holds the example; "Line 144 ('with the variable exported rather than `next --actor`') and line 156 ('With nothing exported') state the same model." "A narrow reading leaves two sentences that contradict R4." Fix: "R5 should name every 'exported' line in how-to-use, not only the example." It finds execute.md line 167 "covered under 'the `Otherwise` branch'". cf. V5, C9, K6 | `how-to-use-git-zhi.md` lines 135, 144 and 156, found by its search for `export`/`exported` | **r8:** "residual" | r8 |
+| Z7 | i26-cold6 | 8 | R1's opening sentence ("Before any worker calls `next`, the agent that orchestrates [assigns]") and the self-resume bullet | "Self-resume calls `next` with no new assignment. The bullet carves this out … execute.md should still put the exception beside the rule, not two bullets later." Also "execute.md should also say where the issue's token comes from: the conversation. A fresh invocation mints a new `<run-id>`. Its reclamation then clears the old token's assignment." "Self-resume is therefore within one run only, and a prior run's in-progress issue remains #27's dead-worker case. Today's 'idempotent' Key Constraint should not be read as promising more." cf. V2, W10, F3; see D15 | `headForActor` step 1 in git-zhi's `graph.go`; the text | **r8:** "residual" | r8 |
+| Z8 | i26-cold6 | 8 | R1's ruling-3 sentence, against 0002's "Identity is fixed for the life of a worker" | "A reader of execute.md who sees the single worker change token per issue may take that as a breach." "Under R1 the token changes only between issues, never while one is held, and self-resume keeps the token mid-issue. So the rule's reason is respected. The ruling-3 sentence in execute.md should say so, so the per-pick token does not read as a breach of 0002." cf. W3, F21; see D10, D13 | 0002's text: "a worker that renames itself mid-run fails `headForActor` step 1 against its own in-progress issue" | **r8:** "residual" | r8 |
+
+Also recorded, not raised as rows, from round 8:
+
+- **Residuals named without an id.**
+  - `i26-fresh`, on `--step`: "One mild tension, which is a residual and not
+    a bar." "The implementing issue can carry the same one-line carve-out for
+    `--step`." cf. P30, K19, Z5, V6.
+  - `i26-cold3`, on R3's bounded retry: "If the implementer treats it as a
+    stand-down, R1b clears the assignment on an issue the worker may own,
+    which strands the issue the way D15 did. The safe answer is to stop and
+    report the issue, which is Loop control's 'a tool refused' stop.
+    **Residual** for the implementing issue." cf. P29, K18, Z3; see D17.
+  - `i26-cold3`, on `--step`: "consistent only if it is read like the
+    one-worker split, with selection here and lifecycle in #27. Wording;
+    **residual**."
+  - `i26-cold3`, on R1c's widening: "A human can assign the picked issue to
+    themselves in the window between R1's assignment and the worker's `next`.
+    On the one-worker path that ends the run and reports the pool, rather than
+    carrying on with the other issues. That is a safe stop with a report, not
+    a hang, and the window is tiny. **Residual**, not raised as a row."
+  - `i26-cold4`, on `--step`: "One wording tension, a residual." "Adding
+    'only its lifecycle' to the `--step` item in Out of scope would remove the
+    tension. The implementing issue can carry this."
+  - `i26-cold4`, on R3's bounded retry: "One edge, a residual for the
+    implementing issue or #27." "the worker's start succeeded, every re-read
+    fails, and it stands down. R1b then sees an assignment that still carries
+    the worker's token and clears it, leaving an owned in-progress issue
+    unassigned and unworked." "The fix is for the stand-down at the bound to
+    report the issue rather than release it." See D17.
+- **Nits, not held.**
+  - `i26-arch`, on `--step`: "One tension, and I judge it a nit, not a
+    contradiction." "The implementing issue can carry the one-word
+    clarification." It holds nothing "as either a bar or a residual".
+  - `i26-cold`, on `--step`: "A nit, not a bar." It holds nothing "as a bar
+    or as a residual".
+  - `i26-pushback`, on `i26-cold2`'s explicit-assertion line: "I could not
+    tell which stand-down this means. Under R2, a reused token's `next`
+    returns a reopened issue that is still assigned to that token (E20, D2),
+    so R2 produces no stand-down." "The implementing issue should say which.
+    This is a nit, not raised as a row." See D16.
+  - `i26-cold2`, on R1c's widening: "That is stricter than it needs to be: a
+    fresh-token re-dispatch would usually succeed. But it cannot loop or hang,
+    and it reports what is left. I accept it as it stands."
+- **Releases of round-7 nits that carried no row.** `i26-arch`: its
+  end-of-run report nit "— released": "That is the right home." `i26-cold2`:
+  its explicit-assertion nit "**released, as moved**", adding "It does
+  conflict with the line above it, though; see K17."
+- **`i26-evidence`'s record correction** to its round-7 tie nit, which the
+  binding section records as "ties between equal `created` values go by UUID":
+  "**misrecorded; please correct**". What it raised (r43): "when two
+  milestones hold **equal-length chains**, `list --critical` picks the one
+  with the lower UUID root, so a milestone whose equal-length chain was
+  created later does not 'hold the chain'. Ties on `created` cannot really
+  occur for creation order, because the UUIDs are v7 and sort in creation
+  order." Its correction: "an equal-length chain in another milestone wins by
+  UUID, so 'holds the chain' is false for the later one". It confirms its
+  other binding items as recorded. See D12.
+- `i26-pushback`'s growth check: "**I found no clause citing neither a
+  round-7 finding nor a ruling.**"
+- `i26-evidence`, not measured: "a decline that leaves its issue pending. The
+  candidate is an assignment whose blocker was reopened between assignment and
+  `next`; that issue is not in the pool, so R1c's report would name only the
+  rest of the pool."
 
 ### Disagreements
 
@@ -1084,6 +1312,10 @@ every party to it says so in its own report; the drafter resolves none.
     - `i26-arch`, `i26-cold`, `i26-cold2`, `i26-cold3` and `i26-fresh` list
       R3's wait mechanism, or the concurrency measurements, as not
       re-examined.
+  - **Round 8. Not resolved.** No party says D1 is resolved, and none
+    re-ran the concurrent-start race beyond `i26-evidence`'s `walk7.sh`, whose
+    CAP=2 `steal` case is "PASS 3/3". `i26-cold`, `i26-cold3`, `i26-cold5` and
+    `i26-cold6` say they did not re-run the concurrent starts.
 - **D2. Whether a reopened issue keeps its assignment. Resolved**: every party
   says so in its own report.
   - r3's author measured it before r3: assigned `a` ended
@@ -1157,6 +1389,14 @@ every party to it says so in its own report; the drafter resolves none.
       *worker's* selection. R1 uses it only for the orchestrator's choice,
       which 0002 permits ('it assigns to steer'). The worker still selects
       with bare `next`."
+  - **Round 8. Not resolved.** No party says D3 is resolved.
+    - `i26-arch`: "All other rows, A1 to A18, stay released".
+    - `i26-cold6`, not a party before round 8: R1 "uses it only for the
+      orchestrator's choice, adds the filter itself, and keeps bare `next` as
+      the worker's selection (R2). That follows the letter of 0002's 'select
+      with bare `git zhi next`'. It also follows the reason 0002 gives." "R1
+      restores one of 0002's premises": "an orchestrator is a single
+      serialisation point with no race to solve".
 - **D4. Whether a refused or resume-own start is reachable within a run. Not
   resolved.**
   - The fact is not contested: r3's author measured that a worker starting its
@@ -1220,6 +1460,18 @@ every party to it says so in its own report; the drafter resolves none.
     - `i26-cold2`: "The fresh-token-per-pick rule (K2, K11) survives ruling 3.
       Its exceptions, the Step 4 reopen and self-resume, keep one token per
       issue".
+  - **Round 8. Not resolved.** r8 replaces R3's "unreachable" clause with
+    R1's "Self-resume runs no transition", and R3 now reads "Resuming one's own
+    in-progress issue does not pass through R3 at all" (quoted by
+    `i26-fresh`). Each raiser of the six round-7 rows releases it (A19, P26,
+    F22, C20, K16, W10). No party says D4 is resolved.
+    - The fact is reconfirmed on 0.7.2 by `i26-evidence` (r46), `i26-pushback`
+      (`probe26r7`), `i26-cold3` and `i26-cold6`: `start` refused, `--state
+      resume` refused while the session is open, `next` returns the issue.
+    - `i26-evidence` (E21) and `i26-pushback` (P28): after `--state pause`,
+      `--state resume` succeeds. See D15.
+    - `i26-cold3`: "A pick always uses a fresh token, which has nothing in
+      progress, so self-resume cannot fire at a pick."
 - **D5. Where "integrated" is read from (new in round 3). Not resolved.**
   - `i26-arch` (A14): "a fact read from git at dispatch time … never a flag the
     orchestrator remembers"; otherwise a dead run loses idempotency. "How it is
@@ -1237,6 +1489,8 @@ every party to it says so in its own report; the drafter resolves none.
   - **Round 6.** No party addresses D5.
   - **Round 7.** No party addresses D5. `i26-evidence`: E15 "still released"
     ("E1 to E18").
+  - **Round 8.** No party addresses D5. `i26-evidence`: "E1 to E18 **still
+    released**".
 - **D6. Whether R7 needs an amendment to 0002, or the human's ruling (new in
   round 3). Not resolved.**
   - `i26-arch` (A13): "no amendment, in my view"; "I hold it to be a premise
@@ -1297,6 +1551,15 @@ every party to it says so in its own report; the drafter resolves none.
       the read and write sides, is preserved." V5 names
       `docs/ARCHITECTURE.md:223`'s "exported", which it says is "not
       falsified".
+  - **Round 8. Not resolved.** No party says D6 is resolved.
+    - `i26-arch`: V5's site "is consistent with ruling 2 and with my A13
+      release".
+    - `i26-cold5`: V5 "**released**".
+    - `i26-cold6`, not a party before round 8: "Identity per command (ruling
+      2) and a fresh token per pick (ruling 3). These are settled." It finds
+      it removes a defect: "`export` does not survive between shell
+      invocations in agent harnesses". Z6 asks that R5 name two further
+      "exported" lines in `how-to-use-git-zhi.md`.
 - **D7. Whether the race R5 addresses can arise under r3 (new in round 3). Not
   resolved.**
   - `i26-cold` (C6): under R2 and R6 "no second starter exists", so R5's settle,
@@ -1341,6 +1604,9 @@ every party to it says so in its own report; the drafter resolves none.
     - `i26-evidence`: in 10 extra `steal` runs the lost start "occurred in 6
       (`standdown rc=0 state=in-progress`, then `--unassign`, dispatched
       once), and the intruder lost in 4".
+  - **Round 8. Not resolved.** No party addresses D7 or says it is resolved.
+    `i26-cold2`: "K1 to K15 still hold against r8." `i26-cold` makes no
+    declaration on C6.
 - **D8. How a dead worker's in-progress issue is recovered (new in round 3).
   Not resolved.** All five participants agree R6's cited mechanism does not
   recover it (A12, E14, P13, F3, C1). They differ on the repair:
@@ -1376,6 +1642,16 @@ every party to it says so in its own report; the drafter resolves none.
     self-resume against R3 (A19, P26, F22, C20, K16, W10); `i26-pushback` calls
     it "F3's stranded shape", and `i26-arch` "the A10 failure, … A15 recorded
     it for #27's re-dispatch-under-token case". See D15.
+  - **Round 8.** No party says D8 is resolved. `i26-fresh`: "F3, F11 to F14
+    and F16 remain live in #27, and I hold them there." The six raisers of the
+    self-resume stranding release their rows on r8's rule; see D15.
+    - `i26-cold6` (Z7), not a party before round 8: "Self-resume is therefore
+      within one run only, and a prior run's in-progress issue remains #27's
+      dead-worker case."
+    - `i26-pushback` (P29), `i26-cold2` (K18), `i26-cold3`, `i26-cold4` and
+      `i26-cold6` (Z3) name a stranding reached through an exhausted retry;
+      `i26-cold4` calls it "#27's stranded shape, reached through a persistent
+      read failure". See D17.
 - **D9. Whether a stood-down worker's leftover assignment belongs to #26 or to
   #27 (new in round 4). Not resolved.** The fact is not contested: after a
   stand-down the issue keeps its assignment and leaves R1's unassigned pool
@@ -1420,6 +1696,15 @@ every party to it says so in its own report; the drafter resolves none.
       not contradict 0002's Open Question, which "is not settled".
     - A19, P26, K16 and W10 say R1b clears a self-resuming agent's assignment;
       C20 says "R1b does not apply". See D15.
+  - **Round 8. Not resolved.** No party says D9 is resolved.
+    - `i26-cold6`, not a party before round 8: "R1b never touches an
+      assignment someone else has since set".
+    - `i26-evidence` (r46's bracket): R2, then R3's refused start, then R1b's
+      `--unassign` on the worker's own issue left it
+      `{"state":"in-progress","assigned":null,...}`, "**The issue is
+      stranded.**"
+    - P29, K18, `i26-cold3`, `i26-cold4` and Z3 say R1b's unassign must not run
+      at an exhausted retry. See D17.
 - **D10. Whether the one-worker branch may keep one token across issues (new
   in round 5). Not resolved.** No party read another's round-5 report.
   - `i26-pushback` (P23), `i26-cold` (C16), `i26-cold2` (K11) and `i26-cold3`
@@ -1457,6 +1742,11 @@ every party to it says so in its own report; the drafter resolves none.
       released").
     - `i26-evidence`: ruling 3 "rests on my E20 measurement, which reproduces
       here".
+  - **Round 8. Not resolved.** No party says D10 is resolved.
+    `i26-cold2`: "K1 to K15 still hold against r8." `i26-cold6` (Z8), not a
+    party before round 8: "Under R1 the token changes only between issues,
+    never while one is held, and self-resume keeps the token mid-issue. So the
+    rule's reason is respected." It asks that execute.md say so.
 - **D11. Who clears a stood-down worker's assignment, and how (new in round
   5). Not resolved.** No party read another's round-5 report.
   - `i26-pushback` (P19): R1b "doesn't say whether the worker or the
@@ -1484,6 +1774,10 @@ every party to it says so in its own report; the drafter resolves none.
     append no transition. So the orchestrator's writes in R1/R1b do not affect
     ownership, whatever identity it runs under." No party says D11 is
     resolved.
+  - **Round 8. Not resolved.** R1b is unchanged. No party says D11 is
+    resolved. `i26-cold6`: "`--assign` adds no transition"; R1b "never touches
+    an assignment someone else has since set". What R1b does at an exhausted
+    retry is D17.
 - **D12. Whether git-zhi 0.7.2 exposes the critical-chain order, and whether
   urgency-first is a choice (new in round 6). Not resolved.** r6's R1: "take
   the pool by `urgency`, then by creation order. … Nothing in git-zhi 0.7.2
@@ -1549,6 +1843,25 @@ every party to it says so in its own report; the drafter resolves none.
     - `i26-cold5`, not a party before round 7: `list --critical --milestone m1`
       returns m2's chain; "The author's measurement holds." V4: say that
       `critical_chain` lists issues upstream first.
+  - **Round 8. Not resolved.** r8 reads the order from the `critical_chain`
+    key and restates the cost: "What is lost is a milestone-scoped critical
+    order, which bare `next` never offered either." No party says D12 is
+    resolved.
+    - `i26-cold3` (Q11 "**released**"): "r8's cost sentence says what I asked".
+    - `i26-arch`: the restated cost "is true. `headForActor` ranks by the
+      whole-graph chain, my round-6 L2. It sharpens A18 rather than reopening
+      it."
+    - `i26-cold5` (V4 "**released**"): `critical_chain` "lists upstream first
+      (`b1,b2,b3`)".
+    - `i26-cold6`, not a party before round 8: "Confirmed in source." "R1's
+      order (chain, then creation) reproduces this order, applied to the
+      milestone's pool." It did not verify that `list --critical` ignores
+      `--milestone`.
+    - `i26-evidence` corrects how the binding section records its round-7
+      tie nit: "an equal-length chain in another milestone wins by UUID, so
+      'holds the chain' is false for the later one". It calls the recorded
+      "ties between equal `created` values go by UUID" "**not what I
+      raised**".
 - **D13. Whether a fresh token per issue on the one-worker path is within
   0002 and costs nothing (new in round 6). Not resolved.** It contests D10's
   movement.
@@ -1584,6 +1897,11 @@ every party to it says so in its own report; the drafter resolves none.
       token. So nothing is stranded. Reading 'worker' as one dispatch matches
       0002's own per-dispatch minting."
     - What ruling 3's self-resume does against R3 is D15.
+  - **Round 8. Not resolved.** No party says D13 is resolved. `i26-cold6`
+    (Z8), not a party before round 8, asks that the ruling-3 sentence say why
+    a per-pick token is not a breach of 0002's "Identity is fixed for the life
+    of a worker". `i26-cold3`: E20's reused-token case "lands on a *reopened*
+    issue, not an in-progress one, so it still goes to R2's stand-down."
 - **D14. Whether `list --critical --format json` exposes the critical chain
   (new in round 7). Not resolved.** C21 is declared against the author's
   measurement and two participants' probes.
@@ -1610,6 +1928,20 @@ every party to it says so in its own report; the drafter resolves none.
     `b1,b2,b3`)".
   - `i26-arch` (round 6, L1) read `critical_chain` from the JSON.
   - C21 stays as its raiser declared it. Only `i26-cold` may release it.
+  - **Round 8.** `i26-cold`, the only party holding the contrary position,
+    withdraws it as its own act: "**C21: my measurement was wrong**". "I
+    re-measured it." The keys are
+    `["critical_chain","current_constraint","issues","parallel_work"]`, and
+    "`.critical_chain` gives `["o1","o2","o3","o4"]`, which is the chain, in
+    order." "In round 7 I read only `.issues` and concluded that JSON ignores
+    `--critical`. That was wrong." "The author and i26-pushback were right.
+    There is no git-zhi defect to file for the JSON form." It releases C21.
+    - `i26-cold5` observes the key again (`b1,b2,b3`); `i26-cold6`, not a party
+      before round 8, finds the same four keys, with `critical_chain` "an array
+      of issue objects".
+    - No party says in its own report that D14 is resolved, so it is not
+      marked resolved. No party now holds the position that the JSON lacks the
+      chain.
 - **D15. Whether ruling 3's self-resume contradicts R3, and how resume enters
   the loop (new in round 7). Not resolved.**
   - Six participants say the two clauses conflict and the resumed issue is
@@ -1641,6 +1973,25 @@ every party to it says so in its own report; the drafter resolves none.
   - `i26-evidence` did not examine "Whether any clause contradicts another,
     beyond the conditions I executed"; its model "reopens and returns,
     whereas under ruling 3 the issue's own token resumes it".
+  - **Round 8.** r8: "Self-resume runs no transition". "It skips R2's
+    stand-down and R3, and goes straight back to Step 3 under that token." The
+    route r8 takes is the one F22, K16 and W10 gave. Each of the six raisers
+    releases its row: A19, P26, F22, C20, K16 and W10. `i26-cold5` releases
+    V2 with a residual, a walkthrough case for it.
+    - `i26-cold3` withdraws its round-7 observation, as its own act: "my
+      round-7 observation was wrong". "That was a reading of the words, and I
+      had not run the path." "The six raisers were right that this strands the
+      issue. I withdraw the observation."
+    - `i26-evidence` (r46) measures the rule and the bracket: the rule keeps
+      the assignment and `done` succeeds; the bracket strands the issue. It
+      raises E21, and `i26-pushback` P28: the stated reason holds "only while
+      the session is open", and a paused issue needs `--state resume`.
+    - `i26-cold6`, not a party before round 8, raises Z7: put the exception
+      beside R1's opening rule, and say the token comes from the conversation,
+      so self-resume is "within one run only".
+    - No party says in its own report that D15 is resolved, so it is not
+      marked resolved. No party now holds that the round-7 clauses did not
+      conflict.
 - **D16. What the reused-token acceptance case shows (new in round 7). Not
   resolved.** r7's walkthrough covers "a worker whose token was used before,
   so that a reopened issue is reachable (E20)", and passes if "each worker
@@ -1656,6 +2007,60 @@ every party to it says so in its own report; the drafter resolves none.
     The implementing issue should assert the stand-down explicitly."
   - `i26-cold3`: the case, with "each worker worked the issue assigned to it",
     "turns red when the token is reused".
+
+  - **Round 8. Not resolved.** r8's binding section: "the reused-token case
+    is a negative control, which must fail (P27)" and "the reused-token
+    stand-down is an explicit assertion (i26-cold2)". The Acceptance body
+    still lists the case under "It passes if".
+    - `i26-pushback` (P27 "**released, as a residual carried by the binding
+      section**"): "Editing L186 to match would remove the contradiction." On
+      the assertion line: "I could not tell which stand-down this means.
+      Under R2, a reused token's `next` returns a reopened issue that is still
+      assigned to that token (E20, D2), so R2 produces no stand-down."
+    - `i26-cold2` (K17): "Both are true, of different runs": under R2 the
+      worker stands down and the walkthrough passes; with R2's guard removed,
+      the case goes red.
+    - `i26-cold6` (Z4), not a party before round 8: the negative control is
+      "`next` under a reused token returns the earlier reopened issue, not the
+      assignment"; the passing assertion is "under R2 the worker starts
+      nothing and returns."
+    - `i26-evidence`: "reused-token **negative control** (`REUSE=1`) **FAIL**,
+      as P27 requires: `worked an issue other than its assignment: [m1 m2
+      m3]`."
+    - `i26-cold3`: E20's case "lands on a *reopened* issue … so it still goes
+      to R2's stand-down."
+    - The parties describe what the passing half asserts differently
+      (`i26-pushback`: R2 "produces no stand-down"; K17, Z4 and `i26-cold3`: the
+      worker stands down under R2). No party says D16 is resolved.
+- **D17. What happens when R3's bounded retry is exhausted (new in round 8).
+  Not resolved.** r8's binding section: "R3's retry of a failed read is bounded
+  (V1)"; R3: a failed read "never counts as won or lost". Every party says the
+  outcome is unstated and that R1b's unassign there would strand an issue the
+  worker may hold. They state the outcome differently:
+  - `i26-pushback` (P29): "ends the worker's attempt as *unknown*, reported by
+    name, without R1b's unassign. Whatever outcome it picks, it must not count
+    as lost."
+  - `i26-cold2` (K18): "unknown: stand down, and leave the assignment alone".
+  - `i26-cold6` (Z3): "Loop control's tool-failure stop: stop and report
+    without standing down."
+  - `i26-cold3`: "stop and report the issue, which is Loop control's 'a tool
+    refused' stop".
+  - `i26-cold4`: "the stand-down at the bound to report the issue rather than
+    release it"; "a residual for the implementing issue or #27".
+  - Each declares it a residual. No party says D17 is resolved.
+- **Self-corrections made in round 8**, each the participant's own act:
+  - `i26-cold`, C21: "my measurement was wrong"; C21 released. See D14.
+  - `i26-cold3`, its round-7 observation on D15: "my round-7 observation was
+    wrong"; "I withdraw the observation." See D15.
+  - `i26-cold5`, V3: "A correction to my own round-7 premise (V3)". "R1 names
+    a different command, `issue list --ready --milestone <m>`, and that
+    command's JSON is the full issue object." "So R1's query already carries
+    `assigned` and `created`, and no join is needed. V3's 'needs a join' was
+    true of the wrong command." V3 released, with a residual.
+  - `i26-evidence`, its round-7 tie nit as the binding section records it:
+    "**misrecorded; please correct**". See D12. It also notes that its earlier
+    tables "printed `null` because jq yields `null` for a missing key"; V3's
+    "omits the field" is "**correct**".
 
 ### Where findings cluster
 
@@ -1875,6 +2280,94 @@ every party to it says so in its own report; the drafter resolves none.
   P26, F22, C20, K16, W10, V2) and **R1's "Order"** (C21, Q11, V4). Every
   round-7 row other than the self-resume six and C21 is marked a nit by its
   raiser.
+- **Round 8.** No participant reports reading another's round-8 report.
+  `i26-cold6` read no record, other report, diff, brief, earlier revision or
+  #27. The brief asked resumed participants to check that nothing in the
+  binding section "should really be a requirement in the body" and that
+  nothing in it "contradicts the body". Raised independently in this round:
+  - **`--step`, in R1's pick by the binding section and in #27 by Out of
+    scope**: P30 (`i26-pushback`), K19 (`i26-cold2`), Z5 (`i26-cold6`), V6's
+    residual (`i26-cold5`), and unnumbered residuals from `i26-fresh`,
+    `i26-cold3` and `i26-cold4`. `i26-arch` and `i26-cold` name the same
+    tension as a nit and hold nothing. Nine participants name it; the seven
+    that hold it as a residual ask for the one-worker path's carve-out, or a
+    clause like it, to cover `--step`.
+  - **R3's bounded retry with no stated outcome**: P29, K18, Z3, and
+    unnumbered residuals from `i26-cold3` and `i26-cold4`. See D17.
+  - **The reused-token case's two binding lines and the Acceptance body**:
+    K17, Z4, P27's residual and `i26-pushback`'s unraised nit. See D16.
+  - **Self-resume's stated reason on a paused issue**: E21 and P28, each
+    measured. See D15.
+  - **Single-raiser residuals**: Z1 (a refused restart leaves `reopened`), Z2
+    (R1a and R1c), Z6 (two more "exported" lines), Z7 (self-resume beside R1's
+    opening rule, and where the token comes from), Z8 (the per-pick token and
+    0002), V2's and V3's residuals, and `i26-cold3`'s R1c window.
+  - **Whether anything in the binding section belongs in the body**: every
+    participant that reports the check finds nothing that must move.
+    `i26-evidence` names "E21's one-word qualifier", "a sentence in R1 rather
+    than in the binding section".
+- By section, round 8 concentrates on **"Binding on the implementing issue"
+  read against Out of scope, R3 and Acceptance** (P29, P30, K17 to K19, Z3 to
+  Z5) and on **R1's self-resume bullet** (E21, P28, Z7, Z8, V2's residual).
+
+## Residuals carried to the implementing issue
+
+Under ruling 5, #26 is accepted at r8 with these open. Each is listed by
+theme, with its raisers and ids, as its raiser declared it. Every one is
+declared a residual, not a bar. Where a raiser placed one in #27 rather than
+the implementing issue, that is said.
+
+1. **What R3's retry bound does when it is exhausted.** P29 (`i26-pushback`),
+   K18 (`i26-cold2`), Z3 (`i26-cold6`), and unnumbered residuals from
+   `i26-cold3` and `i26-cold4`. Each says R1b's unassign must not run there,
+   since the worker may hold the issue; they state the outcome differently
+   (D17). `i26-cold4` places it with "the implementing issue or #27". The
+   others place it with the implementing issue.
+2. **The `--step` selection carve-out.** P30 (`i26-pushback`), K19
+   (`i26-cold2`), Z5 (`i26-cold6`), V6's residual (`i26-cold5`), and
+   unnumbered residuals from `i26-fresh`, `i26-cold3` and `i26-cold4`. The
+   fix each names is Out of scope's one-worker carve-out extended to
+   `--step`: selection is R1's, lifecycle stays in #27. `i26-arch` and
+   `i26-cold` call it a nit and hold nothing.
+3. **The reused-token control wording.** K17 (`i26-cold2`), Z4 (`i26-cold6`),
+   P27's residual (`i26-pushback`: the binding line governs, and "Editing L186
+   to match would remove the contradiction"), and `i26-pushback`'s nit on
+   which stand-down the assertion means. See D16. `i26-cold2`: K17 is "the one
+   I would most want fixed in wording before implementation starts".
+4. **The paused-issue exception to self-resume.** E21 (`i26-evidence`) and
+   P28 (`i26-pushback`): "refused while a session is open", and self-resume
+   runs `--state resume` when the session is closed. `i26-evidence` says the
+   qualifier "is a sentence in R1". `i26-pushback` gives "Session telemetry is
+   lifecycle, which belongs to #27" as a ground for its not being a bar, and
+   places the fix with the implementing issue.
+5. **Z1's reopened state.** Z1 (`i26-cold6`): R3 covers every `--state
+   start`, Step 4's included, and "pending" in R1b and R1c reads "not in
+   progress, that is pending or reopened". "This is arguably lifecycle, which
+   is #27's, but the wording is this subject's."
+6. **The `assigned` field.** V3's residual (`i26-cold5`), after its own
+   correction: "name `issue list`, not `list`, in the issue, because the rule
+   applied to `list --ready` would dispatch human-assigned issues."
+   `i26-evidence` re-measured the binding line as "**correct**".
+7. **Other single-raiser residuals.**
+   - V2's residual (`i26-cold5`): a walkthrough case for self-resume.
+   - Z2 (`i26-cold6`): say that R1c takes precedence over R1a for that return.
+   - Z6 (`i26-cold6`): R5 names `how-to-use-git-zhi.md`'s other "exported"
+     lines.
+   - Z7 (`i26-cold6`): self-resume stated beside R1's opening rule, and the
+     token's source named; a prior run's in-progress issue "remains #27's
+     dead-worker case".
+   - Z8 (`i26-cold6`): the ruling-3 sentence says why a per-pick token
+     respects 0002's reason.
+   - `i26-cold3`'s R1c window, "not raised as a row".
+8. **The binding section's own record.** `i26-evidence` asks that its tie nit
+   be corrected to "an equal-length chain in another milestone wins by UUID,
+   so 'holds the chain' is false for the later one".
+
+**Placed in #27 by their raisers.** No round-8 residual is placed in #27
+alone. `i26-cold4` places its retry-bound residual with "the implementing
+issue or #27". `i26-fresh` holds F3, F11 to F14 and F16 "live in #27". The
+#27 carry-over of A15, E14's in-progress half, E16's reporting half and F18
+stands as recorded.
 
 ## What the participants converged on, independently (round 1)
 
@@ -2152,3 +2645,60 @@ whether `blocked_by` can disagree with the graph's edges.
 - No participant ran a full multi-worker `crochet:execute` run in round 7, and
   none walked either branch, or self-resume, with an agent. `i26-evidence` ran
   both branches as a shell simulation (`walk7.sh`), with no self-resume case.
+
+**Round 8, as each participant declared:**
+
+- **`i26-arch`:**
+  - D14 to D16 beyond what r8 quotes;
+  - C21, "which only its raiser may release";
+  - the other participants' round-7 measurements;
+  - whether `assigned` is omitted rather than null in the ready JSON: "either
+    form reads as null, so the binding rule is safe either way". It ran no new
+    commands.
+- **`i26-evidence`:**
+  - R5's added `docs/ARCHITECTURE.md` site and the other prose sites;
+  - the C21 release, "which is i26-pushback's";
+  - `--step` (V6);
+  - the R1c-on-decline path, "not constructed";
+  - agent behaviour against the skill wording.
+- **`i26-pushback`:**
+  - no walkthrough run;
+  - P28's "outside pause" trigger, "reasoned from `grep`"; whether a harness
+    interrupt ever pauses an issue;
+  - C21, "not mine";
+  - D14 to D16, "not re-read in full";
+  - the binding section's `i26-evidence` items (null chain, UUID tie, moving
+    chain), not re-measured;
+  - `--step`, 0003, the start race, and pvm.
+- **`i26-fresh`:**
+  - C21 and the `critical_chain` key;
+  - Q11's restated cost;
+  - V5's `docs/ARCHITECTURE.md` edit, "beyond noting that it is doc-first";
+  - the ledger rows for D14 to D16. It re-ran no probes.
+- **`i26-cold`:**
+  - the concurrent-start run, the run without R1 to R3, and the E20 case;
+  - the `docs/ARCHITECTURE.md` "exported" site (V5);
+  - `--state resume` being refused on one's own issue: "I relied on 0002's
+    observation from 0.6.0 and r8's statement for 0.7.2."
+- **`i26-cold2`:**
+  - the ledger;
+  - the `critical_chain` JSON key;
+  - the E20 measurement;
+  - `docs/ARCHITECTURE.md`'s "exported identity" line, "beyond confirming it
+    exists".
+- **`i26-cold3`:** did not re-run concurrent starts or the R1c sequence.
+- **`i26-cold4`:** declares no "not checked" list. It ran nothing new: "r8's
+  claims about the tool match what I observed in rounds 6 and 7".
+- **`i26-cold5`:**
+  - the concurrent-start races and the full walkthrough;
+  - other participants' r8 reports;
+  - D14 to D16 "beyond what r8 states".
+- **`i26-cold6`:**
+  - the full concurrent walkthrough; "The measurements of rounds 4 and 5 are
+    taken as given";
+  - that `list --critical` ignores `--milestone`;
+  - how `ReadySet`'s sort key relates to `created` for the tie-break.
+- No participant ran a full multi-worker `crochet:execute` run in round 8, and
+  none walked either branch, or self-resume, with an agent. `i26-evidence`
+  measured self-resume and its bracket with shell micro-tests (r46 to r49),
+  outside `walk7.sh`.
