@@ -105,9 +105,10 @@ touch as waste.
 
 **The actor telemetry is not the source, yet.** Worker identity prefixes a
 transition's actor with `human:` or `agent:`, which looks like the right signal
-and is not: the prefix records whether `ZHI_ACTOR` was exported, not who acted.
-`ZHI_ACTOR` is minted in execute's dispatch, so refinement, chain-review and a
-backfilling review all write transitions outside it. An audit keyed on it today
+and is not: the prefix records whether `ZHI_ACTOR` was set on that `git zhi`
+command, not who acted. Execute's dispatch mints the worker token that
+`ZHI_ACTOR` carries, so refinement, chain-review and a backfilling review all
+write transitions without one. An audit keyed on it today
 would report every agent action as a human interruption. Ask the question of the
 session instead, and use the query once identity discipline reaches every skill
 that writes a transition.
