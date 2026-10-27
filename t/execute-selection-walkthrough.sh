@@ -55,13 +55,28 @@ esac
 # ------------------------------------------------------------ scratch space
 TMP=$(mktemp -d "${TMPDIR:-/tmp}/zhi-walk.XXXXXX") || { echo "not ok - mktemp failed"; exit 1; }
 mkdir -p "$TMP/rec" "$TMP/wt" "$TMP/pid" "$TMP/mark"
-: > "$TMP/pids"; : > "$TMP/returns"; : > "$TMP/dispatch"; : > "$TMP/seen"
+: > "$TMP/returns"; : > "$TMP/dispatch"; : > "$TMP/seen"
 : > "$TMP/report"; : > "$TMP/cases"; : > "$TMP/fails"
+
+kill_tree() {  # pid...; roots first, so no killed parent forks again
+    _all=$(ps -A -o pid= -o ppid=) _tree="$*" _front="$*"
+    while [ -n "$_front" ]; do
+        _front=$(printf '%s\n' "$_all" | awk -v f=" $_front " 'index(f, " " $2 " ") {print $1}' | tr '\n' ' ')
+        _tree="$_tree $_front"
+    done
+    kill $_tree 2>/dev/null
+    _i=0   # give the tree up to five seconds to go before its directories are removed
+    while [ $_i -lt 5 ] && kill -0 $_tree 2>/dev/null; do _i=$((_i + 1)); sleep 1; done
+}
 
 cleanup() {
     trap - EXIT HUP INT PIPE TERM
-    # shellcheck disable=SC2046
-    [ -s "$TMP/pids" ] && kill $(cat "$TMP/pids") 2>/dev/null
+    # Each worker's whole process tree, not only the subshell `$!` names: its
+    # inner subshell and git zhi children outlive a TERM to the parent, and
+    # could still write to a WALKTHROUGH_KEEP repository.
+    # Only live workers: a reaped worker's pid file is gone, so a reused pid is never hit.
+    _live=$(cat "$TMP"/pid/* 2>/dev/null)
+    [ -n "$_live" ] && kill_tree $_live
     wait 2>/dev/null
     [ -n "${WALKTHROUGH_KEEP:-}" ] && [ -n "${REPO:-}" ] && git -C "$REPO" worktree prune 2>/dev/null
     case "$TMP" in */zhi-walk.*) rm -rf "$TMP" ;; esac
@@ -235,7 +250,7 @@ run_case() {  # case milestone path(parallel|one) max_workers
             _n=${_w%%:*}; _rest=${_w#*:}; _id=${_rest##*:}; _tok=${_rest%:*}
             if [ "$_path" = parallel ]; then
                 ( worker "$_c" "$_n" "$_tok" "$_id" ) &
-                echo $! > "$TMP/pid/$_n"; echo $! >> "$TMP/pids"; LIVE=$((LIVE + 1))
+                echo $! > "$TMP/pid/$_n"; LIVE=$((LIVE + 1))
             else
                 # One worker: the agent is its own worker and does not count as live.
                 ( worker "$_c" "$_n" "$_tok" "$_id" ); _handled=$((_handled + 1))
@@ -250,7 +265,7 @@ run_case() {  # case milestone path(parallel|one) max_workers
         # Wait for the next return, whichever worker it is.
         until [ "$(wc -l < "$TMP/returns")" -gt "$_handled" ]; do sleep 1; done
         _handled=$((_handled + 1)); _n=$(sed -n "${_handled}p" "$TMP/returns")
-        wait "$(cat "$TMP/pid/$_n")" 2>/dev/null
+        wait "$(cat "$TMP/pid/$_n")" 2>/dev/null; rm -f "$TMP/pid/$_n"
         LIVE=$((LIVE - 1))
         on_return "$_c" "$_n"
         [ "$HELD" = 1 ] && [ "$LIVE" -eq 0 ] && break
@@ -375,15 +390,23 @@ else
     fail "each worker worked the issue assigned to it:${mism:- nothing worked}"
 fi
 
-idle=""
+# Progress is judged per issue: a worker that rightly stood down (a refused or
+# flaked start) fails nothing if its issue was re-dispatched and worked. An
+# issue dispatched and never worked by anyone fails, so a run that only stands
+# down is not a pass.
+idle=""; downs=""
+for id in $(awk '{print $3}' "$TMP/dispatch" | sort -u); do
+    cat "$TMP"/rec/[0-9]* 2>/dev/null | grep -qx "worked $id" || idle="$idle $id"
+done
 while read -r c tok id n _r; do
     grep -q '^outcome worked' "$TMP/rec/$n" 2>/dev/null ||
-        idle="$idle $tok($id: $(sed -n 's/^reason //p' "$TMP/rec/$n" 2>/dev/null))"
+        downs="$downs $tok($id: $(sed -n 's/^reason //p' "$TMP/rec/$n" 2>/dev/null))"
 done < "$TMP/dispatch"
+[ -n "$downs" ] && echo "# stand-downs:$downs"
 if [ -z "$idle" ] && [ -n "$all_ids" ]; then
-    pass "every dispatched worker in the selection cases worked an issue: $all_ids"
+    pass "every dispatched worker in the selection cases worked an issue: each of $(awk '{print $3}' "$TMP/dispatch" | sort -u | tr '\n' ' ')worked by some worker"
 else
-    fail "every dispatched worker in the selection cases worked an issue: stood down or unknown:${idle:- no dispatch}"
+    fail "every dispatched worker in the selection cases worked an issue: dispatched, never worked:${idle:- no dispatch}"
 fi
 
 missed=""

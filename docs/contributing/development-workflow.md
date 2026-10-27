@@ -59,6 +59,14 @@ order, cheapest first:
    every start waits out the ownership check's settle interval, and set
    `WALKTHROUGH_KEEP` to a directory to keep its scratch chain for inspection.
 
+   On 0.7.2 a `git zhi` read running while another worker writes can fail with
+   `ref file is empty`, or with `no issue found matching` for an issue that
+   exists (a sibling of perigrin/git-zhi#35). In the walkthrough it
+   shows as a `# stand-downs:` line quoting that text. The protocol absorbs it:
+   the worker stands down, the orchestrator gives the assignment back and
+   re-dispatches, and the issue is worked by a later worker — so progress is
+   judged per issue, and such a run still passes.
+
    `xt/run.sh` runs only the first. The walkthrough is not wired into it: its
    cost would be paid on every project check, and its subject is a skill's
    protocol rather than the repository's consistency.
