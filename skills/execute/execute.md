@@ -243,33 +243,86 @@ the pick chose, after the pick, and is never a separate selection.
 works the picked issue with that pick's token set on each `git zhi` command, and
 comes back to the pick when Step 4 returns here.
 
-Each worker selects its own work:
+#### The hand-over — what each worker does with its pick
+
+A worker is dispatched for one issue and handed that issue's full id along
+with its token. It does not choose; the pick above already did, by assigning,
+and `next` hands the assigned issue over:
 
 ```bash
-git zhi next
+git zhi next --format json
 ```
 
 Bare, with **no actor flag**. The identity is already in the environment, and
 passing it on the read side while the write side reads the environment is the
-split-identity failure this exists to prevent. `next` resumes this worker's own
-in-progress issue if it has one, and otherwise returns a ready issue that no
-other worker holds — which a ready-set query cannot do, because it has no
-assignee filter and no notion of who is asking.
+split-identity failure this exists to prevent. On 0.7.2, `next` returns the
+asking worker's own assignment ahead of any other ready issue; with nothing
+assigned to the worker, it returns some other ready issue, even one assigned to
+someone else. That is why `next` confirms the pick rather than making it.
 
-When it reports `no actionable issues for actor <id>` — or the plainer
-`no actionable issues` — **this worker has nothing to do.** That is not the
-same as the chain being finished: it also covers every remaining issue being
-held or blocked by another worker. The tool does not distinguish them, so match
-both strings, stop this worker, and let the run end when every worker has
-stopped.
+**The worker starts nothing unless `next` returns exactly that id.** "Assigned
+to my token" is not the test: a reused token's earlier reopened issue passes it
+too, and `next` returns that one first. If `next` returns any other issue, or
+reports `no actionable issues for actor <id>` or the plainer
+`no actionable issues`, the worker starts nothing, stands down and returns to
+the orchestrator.
 
-Start each issue before executing:
+Read the id from the JSON `id` field, never from the text output. Text prints
+an 8-character short id, and short ids collide for issues created together
+(perigrin/git-zhi#37); on 0.7.2 two issues created a second apart printed the
+same one.
+
+Start the issue by its literal id:
+
 ```bash
 git zhi issue edit <id> --state start
 ```
 
-This records a transition under `ZHI_ACTOR`, which is what makes the selection
-above work for everyone else.
+Never by an empty or unset variable. An empty ref is not an error on 0.7.2: it
+resolves to HEAD, the repository's current issue, so a start with an empty id
+acts on whatever issue that is.
+
+**The ownership check, after every `--state start`.** Step 4's restart after a
+reopen included. The start records a transition under `ZHI_ACTOR`, and the
+check reads it back:
+
+1. Wait a few seconds, then re-read the issue. Some agent harnesses block a
+   foreground `sleep`, so do not use one: run the wait as a background
+   command — in Claude Code, `sleep 5` with `run_in_background`, whose
+   completion re-invokes the worker — and read the issue when it returns.
+
+   ```bash
+   git zhi issue show <id> --format json
+   ```
+
+2. The worker owns the issue when its `state` is `in-progress` **and** the
+   latest transition's actor — the last entry of `transitions`, each of which
+   carries `state`, `actor` and `timestamp` — is its own token. Both are
+   needed. A start refused after Step 4's reopen, for `wip_limit` say, leaves
+   the issue `reopened` with the worker as its latest transition's actor, so
+   the actor alone would pass a start that never happened.
+
+3. A read that fails, or returns something that is not the issue, is retried,
+   and never counts as won or lost: it says nothing about who holds the issue.
+   The retry is bounded at three reads. When it is exhausted, the worker stops
+   and returns to the orchestrator saying the ownership of `<id>` is unknown.
+   That is not a stand-down, and the stand-down's unassign does not run on it,
+   because the worker may hold the issue; it is reported by name for a person
+   to settle.
+
+**A stand-down** is what a worker does when it does not own the issue it was
+dispatched for: `next` returned something else, the start was refused, or the
+check found another state or another actor. It runs no further transition on
+the issue and returns to the orchestrator, saying which of those happened and
+quoting git-zhi's refusal text when there was one. What the orchestrator does
+next is the orchestrator's.
+
+The check narrows git-zhi's concurrent-start window and does not close it
+(perigrin/git-zhi#35). Two starts close enough together can both be recorded;
+the check makes the loser see the winner's transition and back off, rather than
+working an issue someone else holds. Within one run the pick already keeps two
+workers off one issue, so what reaches the check is a start refused for
+`wip_limit`, or an actor outside the run taking the issue.
 
 ### Step 3: Inner Loop (Execute Issue)
 
@@ -419,7 +472,8 @@ decline it in writing rather than silently.
   ```
   The next execution pass reads the issue and sees the findings. The reopen
   and restart run under the issue's own token, not a fresh one, so `next`
-  still hands the reopened issue to its worker.
+  still hands the reopened issue to its worker. The restart goes through the
+  ownership check in Step 2 like any other start.
 
 - **In-scope findings AND reopens >= 3:** Stop and report: "Issue <id> exceeded
   max review passes (3). Consider splitting the issue or revising the AC."
