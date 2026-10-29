@@ -107,9 +107,10 @@ git zhi issue add "Guide: using the signature parser" --milestone "<milestone-na
 
 ### 4. Wire Dependencies
 
-Doc issues depend on the code issues they document. Wire via:
+Doc issues depend on the code issues they document, so the code issue blocks
+the doc issue. Wire via:
 ```bash
-git zhi issue edit <doc-id> --block <code-id>
+git zhi issue edit <code-id> --block <doc-id>  # code blocks doc (doc depends on code)
 ```
 
 ## Constraints

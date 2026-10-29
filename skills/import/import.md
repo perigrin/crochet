@@ -78,8 +78,8 @@ git zhi issue add "<title>" --milestone "<milestone>" --body "<body>"
 ```
 
 Capture the new issue's id from the output, then wire any inferred dependencies
-post-creation with `git zhi issue edit <id> --block <other-id>` (the add-time
-`--after`/`--before` flags are not yet implemented).
+post-creation with `git zhi issue edit <id> --block <other-id>`, where `<id>`
+blocks `<other-id>`. The add-time `--after`/`--before` flags work too.
 
 If the user chose edit, let them modify the title/body before creating the issue.
 

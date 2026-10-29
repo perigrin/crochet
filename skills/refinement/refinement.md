@@ -131,7 +131,7 @@ surface that and stop.
 **Produces:**
 - Issues with titles, dependencies (blocked_by), structured context (paths, commands, entrypoints), Steps (RED-GREEN-COMMIT choreography), and positive acceptance criteria
 - One issue per call: `git zhi issue add "<title>" --milestone <name> --body "<body>"` for a short body, or pipe the body into `--body -` for a long one. Confirm the body is stored rather than that the command exited 0; see `crochet:how-to-use-git-zhi`.
-- Dependencies wired post-creation via `git zhi issue edit <id> --block <other-id>` (the add-time `--after`/`--before` flags are not yet implemented)
+- Dependencies wired at creation with `--after <ref>`/`--before <ref>` on `issue add`, or post-creation via `git zhi issue edit <id> --block <other-id>`, where `<id>` blocks `<other-id>`
 
 ### Steps 4 and 5: Quality and Documentation (Parallel Dispatch)
 

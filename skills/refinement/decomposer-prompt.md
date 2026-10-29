@@ -114,9 +114,9 @@ it) so you can wire dependencies in the next step.
 
 ### 4. Wire Dependencies
 
-After creation, wire dependencies with `issue edit`. The add-time `--after`/
-`--before` flags on `issue add` are not yet implemented; only the `issue edit`
-forms work:
+Wire dependencies at creation with `issue add --after <ref>` (the new issue
+depends on `<ref>`) or `--before <ref>` (`<ref>` depends on the new issue), or
+after creation with `issue edit`:
 ```bash
 git zhi issue edit <id-B> --block <id-A>  # B blocks A (A depends on B)
 ```
