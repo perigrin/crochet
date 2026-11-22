@@ -39,6 +39,7 @@ procedure.
 |---|---|
 | **subject** | what is being judged — a decision, a chain, a diff |
 | **participants** | the lenses or roles to dispatch |
+| **model** | what the participants run on; `opus` when the caller names none |
 | **prior rounds** | the findings already raised, and who raised them |
 | **where the minute goes** | the caller's record — a path, or a milestone body |
 
@@ -63,8 +64,8 @@ its code-review lenses.
 
 *Caller-facing — this is dispatch policy, not something a participant acts on.*
 
-**Participants are dispatched to fresh subagents on `opus`, never forks.**
-Name the model on every dispatch, a resumed participant's included: a
+**Participants are dispatched to fresh subagents on the caller's model, never
+forks.** Name that model on every dispatch, a resumed participant's included: a
 participant is judgment, and one left unset runs on whatever model the
 caller's session happens to run. A fork inherits
 the orchestrator's context, so it carries the reasoning that produced the work
