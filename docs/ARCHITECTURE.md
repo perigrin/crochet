@@ -172,6 +172,18 @@ more. A stand-down that leaves its issue pending or reopened pauses dispatch
 until a live worker returns, and ends the run when none is live, so a
 `wip_limit` slot held from outside the run cannot turn re-dispatch into a loop.
 
+**Every subagent dispatch names its model, and the role decides which.**
+Judgment runs on `opus`: a gate reviewer, a review lens, the gate analyst, a
+discernment participant, a refinement role. A gate that wrongly passes a change
+costs more than the tokens a stronger model spends. Mechanical work runs on
+`haiku`: a runner executes the acceptance criteria and the test command and
+returns their raw output with no verdict, and the reviewer after it reads that
+output rather than the runner's summary, because a cheap model can misread why
+a command failed. A worker runs on the model its issue's `model:` label names:
+`sonnet` for contained, fully specified work, and `opus` otherwise or when the
+label is absent. A dispatch that leaves the model unset inherits the parent
+session's, so the rule would hold only by accident of which session ran it.
+
 ## Data Stores
 
 **The chain is git-zhi's, and crochet reaches it only through the CLI**
