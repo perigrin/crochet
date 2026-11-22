@@ -96,7 +96,7 @@ the positional title and `--milestone` flag. There is no working stdin/batch for
 of `issue add` — it requires a title and only creates one issue per invocation.
 
 ```bash
-git zhi issue add "First issue" --milestone "v0.1" --body "## Context
+git zhi issue add "First issue" --milestone "v0.1" --label model:sonnet --body "## Context
 ...
 
 ## Steps
@@ -105,9 +105,15 @@ git zhi issue add "First issue" --milestone "v0.1" --body "## Context
 ## Acceptance Criteria
 ..."
 
-git zhi issue add "Second issue" --milestone "v0.1" --body "## Context
+git zhi issue add "Second issue" --milestone "v0.1" --label model:opus --body "## Context
 ..."
 ```
+
+Give every issue a `--label model:sonnet` or `--label model:opus`. Execute
+dispatches the issue's worker on that model. Choose `sonnet` only for contained,
+fully specified work, where the steps and criteria leave little to decide. Choose
+`opus` for anything that needs design, crosses a module boundary, or touches
+parsing, concurrency or security semantics, and whenever you are unsure.
 
 Capture each issue's id from the output (use `--format json` if you need to parse
 it) so you can wire dependencies in the next step.

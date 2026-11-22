@@ -224,7 +224,10 @@ the pick chose, after the pick, and is never a separate selection.
 
 **If `superpowers:dispatching-parallel-agents` is available** (check preflight capabilities):
   Run the pick before each dispatch, and dispatch one agent per picked issue,
-  each with the token its pick assigned. Dispatch no more workers than there
+  each with the token its pick assigned. Pass the worker's model explicitly,
+  from the issue's `model:` label: `model:sonnet` dispatches on `sonnet`, and
+  `model:opus` or no label dispatches on `opus`. Left unset, the worker inherits
+  this session's model and the label decides nothing. Dispatch no more workers than there
   are unassigned ready issues in the pool, and within `wip_limit`.
 
   Read the cap with `git zhi config --format json`:
@@ -260,7 +263,9 @@ the pick chose, after the pick, and is never a separate selection.
   Disjoint file scope is necessary but NOT sufficient for concurrent commits —
   index isolation is what makes parallel execution actually parallel.
 
-**Otherwise:** one worker, which is its own orchestrator. It runs the pick,
+**Otherwise:** one worker, which is its own orchestrator. It runs on this
+session's model whatever the issue's `model:` label says, because nothing is
+dispatched for it. It runs the pick,
 works the picked issue with that pick's token set on each `git zhi` command, and
 comes back to the pick when Step 4 returns here.
 
@@ -486,7 +491,7 @@ Sanbao operates at milestone scope. Extract the target issue's metrics from
 the per-issue `difficulties[]` array and the `complexity` domain in the JSON
 output.
 
-**Run the gate analysis agent** with this prompt:
+**Run the gate analysis agent**, dispatched on `opus`, with this prompt:
 
 ```
 You are the gate analyst for crochet:execute. Given the sanbao metrics
@@ -519,7 +524,15 @@ Followed by: one sentence rationale
 
 Run PAAD based on the tier determined by the gate analyst.
 
-**Dispatch the lenses to a fresh subagent. Do not run them yourself.** You wrote
+**Run the checks on a runner first.** Dispatch a fresh subagent on `haiku` to
+run the issue's acceptance-criteria commands and the project's test command. It
+returns each command with its exit status and raw output, and gives no verdict:
+running a command and copying what it printed needs no judgment, and a cheap
+model can misread why something failed. Hand that output to the reviewer below,
+which reads the raw output wherever a failure's cause matters and never takes
+the runner's summary as a finding.
+
+**Dispatch the lenses to a fresh subagent on `opus`. Do not run them yourself.** You wrote
 the commits they are judging, and the composition rule in
 `docs/decisions/0003-acceptance-by-refinement.md` applies to this gate as much as
 to assessment. A reviewer that is the executing agent is the failure the gate

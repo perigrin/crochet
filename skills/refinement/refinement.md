@@ -194,5 +194,5 @@ Run: git zhi list
 
 - All chain interaction through `git zhi` CLI commands — never access `refs/zhi/` directly
 - The quality agent never sees implementation code — only specs and acceptance criteria
-- Each agent role runs as a fresh subagent with its own system prompt
+- Each agent role runs as a fresh subagent on `opus`, with its own system prompt and the model named on the dispatch
 - Lazy init is idempotent — safe to run on repos that already have docs structure
