@@ -41,15 +41,19 @@ and why it is written to an archive rather than presented and lost.
 subject, `docs/assessments/` as where the minute goes, and who drafts. It owns
 the rounds, the dispatch, the recommendation contract and the minute.
 
-**Assessment asks whether to accept a direction, not whether a spec is
-complete.** A finding blocks here only if it shows the direction is wrong:
-the wrong problem, the wrong move, or a conflict with an accepted decision or
-the codebase that the direction cannot survive. How to implement it, an edge
-case, a missing test, a sharper sentence: each is real, and each is a residual
-for refinement and chain-review, which exist to answer exactly those. In one
-assessment, round 1 reached, independently, the design that later shipped;
-seven more rounds then turned the subject into an implementation spec and
-never converged.
+**Assessment asks whether the subject is right, not whether it is complete.**
+A finding blocks here if:
+- it shows the direction is wrong: the wrong problem, the wrong move, or a
+  conflict with an accepted decision or the codebase that the direction cannot
+  survive; or
+- it shows the subject says something wrong, by `crochet:discernment`'s
+  definition of a defect.
+
+How to implement it, an edge case it does not yet cover, a missing test, a
+sharper sentence: each of those is real, and each is a residual for refinement
+and chain-review, which exist to answer exactly those. In one assessment, round
+1 reached, independently, the design that later shipped. Seven more rounds then
+turned the subject into an implementation spec and never converged.
 
 Name this in the dispatch brief, so participants classify against it from
 round 1.

@@ -144,10 +144,29 @@ the standing-aside at the level of a single finding:
   subject should proceed. Examples: an edge case to handle, a wording to
   tighten, a test to add.
 
+**A defect in what the subject asserts is always blocking**, however small its
+fix. That covers:
+- a claim that is false;
+- two parts that contradict each other;
+- a criterion that cannot pass, or that passes before its work exists;
+- a step that loops, strands work, or does the wrong thing when followed
+  literally.
+
+A residual is something the subject does not yet say. A defect is something it
+says wrongly. This matters most for a decision, which freezes at acceptance and
+carries a defect filed as a residual into its accepted text.
+
 A residual goes in the ledger and is carried to whatever implements the
-subject. It holds no round open. Only the raiser may move a finding between
-the two, as only the raiser may release one. When unsure, ask whether you
-would stand aside on it alone. If you would, it is a residual.
+subject. It holds no round open. When unsure, ask whether you would stand aside
+on it alone. If you would, it is a residual.
+
+**Any participant may promote a residual to blocking**, giving its grounds, and
+then holds the promoted finding itself. Only that participant releases it. No
+one but the raiser may demote a finding. Promotion is how a misclassification
+gets caught. In one review, round 1's lenses held a tokenless restart step as a
+residual. Followed literally, that step stranded the issue it restarted. Round
+2's fresh reader made it a bar. A rule letting only the raiser reclassify would
+have shipped it.
 
 ## The dispatch brief
 
@@ -252,7 +271,10 @@ A report that arrives truncated is a failed delivery, not a short report.
      fixture. Re-run what proved the fix, every round.
 4. Repeat from 1 with the participants resumed, until **no blocking finding is
    held and the last round raised no new one.** Residuals do not count against
-   that: a round that raises only residuals has converged. **From round two,
+   that: a round that raises only residuals has converged. **The earliest a
+   session can converge is round two**, because convergence needs a round in
+   which a fresh reader read the current subject and promoted nothing. Round
+   one's participants are the ones whose classifications that reader checks. **From round two,
    every round includes at least one participant reading the current subject
    without the prior findings.** A
    fixed point reached by verifiers alone is not a fixed point: resumed
