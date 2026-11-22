@@ -175,7 +175,10 @@ until a live worker returns, and ends the run when none is live, so a
 **Every subagent dispatch names its model, and the role decides which.**
 Judgment runs on `opus`: a gate reviewer, a review lens, the gate analyst, a
 discernment participant, a refinement role. A gate that wrongly passes a change
-costs more than the tokens a stronger model spends. Mechanical work runs on
+costs more than the tokens a stronger model spends. Assessment runs its
+participants on `fable`, the most capable model, because it decides whether a
+decision is accepted at all, and every later gate judges against what it
+accepted. Mechanical work runs on
 `haiku`: a runner executes the acceptance criteria and the test command and
 returns their raw output with no verdict, and the reviewer after it reads that
 output rather than the runner's summary, because a cheap model can misread why
