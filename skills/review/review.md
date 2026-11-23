@@ -230,8 +230,8 @@ names, and the fix is the release discipline there — bump the plugin version a
 the marketplace's, then confirm what you actually got — not a capability check
 that cannot pass.
 
-A single pass reports what one look caught; a fixed point reports that nothing
-further is visible. **`crochet:discernment` owns the bound** — do not restate it
+A single pass reports what one look caught; a fixed point reports that no
+further blocking finding is visible. **`crochet:discernment` owns the bound** — do not restate it
 here. This skill said three, copying `crochet:execute`'s number, while
 discernment argues at length that three is the wrong bound and would have
 declared both of the sessions that produced it non-convergent. Restating a

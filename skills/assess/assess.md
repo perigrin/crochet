@@ -14,8 +14,8 @@ produce a gap analysis. Output feeds `crochet:refinement` — blocking items bec
 prerequisite refactoring issues at the front of the chain.
 
 **This gate produces the acceptance.** A decision is accepted when its assessment
-reaches a fixed point: a round raising nothing new, from participants that did
-not author it. That is why the session is dispatched rather than performed here,
+reaches a fixed point: a round in which no blocking finding is held or raised,
+from participants that did not author it. That is why the session is dispatched rather than performed here,
 and why it is written to an archive rather than presented and lost.
 
 
