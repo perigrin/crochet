@@ -192,7 +192,7 @@ in the same file.
 So each lens has three outcomes, and the minute names which one occurred.
 
 **If `paad:agentic-review` is available:**
-  Dispatch it to a fresh session — not this one, which it will refuse.
+  Dispatch it to a fresh session on `opus` — not this one, which it will refuse.
 **If it is available and declines, or its specialists do not return:**
   Load its taxonomy and run its lenses yourself, **sequentially**, one at a time.
   Record the result as inline rather than dispatched. This is a legal outcome
@@ -202,7 +202,7 @@ So each lens has three outcomes, and the minute names which one occurred.
   Read the diff for debt, security and coverage gaps inline, and say so.
 
 **If `ponytail:ponytail-review` is available:**
-  Dispatch it — over-engineering is the lens it exists for.
+  Dispatch it on `opus` — over-engineering is the lens it exists for.
 **If it declines or does not return:**
   Apply it inline and label it inline.
 **If it is absent:**

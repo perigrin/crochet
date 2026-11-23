@@ -526,10 +526,13 @@ Run PAAD based on the tier determined by the gate analyst.
 
 **Run the checks on a runner first.** Dispatch a fresh subagent on `haiku` to
 run the issue's acceptance-criteria commands and the project's test command. It
-returns each command with its exit status and raw output, and gives no verdict:
+writes each command's raw output to its own file and returns, for each command,
+the command, its exit status and the file's path. It gives no verdict. Output
+returned as the runner's final text is cut at about 4,900 characters, and a
+truncated log read as complete is a wrong verdict:
 running a command and copying what it printed needs no judgment, and a cheap
-model can misread why something failed. Hand that output to the reviewer below,
-which reads the raw output wherever a failure's cause matters and never takes
+model can misread why something failed. Hand the paths to the reviewer below,
+which reads the raw output files wherever a failure's cause matters and never takes
 the runner's summary as a finding.
 
 **Dispatch the lenses to a fresh subagent on `opus`. Do not run them yourself.** You wrote

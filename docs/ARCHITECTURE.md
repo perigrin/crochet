@@ -172,20 +172,23 @@ more. A stand-down that leaves its issue pending or reopened pauses dispatch
 until a live worker returns, and ends the run when none is live, so a
 `wip_limit` slot held from outside the run cannot turn re-dispatch into a loop.
 
-**Every subagent dispatch names its model, and the role decides which.**
-Judgment runs on `opus`: a gate reviewer, a review lens, the gate analyst, a
-discernment participant, a refinement role. A gate that wrongly passes a change
-costs more than the tokens a stronger model spends. Assessment runs its
-participants on `fable`, the most capable model, because it decides whether a
-decision is accepted at all, and every later gate judges against what it
-accepted. Mechanical work runs on
-`haiku`: a runner executes the acceptance criteria and the test command and
-returns their raw output with no verdict, and the reviewer after it reads that
-output rather than the runner's summary, because a cheap model can misread why
-a command failed. A worker runs on the model its issue's `model:` label names:
-`sonnet` for contained, fully specified work, and `opus` otherwise or when the
-label is absent. A dispatch that leaves the model unset inherits the parent
-session's, so the rule would hold only by accident of which session ran it.
+**Every subagent crochet dispatches names its model, and the role decides
+which.** Dispatches made inside another plugin's skill, such as paad's
+sub-lenses, are that plugin's to choose. Judgment runs on `opus`: a gate
+reviewer, a review lens, the gate analyst, a discernment participant, a
+refinement role. A gate that wrongly passes a change costs more than the tokens
+a stronger model spends. Assessment runs its participants on `fable`, the most
+capable model, because it decides whether a decision is accepted at all, and
+every later gate judges against what it accepted. Mechanical work runs on
+`haiku`: a runner executes the acceptance criteria and the test command, writes
+their raw output to files and gives no verdict, and the reviewer after it reads
+those files rather than the runner's summary, because a cheap model can misread
+why a command failed. A dispatched worker runs on the model its issue's `model:`
+label names: `sonnet` for contained, fully specified work, and `opus` otherwise
+or when the label is absent. On the one-worker path nothing is dispatched, so
+the worker runs on the session's model whatever the label says. A dispatch that
+leaves the model unset inherits the parent session's, so the rule would hold
+only by accident of which session ran it.
 
 ## Data Stores
 

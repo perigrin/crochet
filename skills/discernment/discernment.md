@@ -64,10 +64,11 @@ its code-review lenses.
 
 *Caller-facing — this is dispatch policy, not something a participant acts on.*
 
-**Participants are dispatched to fresh subagents on the caller's model, never
-forks.** Name that model on every dispatch, a resumed participant's included: a
-participant is judgment, and one left unset runs on whatever model the
-caller's session happens to run. A fork inherits
+**Participants are dispatched to fresh subagents on the model the caller
+names, never forks.** Name it when each participant is first spawned. A resumed
+participant keeps the model it was spawned on, since resuming takes no model. A
+participant is judgment, and one spawned with the model unset runs on whatever
+model the caller's session happens to run. A fork inherits
 the orchestrator's context, so it carries the reasoning that produced the work
 and reaches the same conclusions by a different route. Independence of actor
 without independence of context buys nothing.
