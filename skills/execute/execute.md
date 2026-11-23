@@ -526,7 +526,8 @@ Run PAAD based on the tier determined by the gate analyst.
 
 **Run the checks on a runner first.** Dispatch a fresh subagent on `haiku` to
 run the issue's acceptance-criteria commands and the project's test command. It
-writes each command's raw output to its own file and returns, for each command,
+writes each command's raw output to its own file, outside the repository so no
+commit can sweep it in, and returns, for each command,
 the command, its exit status and the file's path. It gives no verdict. Output
 returned as the runner's final text is cut at about 4,900 characters, and a
 truncated log read as complete is a wrong verdict:
