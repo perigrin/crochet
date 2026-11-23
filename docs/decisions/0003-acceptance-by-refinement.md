@@ -585,7 +585,7 @@ rather than empty. The relation is already in use — 0001 carries
 - [ ] the architect no longer denies that a milestone carries a body (`! grep -q 'no flag, stdin, or' skills/refinement/architect-prompt.md`)
 - [ ] refinement no longer denies it either (`! grep -q 'no milestone-body/resolution setter' skills/refinement/refinement.md`)
 - [ ] the architect stores the resolution command on the milestone (`grep -q 'milestone add .*--resolution\|milestone edit .*--resolution' skills/refinement/architect-prompt.md`)
-- [ ] refinement backfills an assessment when none exists (`grep -q 'cursory assessment' skills/refinement/refinement.md`)
+- [ ] refinement backfills an assessment when none exists (`grep -q 'for a cursory one' skills/refinement/refinement.md`)
 - [ ] assess defines the cursory form (`grep -q 'cursory' skills/assess/assess.md`)
 - [ ] assess writes the assessment to the archive (`grep -q 'docs/assessments' skills/assess/assess.md`)
 - [ ] assess refuses to assess its own actor's work (`grep -q 'own work' skills/assess/assess.md`)
