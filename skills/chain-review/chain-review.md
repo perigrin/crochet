@@ -38,7 +38,7 @@ chain-review runs two internal skills:
 - **crochet:pushback** — plan quality lens. Reviews the issue chain for sizing problems, missing QA tasks, dependency cycles, critical chain issues, untestable acceptance criteria, and ACs whose commands git-zhi-verify cannot execute.
 
 **If `dispatching-parallel-agents` is available** (check preflight capabilities):
-  Dispatch alignment and pushback as concurrent agents. Collect both result sets before proceeding to Step 2.5.
+  Dispatch alignment and pushback as concurrent agents, each on `opus`. Collect both result sets before proceeding to Step 2.5.
 
 **Otherwise:**
   Run alignment and pushback sequentially — first alignment, then pushback. Collect both result sets before proceeding to Step 2.5.
