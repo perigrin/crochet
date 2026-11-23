@@ -308,7 +308,7 @@ material out of the subject into the ledger. The one exception is
 That fix is then part of the next round's subject. Before re-dispatching, the
 drafter compares the subject's diff against the findings it claims to answer,
 and refuses a round whose diff grew the subject beyond what its blocking
-findings asked for.
+findings asked for, and in `crochet:review` its residual fixes.
 
 That guard used to refuse any growth at all. Every answer that adds text grows
 the subject, so in practice the guard was not applied. In the #26 assessment
