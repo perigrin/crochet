@@ -67,8 +67,8 @@ If the spec is a decision under `docs/decisions/` whose frontmatter says
 architect.
 
 This records an acceptance already reached; it does not make one. A decision is
-accepted when its assessment reaches a fixed point — a round raising nothing new
-— and this step is the durable trace of that judgment. The author may have sat
+accepted when its assessment reaches a fixed point — a round in which no
+blocking finding is held or raised — and this step is the durable trace of that judgment. The author may have sat
 in that session; what the rule requires is that at least one participant was
 neither the author nor a role holding no view. Do not ask for confirmation: the
 decision was taken at the assessment, and asking again would re-litigate it

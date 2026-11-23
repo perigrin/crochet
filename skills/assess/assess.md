@@ -14,8 +14,8 @@ produce a gap analysis. Output feeds `crochet:refinement` — blocking items bec
 prerequisite refactoring issues at the front of the chain.
 
 **This gate produces the acceptance.** A decision is accepted when its assessment
-reaches a fixed point: a round raising nothing new, from participants that did
-not author it. That is why the session is dispatched rather than performed here,
+reaches a fixed point: a round in which no blocking finding is held or raised,
+from participants that did not author it. That is why the session is dispatched rather than performed here,
 and why it is written to an archive rather than presented and lost.
 
 
@@ -43,6 +43,10 @@ minute goes, and who drafts. Assessment decides whether a decision is accepted,
 and every later gate judges against that, so it gets the most capable model. If
 `fable` is refused, run on `opus` and say so in the minute. It owns
 the rounds, the dispatch, the recommendation contract and the minute.
+
+**Name the blocking test in the dispatch brief**, so participants classify
+against it from round 1. It is under "A finding about implementation is
+answered by moving it" below.
 
 **Composition and convergence are this skill's arithmetic, not the user's.**
 Whether another round is owed, who sits in it, and whether a fresh participant
@@ -173,6 +177,25 @@ where they landed compounded the original error.
 
 **A decision that grows during its own assessment is the signal.** Not that the
 participants are thorough: that the gate is reviewing an implementation.
+
+This rule was in place when the #26 assessment ran eight rounds without
+converging, so a rule stated in prose was not enough. `crochet:discernment` now
+supplies the mechanism: each finding is classed blocking or residual, and
+residuals are answered in its ledger, never in the subject. For assessment, a
+finding is **blocking** if either:
+- it shows the direction is wrong: the wrong problem, the wrong move, or a
+  conflict with an accepted decision or the codebase that the direction cannot
+  survive; or
+- it shows the subject says something wrong, by discernment's definition of a
+  defect.
+
+How to implement it, an edge case not yet covered, a missing test, a sharper
+sentence: each is a residual for refinement and chain-review, which exist to
+answer exactly those.
+
+A blocking *finding* is not Step 3's **Blocking** *requirement*. Step 3 sorts the
+spec's requirements against the code. This sorts what participants raise
+against the subject.
 
 #### Every assessment ends with a recommendation
 

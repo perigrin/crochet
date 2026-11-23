@@ -4,7 +4,7 @@ description: Internal convergence mechanism — dispatches independent participa
 ---
 
 <!-- ABOUTME: Internal skill invoked by crochet:assess, crochet:chain-review and crochet:review. -->
-<!-- ABOUTME: Runs rounds of independent participants over a subject until nothing new is raised. -->
+<!-- ABOUTME: Runs rounds of independent participants over a subject until no blocking finding is held. -->
 
 ## Prerequisites
 
@@ -23,8 +23,8 @@ step 3 of the loop. If you were dispatched into a session, read those two and
 skim the rest.
 
 Three gates run the same loop: dispatch independent participants over a subject,
-collect findings and a recommendation from each, iterate until a round raises
-nothing new, and draft the outcome. This is that loop, built once and
+collect findings and a recommendation from each, iterate until no blocking
+finding is held, and draft the outcome. This is that loop, built once and
 parameterised, rather than described three times and drifting.
 
 The policy it implements — who may sit, what blocks, who releases — is settled
@@ -140,6 +140,44 @@ A participant may **stand aside** instead of blocking: the concern is recorded
 with its grounds and the decision proceeds. **One held objection means not yet.**
 Nothing is counted, and a majority is not an outcome.
 
+**Declare every finding blocking or residual when you raise it.** This applies
+the standing-aside at the level of a single finding:
+
+- **Blocking:** if the subject proceeds as it stands, it is the wrong thing to
+  do. It is why you would recommend reject or modify.
+- **Residual:** true and worth recording, but it does not change whether the
+  subject should proceed. Examples: an edge case to handle, a wording to
+  tighten, a test to add.
+
+**A defect in what the subject asserts is classed blocking**, however small
+its fix. That covers:
+- a claim that is false;
+- two parts that contradict each other;
+- a criterion that cannot pass, or that passes before its work exists;
+- a step that loops, strands work, or does the wrong thing when followed
+  literally.
+
+A residual is something the subject does not yet say. A defect is something it
+says wrongly. This matters most for a decision, which freezes at acceptance and
+carries a defect filed as a residual into its accepted text. Its raiser may
+still stand aside on a defect, as any participant may on any objection. That
+is done explicitly, with the grounds recorded, never by calling the defect a
+residual.
+
+A residual goes in the ledger and is carried to whatever implements the
+subject. It holds no round open. When unsure, ask whether you would stand aside
+on it alone. If you would, it is a residual.
+
+**Every resumed participant reads every residual row each round**, not only its
+own, and **promotes** any it judges blocking, giving its grounds. The promoter
+then holds the promoted finding: only the promoter releases it or demotes it
+again. A finding nobody has promoted may be demoted only by its raiser.
+
+This duty is how a misclassification is caught. In the #26 review, round 1's
+lenses held a tokenless restart step only as a residual. Followed literally,
+that step stranded the issue it restarted. Only round 2's fresh reader, raising
+it independently as a bar, stopped it shipping.
+
 ## The dispatch brief
 
 *Caller-facing — the caller writes it, a participant receives it.*
@@ -241,23 +279,51 @@ A report that arrives truncated is a failed delivery, not a short report.
      "if this revision had quietly regressed [the fixed criterion], I would have
      caught it only by luck." Releasing a finding retires the objection, not the
      fixture. Re-run what proved the fix, every round.
-4. Repeat from 1 with the participants resumed, until a round raises nothing new
-   and nothing is outstanding. **From round two, every round includes at least
-   one participant reading the current subject without the prior findings.** A
+4. Repeat from 1 with the participants resumed, until a round in which:
+   - no blocking finding is held;
+   - nobody raised a new blocking finding, the fresh reader included;
+   - every resumed participant read the residual rows and promoted none.
+
+   Residuals do not count against that: a round that raises only residuals,
+   and promotes none, has converged. **The earliest a session can converge is
+   round two**, because round one's classifications are only cross-checked
+   once participants are resumed. **From round two, every round includes at
+   least one participant reading the current subject without the prior
+   findings.** A
    fixed point reached by verifiers alone is not a fixed point: resumed
    participants verify against the bars they set, and a defect introduced after
    their last pass and untouched by the diff is invisible to all of them at
    once. Resumed participants also declare what they did not re-examine.
+
+   **The fresh reader's job is to find a blocker, not to find something.** A
+   first-time reader of any subject of size finds something, so a test of
+   "nothing new" is never met while a fresh reader sits each round. Its
+   residuals are recorded and hold nothing open.
 
 **The subject holds still for the duration of a round.** Changing it under a
 participant invalidates the answer being asked for, and turns findings stale
 rather than wrong.
 
 **The author holds still between rounds too**, and this is the harder half. An
-edit between rounds answers a recorded finding and names which one; an edit that
-answers nothing waits for the next round to ask for it. Before re-dispatching,
-the drafter compares the subject's diff against the findings it claims to answer
-and refuses a round whose diff grew the subject.
+edit between rounds answers a recorded **blocking** finding and names which one;
+an edit that answers nothing waits for the next round to ask for it. **A residual
+never adds to the subject.** It is answered in the ledger, or by moving
+material out of the subject into the ledger. The one exception is
+`crochet:review`: its subject is a delivery, and a residual may be fixed there.
+That fix is then part of the next round's subject. Before re-dispatching, the
+drafter compares the subject's diff against the findings it claims to answer,
+and refuses a round whose diff grew the subject beyond what its blocking
+findings asked for, or, in `crochet:review`, beyond what its blocking findings
+and residual fixes asked for.
+
+That guard used to refuse any growth at all. Every answer that adds text grows
+the subject, so in practice the guard was not applied. In the #26 assessment
+it was in force and nobody refused a round. Every edit named a finding, and the
+subject still grew from 152 to 264 lines over four rounds. Findings per round
+ran 13, 20, 31, 20, 19, 23, 15 and 15, and the session ended at the bound
+without converging. Each added line was new ground for the next round's
+findings. Restricting additions to blocking findings is what makes the guard
+one a drafter can apply.
 
 Without that, the loop stops reviewing the subject and starts reviewing the
 repairs. One assessment answered twenty-four first-round findings with a diff of
@@ -297,6 +363,10 @@ So: **bound at eight rounds**, and report non-convergence rather than spinning.
 A loop that will not converge is itself a finding about the subject, and the
 bound exists to make that finding arrive rather than to hurry agreement.
 
+A session still raising blocking findings after round three should say so in
+its minute. That usually means the subject is answering a wider question than
+it was asked.
+
 Do not copy `crochet:execute`'s number. It bounds two different things — ten
 passes for its inner convergence, three reopen cycles for its outer gate — and
 neither is this loop. A round here is a full dispatch of every participant,
@@ -308,10 +378,11 @@ which is far more expensive than a reopen and far cheaper than being wrong.
 
 **The minute is a ledger first and a narrative second.** One row per finding:
 
-| id | raiser | round | section of the subject | consequence if it ships | evidence | status | revision |
+| id | raiser | round | blocking or residual | section of the subject | consequence if it ships | evidence | status | revision |
 
 Prose may follow, and a round's brief to a resumed participant is the diff plus
-the ledger.
+the ledger. Convergence is read from this table: no row that is both blocking and
+held.
 
 The table is what makes the rest work. A finding recorded as a row survives its
 raiser, so `raiser absent` is a status rather than a dead end. Rebuttals have
