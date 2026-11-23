@@ -38,7 +38,10 @@ and why it is written to an archive rather than presented and lost.
 ### Step 0: Dispatch the session
 
 **Delegate the session to `crochet:discernment`**, passing the spec as the
-subject, `docs/assessments/` as where the minute goes, and who drafts. It owns
+subject, `fable` as the participants' model, `docs/assessments/` as where the
+minute goes, and who drafts. Assessment decides whether a decision is accepted,
+and every later gate judges against that, so it gets the most capable model. If
+`fable` is refused, run on `opus` and say so in the minute. It owns
 the rounds, the dispatch, the recommendation contract and the minute.
 
 **Name the blocking test in the dispatch brief**, so participants classify
